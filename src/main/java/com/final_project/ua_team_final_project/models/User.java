@@ -14,13 +14,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long userId;
 
-    private Long dept_id;
+    private Long deptId;
     private String name;
-    private Long role_id;
+    private Long roleId;
     private String login;
-    private String password_enc;
+    private String passwordEnc;
     private String phone;
     private String email;
 
@@ -32,31 +32,31 @@ public class User {
     public User() {
     }
 
-    public User(Long user_id, Long dept_id, String name, Long role_id, String login, String password_enc, String phone, String email) {
-        this.user_id = user_id;
-        this.dept_id = dept_id;
+    public User(Long userId, Long deptId, String name, Long roleId, String login, String passwordEnc, String phone, String email) {
+        this.userId = userId;
+        this.deptId = deptId;
         this.name = name;
-        this.role_id = role_id;
+        this.roleId = roleId;
         this.login = login;
-        this.password_enc = password_enc;
+        this.passwordEnc = passwordEnc;
         this.phone = phone;
         this.email = email;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(Long user_id) {
+        this.userId = user_id;
     }
 
-    public Long getDept_id() {
-        return dept_id;
+    public Long getDeptId() {
+        return deptId;
     }
 
-    public void setDept_id(Long dept_id) {
-        this.dept_id = dept_id;
+    public void setDeptId(Long dept_id) {
+        this.deptId = dept_id;
     }
 
     public String getName() {
@@ -67,12 +67,12 @@ public class User {
         this.name = name;
     }
 
-    public Long getRole_id() {
-        return role_id;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public void setRoleId(Long role_id) {
+        this.roleId = role_id;
     }
 
     public String getLogin() {
@@ -83,12 +83,12 @@ public class User {
         this.login = login;
     }
 
-    public String getPassword_enc() {
-        return password_enc;
+    public String getPasswordEnc() {
+        return passwordEnc;
     }
 
-    public void setPassword_enc(String password_enc) {
-        this.password_enc = password_enc;
+    public void setPasswordEnc(String password_enc) {
+        this.passwordEnc = password_enc;
     }
 
     public String getPhone() {
@@ -126,23 +126,23 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof User user)) return false;
-        return Objects.equals(user_id, user.user_id) && Objects.equals(dept_id, user.dept_id) && Objects.equals(name, user.name) && Objects.equals(role_id, user.role_id) && Objects.equals(login, user.login) && Objects.equals(password_enc, user.password_enc) && Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+        return Objects.equals(userId, user.userId) && Objects.equals(deptId, user.deptId) && Objects.equals(name, user.name) && Objects.equals(roleId, user.roleId) && Objects.equals(login, user.login) && Objects.equals(passwordEnc, user.passwordEnc) && Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user_id, dept_id, name, role_id, login, password_enc, phone, email, createdAt, updatedAt);
+        return Objects.hash(userId, deptId, name, roleId, login, passwordEnc, phone, email, createdAt, updatedAt);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "user_id=" + user_id +
-                ", dept_id=" + dept_id +
+                "user_id=" + userId +
+                ", dept_id=" + deptId +
                 ", name='" + name + '\'' +
-                ", role_id=" + role_id +
+                ", role_id=" + roleId +
                 ", login='" + login + '\'' +
-                ", password_enc='" + password_enc + '\'' +
+                ", password_enc='" + passwordEnc + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", createdAt=" + createdAt +

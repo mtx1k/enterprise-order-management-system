@@ -5,29 +5,29 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table (name = "roles")
-public class Role {
+@Table (name= "departments")
+public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roleId;
+    private Long deptId;
 
     private String name;
 
-    public Role() {
+    public Department() {
     }
 
-    public Role(Long roleId, String name) {
-        this.roleId = roleId;
+    public Department(Long deptId, String name) {
+        this.deptId = deptId;
         this.name = name;
     }
 
-    public Long getRoleId() {
-        return roleId;
+    public Long getDeptId() {
+        return deptId;
     }
 
-    public void setRoleId(Long role_id) {
-        this.roleId = role_id;
+    public void setDeptId(Long dept_id) {
+        this.deptId = dept_id;
     }
 
     public String getName() {
@@ -40,19 +40,19 @@ public class Role {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Role role)) return false;
-        return Objects.equals(roleId, role.roleId) && Objects.equals(name, role.name);
+        if (!(o instanceof Department that)) return false;
+        return Objects.equals(deptId, that.deptId) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roleId, name);
+        return Objects.hash(deptId, name);
     }
 
     @Override
     public String toString() {
-        return "Role{" +
-                "role_id=" + roleId +
+        return "Department{" +
+                "dept_id=" + deptId +
                 ", name='" + name + '\'' +
                 '}';
     }
