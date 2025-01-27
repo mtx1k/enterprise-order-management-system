@@ -26,8 +26,8 @@ public class Role {
         return roleId;
     }
 
-    public void setRoleId(Long role_id) {
-        this.roleId = role_id;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getName() {

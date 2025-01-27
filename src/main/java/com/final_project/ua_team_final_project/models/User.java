@@ -47,16 +47,16 @@ public class User {
         return userId;
     }
 
-    public void setUserId(Long user_id) {
-        this.userId = user_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long dept_id) {
-        this.deptId = dept_id;
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
     }
 
     public String getName() {
@@ -71,8 +71,8 @@ public class User {
         return roleId;
     }
 
-    public void setRoleId(Long role_id) {
-        this.roleId = role_id;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getLogin() {
@@ -87,8 +87,8 @@ public class User {
         return passwordEnc;
     }
 
-    public void setPasswordEnc(String password_enc) {
-        this.passwordEnc = password_enc;
+    public void setPasswordEnc(String passwordEnc) {
+        this.passwordEnc = passwordEnc;
     }
 
     public String getPhone() {

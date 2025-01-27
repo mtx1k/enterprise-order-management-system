@@ -39,8 +39,8 @@ public class Supplier {
         return supplierId;
     }
 
-    public void setSupplierId(Long supplier_id) {
-        this.supplierId = supplier_id;
+    public void setSupplierId(Long supplierId) {
+        this.supplierId = supplierId;
     }
 
     public String getName() {
@@ -71,16 +71,16 @@ public class Supplier {
         return contactPhone;
     }
 
-    public void setContactPhone(String contact_phone) {
-        this.contactPhone = contact_phone;
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
     }
 
     public String getContactEmail() {
         return contactEmail;
     }
 
-    public void setContactEmail(String contact_email) {
-        this.contactEmail = contact_email;
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 
     @Override
