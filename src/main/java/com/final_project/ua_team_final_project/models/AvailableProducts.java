@@ -14,17 +14,17 @@ public class AvailableProducts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long product_id;
+    private Long productId;
 
-    private String product_code;
+    private String productCode;
 
     private String name;
 
     private String description;
 
-    private Long category_id;
+    private Long categoryId;
 
-    private Long supplier_id;
+    private Long supplierId;
 
     private Long price;
 
@@ -37,30 +37,30 @@ public class AvailableProducts {
     public AvailableProducts() {
     }
 
-    public AvailableProducts(Long product_id, String product_code, String name, String description, Long category_id, Long supplier_id, Long price) {
-        this.product_id = product_id;
-        this.product_code = product_code;
+    public AvailableProducts(Long productId, String productCode, String name, String description, Long categoryId, Long supplierId, Long price) {
+        this.productId = productId;
+        this.productCode = productCode;
         this.name = name;
         this.description = description;
-        this.category_id = category_id;
-        this.supplier_id = supplier_id;
+        this.categoryId = categoryId;
+        this.supplierId = supplierId;
         this.price = price;
     }
 
-    public Long getProduct_id() {
-        return product_id;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct_id(Long product_id) {
-        this.product_id = product_id;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public String getProduct_code() {
-        return product_code;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setProduct_code(String product_code) {
-        this.product_code = product_code;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     public String getName() {
@@ -79,20 +79,20 @@ public class AvailableProducts {
         this.description = description;
     }
 
-    public Long getCategory_id() {
-        return category_id;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory_id(Long category_id) {
-        this.category_id = category_id;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public Long getSupplier_id() {
-        return supplier_id;
+    public Long getSupplierId() {
+        return supplierId;
     }
 
-    public void setSupplier_id(Long supplier_id) {
-        this.supplier_id = supplier_id;
+    public void setSupplierId(Long supplierId) {
+        this.supplierId = supplierId;
     }
 
     public Long getPrice() {
@@ -122,23 +122,23 @@ public class AvailableProducts {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof AvailableProducts that)) return false;
-        return Objects.equals(product_id, that.product_id) && Objects.equals(product_code, that.product_code) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(category_id, that.category_id) && Objects.equals(supplier_id, that.supplier_id) && Objects.equals(price, that.price) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+        return Objects.equals(productId, that.productId) && Objects.equals(productCode, that.productCode) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(categoryId, that.categoryId) && Objects.equals(supplierId, that.supplierId) && Objects.equals(price, that.price) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product_id, product_code, name, description, category_id, supplier_id, price, createdAt, updatedAt);
+        return Objects.hash(productId, productCode, name, description, categoryId, supplierId, price, createdAt, updatedAt);
     }
 
     @Override
     public String toString() {
         return "AvailableProducts{" +
-                "product_id=" + product_id +
-                ", product_code='" + product_code + '\'' +
+                "productId=" + productId +
+                ", productCode='" + productCode + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", category_id=" + category_id +
-                ", supplier_id=" + supplier_id +
+                ", categoryId=" + categoryId +
+                ", supplierId=" + supplierId +
                 ", price=" + price +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

@@ -10,24 +10,24 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long role_id;
+    private Long roleId;
 
     private String name;
 
     public Role() {
     }
 
-    public Role(Long role_id, String name) {
-        this.role_id = role_id;
+    public Role(Long roleId, String name) {
+        this.roleId = roleId;
         this.name = name;
     }
 
-    public Long getRole_id() {
-        return role_id;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public void setRoleId(Long role_id) {
+        this.roleId = role_id;
     }
 
     public String getName() {
@@ -41,18 +41,18 @@ public class Role {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Role role)) return false;
-        return Objects.equals(role_id, role.role_id) && Objects.equals(name, role.name);
+        return Objects.equals(roleId, role.roleId) && Objects.equals(name, role.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(role_id, name);
+        return Objects.hash(roleId, name);
     }
 
     @Override
     public String toString() {
         return "Role{" +
-                "role_id=" + role_id +
+                "role_id=" + roleId +
                 ", name='" + name + '\'' +
                 '}';
     }
