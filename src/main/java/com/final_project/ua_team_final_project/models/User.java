@@ -6,11 +6,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table (name = "users")
 public class User {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,5 +121,32 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(user_id, user.user_id) && Objects.equals(dept_id, user.dept_id) && Objects.equals(name, user.name) && Objects.equals(role_id, user.role_id) && Objects.equals(login, user.login) && Objects.equals(password_enc, user.password_enc) && Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user_id, dept_id, name, role_id, login, password_enc, phone, email, createdAt, updatedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "user_id=" + user_id +
+                ", dept_id=" + dept_id +
+                ", name='" + name + '\'' +
+                ", role_id=" + role_id +
+                ", login='" + login + '\'' +
+                ", password_enc='" + password_enc + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
