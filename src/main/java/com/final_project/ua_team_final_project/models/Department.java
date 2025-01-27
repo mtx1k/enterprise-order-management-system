@@ -10,24 +10,24 @@ public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long dept_id;
+    private Long deptId;
 
     private String name;
 
     public Department() {
     }
 
-    public Department(Long dept_id, String name) {
-        this.dept_id = dept_id;
+    public Department(Long deptId, String name) {
+        this.deptId = deptId;
         this.name = name;
     }
 
-    public Long getDept_id() {
-        return dept_id;
+    public Long getDeptId() {
+        return deptId;
     }
 
-    public void setDept_id(Long dept_id) {
-        this.dept_id = dept_id;
+    public void setDeptId(Long dept_id) {
+        this.deptId = dept_id;
     }
 
     public String getName() {
@@ -41,18 +41,18 @@ public class Department {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Department that)) return false;
-        return Objects.equals(dept_id, that.dept_id) && Objects.equals(name, that.name);
+        return Objects.equals(deptId, that.deptId) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dept_id, name);
+        return Objects.hash(deptId, name);
     }
 
     @Override
     public String toString() {
         return "Department{" +
-                "dept_id=" + dept_id +
+                "dept_id=" + deptId +
                 ", name='" + name + '\'' +
                 '}';
     }
