@@ -1,5 +1,6 @@
 package com.final_project.ua_team_final_project.config;
 
+import com.final_project.ua_team_final_project.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
