@@ -1,17 +1,23 @@
 package com.final_project.ua_team_final_project.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table (name = "roles")
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
     private Long roleId;
 
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     public Role() {
@@ -19,22 +25,6 @@ public class Role {
 
     public Role(Long roleId, String name) {
         this.roleId = roleId;
-        this.name = name;
-    }
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long role_id) {
-        this.roleId = role_id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
     }
 

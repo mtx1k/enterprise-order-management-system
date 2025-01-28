@@ -46,40 +46,40 @@ public class Order {
         return orderId;
     }
 
-    public void setOrderId(Long order_id) {
-        this.orderId = order_id;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public Long getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long dept_id) {
-        this.deptId = dept_id;
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
     }
 
     public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double total_price) {
-        this.totalPrice = total_price;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public boolean isApprovedByHead() {
         return approvedByHead;
     }
 
-    public void setApprovedByHead(boolean approved_by_head) {
-        this.approvedByHead = approved_by_head;
+    public void setApprovedByHead(boolean approvedByHead) {
+        this.approvedByHead = approvedByHead;
     }
 
     public boolean isApprovedByFinDept() {
         return approvedByFinDept;
     }
 
-    public void setApprovedByFinDept(boolean approved_by_fin_dept) {
-        this.approvedByFinDept = approved_by_fin_dept;
+    public void setApprovedByFinDept(boolean approvedByFinDept) {
+        this.approvedByFinDept = approvedByFinDept;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -102,8 +102,8 @@ public class Order {
         return statusId;
     }
 
-    public void setStatusId(Long status_id) {
-        this.statusId = status_id;
+    public void setStatusId(Long statusId) {
+        this.statusId = statusId;
     }
 
     @Override

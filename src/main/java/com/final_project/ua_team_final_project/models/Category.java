@@ -27,8 +27,8 @@ public class Category {
         return categoryId;
     }
 
-    public void setCategoryId(Long category_id) {
-        this.categoryId = category_id;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {

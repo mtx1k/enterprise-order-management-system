@@ -2,41 +2,40 @@ package com.final_project.ua_team_final_project.services;
 
 import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new UsernameNotFoundException(login));
 
-        User user = userRepository
-                .findByName(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getName())
-                .password(user.getPassword_enc())
+        List<GrantedAuthority> authorities = Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().toUpperCase()));
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getLogin())
+                .password(user.getPasswordEnc())
+                .authorities(authorities)
                 .build();
     }
 
-    public User createUserAccount(String username, String password) {
-        User userAccount = new User();
-
-        userAccount.setName(username);
-        userAccount.setPassword_enc(passwordEncoder.encode(password));
-
-        return userRepository.save(userAccount);
-    }
+//    public void createUserAccount(String login, String password) {
+//
+//    }
 }
