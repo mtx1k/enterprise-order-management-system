@@ -2,9 +2,13 @@ package com.final_project.ua_team_final_project.models;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "order_messages")
 public class OrderMessage {
@@ -25,38 +29,6 @@ public class OrderMessage {
         this.messageId = messageId;
         this.userId = userId;
         this.orderId = orderId;
-        this.supplierOrderId = supplierOrderId;
-    }
-
-    public Long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getSupplierOrderId() {
-        return supplierOrderId;
-    }
-
-    public void setSupplierOrderId(Long supplierOrderId) {
         this.supplierOrderId = supplierOrderId;
     }
 

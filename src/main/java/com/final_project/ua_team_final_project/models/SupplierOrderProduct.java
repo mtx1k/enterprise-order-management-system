@@ -2,9 +2,13 @@ package com.final_project.ua_team_final_project.models;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "supplier_order_products")
 public class SupplierOrderProduct {
@@ -28,37 +32,6 @@ public class SupplierOrderProduct {
         this.amount = amount;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getSupplierOrderId() {
-        return supplierOrderId;
-    }
-
-    public void setSupplierOrderId(Long supplierOrderId) {
-        this.supplierOrderId = supplierOrderId;
-    }
-
-    public Long getOrderProductId() {
-        return orderProductId;
-    }
-
-    public void setOrderProductId(Long orderProductId) {
-        this.orderProductId = orderProductId;
-    }
-
-    public Long getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
-    }
 
     @Override
     public boolean equals(Object o) {

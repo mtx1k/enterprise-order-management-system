@@ -1,9 +1,13 @@
 package com.final_project.ua_team_final_project.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "ordered_products")
 public class OrderedProduct {
@@ -38,70 +42,6 @@ public class OrderedProduct {
         this.itemPrice = itemPrice;
         this.categoryId = categoryId;
         this.supplierId = supplierId;
-        this.amount = amount;
-    }
-
-    public Long getOrderedProductId() {
-        return orderedProductId;
-    }
-
-    public void setOrderedProductId(Long orderedProductId) {
-        this.orderedProductId = orderedProductId;
-    }
-
-    public Long getOrdersOrderId() {
-        return ordersOrderId;
-    }
-
-    public void setOrdersOrderId(Long ordersOrderId) {
-        this.ordersOrderId = ordersOrderId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
-    }
-
-    public double getItemPrice() {
-        return itemPrice;
-    }
-
-    public void setItemPrice(double itemPrice) {
-        this.itemPrice = itemPrice;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Long getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(Long supplierId) {
-        this.supplierId = supplierId;
-    }
-
-    public Long getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Long amount) {
         this.amount = amount;
     }
 
