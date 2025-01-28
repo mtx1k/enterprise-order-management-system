@@ -36,7 +36,10 @@ public class AppController {
 
         return "register";
     }
-
+    @GetMapping("/about")
+    public String about() {
+        return "about";
+    }
 //    @PostMapping("/register")
 //    public String postRegister(@ModelAttribute User userAccount) {
 //
