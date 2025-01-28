@@ -2,9 +2,13 @@ package com.final_project.ua_team_final_project.models;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table(name="order_status")
 public class OrderStatus {
@@ -19,22 +23,6 @@ public class OrderStatus {
 
     public OrderStatus(Long statusId, String statusText) {
         this.statusId = statusId;
-        this.statusText = statusText;
-    }
-
-    public Long getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(Long statusId) {
-        this.statusId = statusId;
-    }
-
-    public String getStatusText() {
-        return statusText;
-    }
-
-    public void setStatusText(String statusText) {
         this.statusText = statusText;
     }
 

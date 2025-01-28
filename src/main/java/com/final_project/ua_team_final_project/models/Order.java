@@ -1,15 +1,20 @@
 package com.final_project.ua_team_final_project.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table (name = "orders")
 public class Order {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,70 +44,6 @@ public class Order {
         this.totalPrice = totalPrice;
         this.approvedByHead = approvedByHead;
         this.approvedByFinDept = approvedByFinDept;
-        this.statusId = statusId;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getDeptId() {
-        return deptId;
-    }
-
-    public void setDeptId(Long deptId) {
-        this.deptId = deptId;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public boolean isApprovedByHead() {
-        return approvedByHead;
-    }
-
-    public void setApprovedByHead(boolean approvedByHead) {
-        this.approvedByHead = approvedByHead;
-    }
-
-    public boolean isApprovedByFinDept() {
-        return approvedByFinDept;
-    }
-
-    public void setApprovedByFinDept(boolean approvedByFinDept) {
-        this.approvedByFinDept = approvedByFinDept;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Long getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(Long statusId) {
         this.statusId = statusId;
     }
 
