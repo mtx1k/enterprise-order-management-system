@@ -2,11 +2,15 @@ package com.final_project.ua_team_final_project.models;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "supplier_orders")
 public class SupplierOrders {
@@ -30,46 +34,6 @@ public class SupplierOrders {
         this.supplierOrderId = supplierOrderId;
         this.supplierId = supplierId;
         this.totalPrice = totalPrice;
-        this.statusId = statusId;
-    }
-
-    public Long getSupplierOrderId() {
-        return supplierOrderId;
-    }
-
-    public void setSupplierOrderId(Long supplierOrderId) {
-        this.supplierOrderId = supplierOrderId;
-    }
-
-    public Long getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(Long supplierId) {
-        this.supplierId = supplierId;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Long getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(Long statusId) {
         this.statusId = statusId;
     }
 

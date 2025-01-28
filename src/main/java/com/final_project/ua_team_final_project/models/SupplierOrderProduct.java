@@ -32,6 +32,7 @@ public class SupplierOrderProduct {
         this.amount = amount;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SupplierOrderProduct that)) return false;
