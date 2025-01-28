@@ -13,11 +13,11 @@
 
 <div th:object="${user}">
     <div th:text="*{getName()}"></div>
-    <div th:text="*{getPassword_enc()}"></div>
+    <div th:text="*{getPasswordEnc()}"></div>
 </div>
 <div>
     <div th:text="${user.getName()}"></div>
-    <div th:text="${user.getPassword_enc()}"></div>
+    <div th:text="${user.getPasswordEnc()}"></div>
 </div>
 
 </body>
