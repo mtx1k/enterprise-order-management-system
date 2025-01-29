@@ -1,17 +1,12 @@
 package com.final_project.ua_team_final_project.controllers;
 
 import com.final_project.ua_team_final_project.models.User;
-import com.final_project.ua_team_final_project.services.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class AppController {
-
-    @Autowired
-    CustomUserDetailsService customUserDetailsService;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -36,16 +31,10 @@ public class AppController {
 
         return "register";
     }
-
-//    @PostMapping("/register")
-//    public String postRegister(@ModelAttribute User userAccount) {
-//
-//        customUserDetailsService.createUserAccount(
-//                userAccount.getName(),
-//                userAccount.getPasswordEnc()
-//        );
-//
-//        return "redirect:/register";
-//    }
+  
+    @GetMapping("/about")
+    public String about() {
+        return "about";
+    }
 
 }
