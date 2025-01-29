@@ -14,8 +14,10 @@ public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dept_id")
     private Long deptId;
 
+    @Column(name = "name")
     private String name;
 
     public Department() {

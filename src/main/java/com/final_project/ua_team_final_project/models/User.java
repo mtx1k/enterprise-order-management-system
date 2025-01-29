@@ -21,8 +21,9 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "dept_id")
-    private Long deptId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "dept_id", referencedColumnName = "dept_id")
+    private Department department;
 
     @Column(name = "name")
     private String name;
@@ -54,9 +55,9 @@ public class User {
     public User() {
     }
 
-    public User(Long userId, Long deptId, String name, Role role, String login, String passwordEnc, String phone, String email) {
+    public User(Long userId, Department department, String name, Role role, String login, String passwordEnc, String phone, String email) {
         this.userId = userId;
-        this.deptId = deptId;
+        this.department = department;
         this.name = name;
         this.role = role;
         this.login = login;
@@ -68,21 +69,25 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof User user)) return false;
-        return Objects.equals(userId, user.userId) && Objects.equals(deptId, user.deptId) && Objects.equals(name, user.name) && Objects.equals(role, user.role) && Objects.equals(login, user.login) && Objects.equals(passwordEnc, user.passwordEnc) && Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+        return Objects.equals(userId, user.userId) && Objects.equals(department, user.department)
+                && Objects.equals(name, user.name) && Objects.equals(role, user.role)
+                && Objects.equals(login, user.login) && Objects.equals(passwordEnc, user.passwordEnc)
+                && Objects.equals(phone, user.phone) && Objects.equals(email, user.email)
+                && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, deptId, name, role, login, passwordEnc, phone, email, createdAt, updatedAt);
+        return Objects.hash(userId, department, name, role, login, passwordEnc, phone, email, createdAt, updatedAt);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "user_id=" + userId +
-                ", dept_id=" + deptId +
+                ", dept_id=" + department.getDeptId() +
                 ", name='" + name + '\'' +
-                ", role_id=" + role +
+                ", role_id=" + role.getRoleId() +
                 ", login='" + login + '\'' +
                 ", password_enc='" + passwordEnc + '\'' +
                 ", phone='" + phone + '\'' +
