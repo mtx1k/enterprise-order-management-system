@@ -25,4 +25,16 @@ public class AppController {
     public String login() {
         return "login";
     }
+
+    @GetMapping("/register")
+    public String register() {
+
+        return "register";
+    }
+  
+    @GetMapping("/about")
+    public String about() {
+        return "about";
+    }
+
 }

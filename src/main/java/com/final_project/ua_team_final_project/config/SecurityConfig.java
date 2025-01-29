@@ -25,7 +25,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/js/**", "/css/**").permitAll()
+                .requestMatchers("/login", "/about", "/js/**", "/css/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/user/**").hasRole("USER")
                 .anyRequest().authenticated()
@@ -48,17 +48,6 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-//        UserDetails user = User.builder()
-//                .username("admin")
-//                .password(passwordEncoder.encode("password"))
-//                .roles("ADMIN")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -70,9 +59,4 @@ public class SecurityConfig {
         tokenRepository.setDataSource(dataSource);
         return tokenRepository;
     }
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return new CustomUserDetailsService(userRepository);
-//    }
 }
