@@ -2,9 +2,153 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Admin page</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <style>
+        a {
+            color:black;
+            text-decoration: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 6px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        .disabled {
+            color: #ccc;
+            pointer-events: none;
+        }
+
+        #pageNumber {
+            width: 50px;
+        }
+
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-form {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
+<h1>List of products</h1>
 
+<label for="sortOptions">Sort by:</label>
+<select id="sortOptions" onchange="refresh()">
+    <option value="scales" th:selected="${order == 'scales'}">Scaled</option>
+    <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
+    <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
+    <option value="productCode" th:selected="${order == 'productCode: ASC'}">Product Code</option>
+    <option value="productCode_desc" th:selected="${order == 'productCode: ASC'}">Product Code DESC</option>
+    <option value="inputNumbers" th:selected="${order == 'inputNumbers: ASC'}">Amount</option>
+    <option value="inputNumbers_desc" th:selected="${order == 'inputNumbers: DESC'}">Amount DESC</option>
+
+</select>
+
+<label for="resultsPerPage">Results per page:</label>
+<select id="resultsPerPage" onchange="refresh()">
+    <option value="20" th:selected="${pageSize == 10}">10</option>
+    <option value="50" th:selected="${pageSize == 25}">25</option>
+    <option value="100" th:selected="${pageSize == 50}">50</option>
+    <option value="200" th:selected="${pageSize == 100}">100</option>
+</select>
+
+<table id="availableProducts" >
+    <thead>
+    <tr>
+        <th>Add</th>
+        <th>Product Code</th>
+        <th>Product Name</th>
+        <th>Description</th>
+        <th>Amount</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="availableProduct : ${availableProducts}">
+        <td><input type="checkbox" id="scales" name="scales" /></td>
+        <td th:text="${availableProduct.getProductCode()}"></td>
+        <td th:text="${availableProduct.getName()}"></td>
+        <td th:text="${availableProduct.getDescription()}"></td>
+        <td ><input type="number" id="inputNumbers" ></input></td>
+
+
+    </tr>
+    </tbody>
+</table>
+
+<div class="pagination-container">
+    <button id="firstPageButton" onclick="refresh()">First Page</button>
+    <button id="prevPage" onclick="prevPage()">Previous</button>
+    <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
+        <label for="pageNumber">Page#</label>
+        <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
+        <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
+    </form>
+    <button id="nextPage" onclick="nextPage()">Next</button>
+    <button id="lastPageButton" onclick="lastPage()">Last Page</button>
+</div>
+
+<script>
+    const pageNumber = [[${pageNumber}]];
+    const totalPages = [[${totalPages}]];
+
+    document.getElementById('prevPage').classList.toggle('disabled', pageNumber === 1);
+    document.getElementById('firstPageButton').classList.toggle('disabled', pageNumber === 1);
+    document.getElementById('lastPageButton').classList.toggle('disabled', pageNumber === totalPages);
+    document.getElementById('nextPage').classList.toggle('disabled', pageNumber === totalPages);
+
+    function prevPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=${pageNumber - 1}&page_size=` + pageSize + `&order=${order}`;
+    }
+
+    function nextPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=${pageNumber + 1}&page_size=` + pageSize + `&order=${order}`;
+    }
+
+    function refresh() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=1&page_size=` + pageSize + `&order=` + order;
+    }
+
+    function lastPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=` + totalPages + `&page_size=` + pageSize + `&order=` + order;
+    }
+
+    function moveToPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+        const moveToPageNumber = document.getElementById('pageNumber').value;
+
+        window.location.href = `/?page=` + moveToPageNumber + `&page_size=` + pageSize + `&order=${order}`;
+    }
+</script>
+<script src="/js/bootstrap.bundle.js"></script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package com.final_project.ua_team_final_project.controllers;
 
+import com.final_project.ua_team_final_project.models.AvailableProducts;
 import com.final_project.ua_team_final_project.models.User;
+import com.final_project.ua_team_final_project.repositories.AvailableProductsRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +16,12 @@ import java.util.List;
 public class AppController {
 
     private final UserRepository userRepository;
+    private final AvailableProductsRepository availableProductsRepository;
 
-    public AppController(UserRepository userRepository) {
+    public AppController(UserRepository userRepository, AvailableProductsRepository availableProductsRepository) {
         this.userRepository = userRepository;
+
+        this.availableProductsRepository = availableProductsRepository;
     }
 
     @GetMapping("/")
@@ -27,6 +32,7 @@ public class AppController {
             getAdminModel(model);
             return "/organization/adminpage";
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+            getAvailableProductsModel(model);
             return "/organization/userpage";
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_HEAD"))){
             return "/organization/pageofhead";
@@ -52,5 +58,10 @@ public class AppController {
     private void getAdminModel(Model model) {
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
+    }
+
+    private void getAvailableProductsModel(Model model) {
+        List<AvailableProducts> availableProducts = availableProductsRepository.findAll();
+        model.addAttribute("availableProducts", availableProducts);
     }
 }
