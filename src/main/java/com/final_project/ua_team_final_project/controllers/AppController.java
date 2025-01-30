@@ -1,22 +1,20 @@
 package com.final_project.ua_team_final_project.controllers;
 
-import com.final_project.ua_team_final_project.models.User;
-import com.final_project.ua_team_final_project.repositories.UserRepository;
+import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
 
 @Controller
 public class AppController {
 
-    private final UserRepository userRepository;
+    private final PageDataManager pageDataManager;
 
-    public AppController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AppController(PageDataManager pageDataManager) {
+        this.pageDataManager = pageDataManager;
     }
 
     @GetMapping("/")
@@ -24,7 +22,7 @@ public class AppController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            getAdminModel(model);
+            pageDataManager.getAdminModel(model);
             return "/adminpage";
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
             return "/userpage";
@@ -43,8 +41,4 @@ public class AppController {
         return "about";
     }
 
-    private void getAdminModel(Model model) {
-        List<User> users = userRepository.findAll();
-        model.addAttribute("users", users);
-    }
 }
