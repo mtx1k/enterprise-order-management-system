@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 @Controller
@@ -22,7 +23,7 @@ public class AppController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            pageDataManager.getAdminModel(model);
+            pageDataManager.setAdminModel(model);
             return "/adminpage";
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
             return "/userpage";
@@ -41,4 +42,9 @@ public class AppController {
         return "about";
     }
 
+    @GetMapping("/useredit/{id}")
+    public String editUser(@PathVariable Long id, Model model) {
+        pageDataManager.setEditUserModel(id, model);
+        return "editUser";
+    }
 }
