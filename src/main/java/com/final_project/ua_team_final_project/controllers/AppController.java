@@ -25,9 +25,15 @@ public class AppController {
 
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             getAdminModel(model);
-            return "/adminpage";
+            return "/organization/adminpage";
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
-            return "/userpage";
+            return "/organization/userpage";
+        } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_HEAD"))){
+            return "/organization/pageofhead";
+        } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_FINCO"))){
+            return "/organization/pageoffinco";
+        } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_SUPPLIER"))){
+            return "/organization/supply";
         } else {
             return "redirect:/login";
         }
