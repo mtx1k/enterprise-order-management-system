@@ -4,6 +4,46 @@
     <meta charset="UTF-8">
     <title>Admin page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
+    <style>
+        a {
+            color:black;
+            text-decoration: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 6px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        .disabled {
+            color: #ccc;
+            pointer-events: none;
+        }
+
+        #pageNumber {
+            width: 50px;
+        }
+
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-form {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <h1>List of users</h1>
@@ -44,14 +84,14 @@
         </thead>
         <tbody>
         <tr th:each="user : ${users}">
-            <td th:text="${user.getUserId()}"></td>
-            <td th:text="${user.getName()}"></td>
-            <td th:text="${user.getDepartment().getName()}"></td>
-            <td th:text="${user.getRole().getName()}"></td>
-            <td th:text="${user.getLogin()}"></td>
-            <td th:text="${user.getPhone()}"></td>
-            <td th:text="${user.getEmail()}"></td>
-            <td th:text="${user.getCreatedAt()}"></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getUserId()}"></a></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getName()}"></a></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getDepartment().getName()}"></a></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getRole().getName()}"></a></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getLogin()}"></a></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getPhone()}"></a></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getEmail()}"></a></td>
+            <td><a th:href="@{/useredit/{id}(id=${user.getUserId()})}" th:text="${user.getCreatedAt()}"></a></td>
         </tr>
         </tbody>
     </table>
