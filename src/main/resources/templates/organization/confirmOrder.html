@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Order</title>
+</head>
+<body>
+<h1>Edit Order</h1>
+
+<form th:action="@{/confirmOrder}" method="post">
+    <table>
+        <thead>
+        <tr>
+            <th>Product Code</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="orderItem, iterStat : ${orderItems}">
+            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.productId'" th:value="${orderItem.product.productId}" />
+            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.productCode'" th:value="${orderItem.product.productCode}" />
+            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.name'" th:value="${orderItem.product.name}" />
+            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.description'" th:value="${orderItem.product.description}" />
+            <td th:text="${orderItem.product.productCode}"></td>
+            <td th:text="${orderItem.product.name}"></td>
+            <td><input type="number" th:name="'orderItems[' + ${iterStat.index} + '].quantity'" th:value="${orderItem.quantity}" min="1" required /></td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit">Confirm Order</button>
+</form>
+
+</body>
+</html>

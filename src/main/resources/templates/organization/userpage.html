@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <title>Admin page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
         a {
-            color:black;
+            color: black;
             text-decoration: none;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -54,100 +57,98 @@
     <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
     <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
     <option value="productCode" th:selected="${order == 'productCode: ASC'}">Product Code</option>
-    <option value="productCode_desc" th:selected="${order == 'productCode: ASC'}">Product Code DESC</option>
+    <option value="productCode_desc" th:selected="${order == 'productCode: DESC'}">Product Code DESC</option>
     <option value="inputNumbers" th:selected="${order == 'inputNumbers: ASC'}">Amount</option>
     <option value="inputNumbers_desc" th:selected="${order == 'inputNumbers: DESC'}">Amount DESC</option>
-
 </select>
 
 <label for="resultsPerPage">Results per page:</label>
 <select id="resultsPerPage" onchange="refresh()">
-    <option value="20" th:selected="${pageSize == 10}">10</option>
-    <option value="50" th:selected="${pageSize == 25}">25</option>
-    <option value="100" th:selected="${pageSize == 50}">50</option>
-    <option value="200" th:selected="${pageSize == 100}">100</option>
+    <option value="10" th:selected="${pageSize == 10}">10</option>
+    <option value="25" th:selected="${pageSize == 25}">25</option>
+    <option value="50" th:selected="${pageSize == 50}">50</option>
+    <option value="100" th:selected="${pageSize == 100}">100</option>
 </select>
 
-<table id="availableProducts" >
-    <thead>
-    <tr>
-        <th>Add</th>
-        <th>Product Code</th>
-        <th>Product Name</th>
-        <th>Description</th>
-        <th>Amount</th>
+<form id="productForm" action="/selectedProducts" method="POST">
+    <table id="availableProducts">
+        <thead>
+        <tr>
+            <th>Select</th>
+            <th>Product Code</th>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="availableProduct : ${availableProducts}">
+            <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/></td>
+            <td th:text="${availableProduct.productCode}"></td>
+            <td th:text="${availableProduct.name}"></td>
+            <td th:text="${availableProduct.description}"></td>
+            <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'" /></td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit">Create Order</button>
+</form>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="availableProduct : ${availableProducts}">
-        <td><input type="checkbox" id="scales" name="scales" /></td>
-        <td th:text="${availableProduct.getProductCode()}"></td>
-        <td th:text="${availableProduct.getName()}"></td>
-        <td th:text="${availableProduct.getDescription()}"></td>
-        <td ><input type="number" id="inputNumbers" ></input></td>
 
 
-    </tr>
-    </tbody>
-</table>
 
-<div class="pagination-container">
-    <button id="firstPageButton" onclick="refresh()">First Page</button>
-    <button id="prevPage" onclick="prevPage()">Previous</button>
-    <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
-        <label for="pageNumber">Page#</label>
-        <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
-        <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
-    </form>
-    <button id="nextPage" onclick="nextPage()">Next</button>
-    <button id="lastPageButton" onclick="lastPage()">Last Page</button>
-</div>
+
+    <div class="pagination-container">
+        <button id="firstPageButton" onclick="goToFirstPage()">First Page</button>
+        <button id="prevPage" onclick="prevPage()">Previous</button>
+        <form class="page-form" onsubmit="moveToPage(); return false;">
+            <label for="pageNumber">Page#</label>
+            <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
+            <button type="button" onclick="moveToPage()">Move</button>
+        </form>
+        <button id="nextPage" onclick="nextPage()">Next</button>
+        <button id="lastPageButton" onclick="goToLastPage()">Last Page</button>
+    </div>
+
+
 
 <script>
-    const pageNumber = [[${pageNumber}]];
+    let currentPageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
 
-    document.getElementById('prevPage').classList.toggle('disabled', pageNumber === 1);
-    document.getElementById('firstPageButton').classList.toggle('disabled', pageNumber === 1);
-    document.getElementById('lastPageButton').classList.toggle('disabled', pageNumber === totalPages);
-    document.getElementById('nextPage').classList.toggle('disabled', pageNumber === totalPages);
+    document.getElementById('prevPage').classList.toggle('disabled', currentPageNumber === 1);
+    document.getElementById('firstPageButton').classList.toggle('disabled', currentPageNumber === 1);
+    document.getElementById('lastPageButton').classList.toggle('disabled', currentPageNumber === totalPages);
+    document.getElementById('nextPage').classList.toggle('disabled', currentPageNumber === totalPages);
+
+    function goToFirstPage() {
+        refresh(1);
+    }
 
     function prevPage() {
-        const pageSize = document.getElementById('resultsPerPage').value;
-        const order = document.getElementById('sortOptions').value;
-
-        window.location.href = `/?page=${pageNumber - 1}&page_size=` + pageSize + `&order=${order}`;
+        refresh(currentPageNumber - 1);
     }
 
     function nextPage() {
-        const pageSize = document.getElementById('resultsPerPage').value;
-        const order = document.getElementById('sortOptions').value;
-
-        window.location.href = `/?page=${pageNumber + 1}&page_size=` + pageSize + `&order=${order}`;
+        refresh(currentPageNumber + 1);
     }
 
-    function refresh() {
-        const pageSize = document.getElementById('resultsPerPage').value;
-        const order = document.getElementById('sortOptions').value;
-
-        window.location.href = `/?page=1&page_size=` + pageSize + `&order=` + order;
-    }
-
-    function lastPage() {
-        const pageSize = document.getElementById('resultsPerPage').value;
-        const order = document.getElementById('sortOptions').value;
-
-        window.location.href = `/?page=` + totalPages + `&page_size=` + pageSize + `&order=` + order;
+    function goToLastPage() {
+        refresh(totalPages);
     }
 
     function moveToPage() {
+        const pageNumber = document.getElementById('pageNumber').value;
+        refresh(pageNumber);
+    }
+
+    function refresh(pageNumber = 1) {
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
-        const moveToPageNumber = document.getElementById('pageNumber').value;
-
-        window.location.href = `/?page=` + moveToPageNumber + `&page_size=` + pageSize + `&order=${order}`;
+        window.location.href = `/?page=${pageNumber}&page_size=${pageSize}&order=${order}`;
     }
+
+
 </script>
 <script src="/js/bootstrap.bundle.js"></script>
 </body>
