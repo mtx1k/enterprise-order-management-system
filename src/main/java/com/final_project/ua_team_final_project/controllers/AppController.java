@@ -36,7 +36,7 @@ public class AppController {
             getAdminModel(model);
             return "adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
-            return "userPage";
+            return "userpage";
         } else {
             return "accessDenied";
         }
