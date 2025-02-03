@@ -5,9 +5,12 @@ import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.DepartmentRepository;
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
+
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class AppController {
@@ -33,16 +38,25 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String index(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            pageDataManager.setAdminModel(model);
-            return "/adminpage";
-        } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
-            return "/userpage";
-        } else {
+    public String index(Principal principal, Model model) {
+        if (principal == null) {
             return "redirect:/login";
+        }
+
+        User user = userRepository.findByName(principal.getName()).orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + principal.getName()));
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        if ("ADMIN".equals(user.getRole().getName())) {
+            getAdminModel(model);
+            return "adminpage";
+        } else if ("USER".equals(user.getRole().getName())) {
+            return "userpage";
+        } else {
+            return "accessDenied";
         }
     }
 
