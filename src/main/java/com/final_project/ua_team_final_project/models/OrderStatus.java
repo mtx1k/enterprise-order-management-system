@@ -10,8 +10,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name="order_status")
+@Table(name="order_statuses")
 public class OrderStatus {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long statusId;

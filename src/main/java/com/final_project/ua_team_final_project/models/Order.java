@@ -21,7 +21,10 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    private Long deptId;
+    @ManyToOne
+    @JoinColumn(name = "dept_id", nullable = false)
+    private Department deptId;
+
     private double totalPrice;
     private boolean approvedByHead;
     private boolean approvedByFinDept;
@@ -44,7 +47,7 @@ public class Order {
 
     public Order() { }
 
-    public Order(Long orderId, Long deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, Long statusId) {
+    public Order(Long orderId, Department deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, Long statusId) {
         this.orderId = orderId;
         this.deptId = deptId;
         this.totalPrice = totalPrice;

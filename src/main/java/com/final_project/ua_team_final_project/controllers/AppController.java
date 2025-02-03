@@ -1,9 +1,6 @@
 package com.final_project.ua_team_final_project.controllers;
 
-import com.final_project.ua_team_final_project.models.AvailableProducts;
-import com.final_project.ua_team_final_project.models.Order;
-import com.final_project.ua_team_final_project.models.OrderItem;
-import com.final_project.ua_team_final_project.models.User;
+import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.security.core.Authentication;
@@ -13,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,14 +21,17 @@ public class AppController {
     private final AvailableProductsRepository availableProductsRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final DepartmentRepository departmentRepository;
+Department department;
 
-
-    public AppController(UserRepository userRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository, OrderItemRepository orderItemRepository, OrderService orderService, OrderStatusRepository orderStatusRepository, OrderItemRepository orderItemRepository1) {
+    public AppController(UserRepository userRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository, OrderItemRepository orderItemRepository, OrderService orderService, OrderStatusRepository orderStatusRepository, DepartmentRepository departmentRepository) {
         this.userRepository = userRepository;
         this.availableProductsRepository = availableProductsRepository;
         this.orderRepository = orderRepository;
         this.orderStatusRepository = orderStatusRepository;
-        this.orderItemRepository = orderItemRepository1;
+        this.orderItemRepository = orderItemRepository;
+        this.departmentRepository = departmentRepository;
+
     }
 
     @GetMapping("/")
@@ -90,9 +89,16 @@ public class AppController {
     @PostMapping("/confirmOrder")
     public String confirmOrder(@RequestParam Map<String, String> orderItems) {
         try {
-            // Create new order
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            User user = userRepository.findByName(username)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+            Department department = user.getDepartment();
+
             Order order = new Order();
-            order.setDeptId(1L);
+            order.setDeptId(department);
             order.setStatusId(1L);
             order.setApprovedByHead(false);
             order.setApprovedByFinDept(false);
@@ -114,6 +120,7 @@ public class AppController {
                     orderItem.setProduct(product);
                     orderItem.setQuantity(quantity);
                     orderItem.setPrice((double) (product.getPrice() * quantity));
+
 
                     order.addOrderItem(orderItem);
                     totalPrice += orderItem.getPrice();
