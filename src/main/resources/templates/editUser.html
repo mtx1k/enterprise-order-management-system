@@ -58,14 +58,14 @@
             </tr>
             <tr>
                 <td><h5><label for="email">Email</label></h5></td>
-                <td><input type="text" name="email" id="email" th:value="${user.getEmail()}" class="form-control"></td>
+                <td><input type="email" name="email" id="email" th:value="${user.getEmail()}" class="form-control"></td>
             </tr>
             <tr>
                 <td>
                     <h5><label for="datepicker">Hired at</label></h5>
                 </td>
                 <td>
-                    <input type="text" id="datepicker" class="form-control"
+                    <input type="text" id="datepicker"  class="form-control" name="hired_at"
                            th:value="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}"/>
                 </td>
             </tr>
