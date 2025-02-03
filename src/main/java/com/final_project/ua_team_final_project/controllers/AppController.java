@@ -51,7 +51,7 @@ public class AppController {
         }
 
         if ("ADMIN".equals(user.getRole().getName())) {
-            getAdminModel(model);
+            pageDataManager.setAdminModel(model);
             return "adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
             return "userpage";
