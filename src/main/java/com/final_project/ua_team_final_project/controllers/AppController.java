@@ -2,7 +2,6 @@ package com.final_project.ua_team_final_project.controllers;
 
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
-import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -16,22 +15,16 @@ import java.util.Map;
 @Controller
 public class AppController {
 
-    private final OrderStatusRepository orderStatusRepository;
+
     private final UserRepository userRepository;
     private final AvailableProductsRepository availableProductsRepository;
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final DepartmentRepository departmentRepository;
-Department department;
 
-    public AppController(UserRepository userRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository, OrderItemRepository orderItemRepository, OrderService orderService, OrderStatusRepository orderStatusRepository, DepartmentRepository departmentRepository) {
+
+    public AppController(UserRepository userRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository) {
         this.userRepository = userRepository;
         this.availableProductsRepository = availableProductsRepository;
         this.orderRepository = orderRepository;
-        this.orderStatusRepository = orderStatusRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.departmentRepository = departmentRepository;
-
     }
 
     @GetMapping("/")
