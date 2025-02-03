@@ -21,6 +21,7 @@ public class AvailableProducts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
+    @Column(unique = true)
     private String productCode;
 
     private String name;

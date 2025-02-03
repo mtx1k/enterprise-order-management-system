@@ -21,8 +21,8 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "dept_id", referencedColumnName = "dept_id")
+    @ManyToOne
+    @JoinColumn(name = "dept_id", nullable = false)
     private Department department;
 
     @Column(name = "name")
