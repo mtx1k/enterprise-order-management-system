@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 
 import java.time.LocalDate;
@@ -40,16 +41,14 @@ public class AppController {
     private final DepartmentRepository deptRepository;
     private final RoleRepository roleRepository;
     private final AvailableProductsRepository availableProductsRepository;
-    private final OrderRepository orderRepository;
 
     public AppController(PageDataManager pageDataManager, UserRepository userRepository,
-                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository) {
+                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository) {
         this.pageDataManager = pageDataManager;
         this.userRepository = userRepository;
         this.deptRepository = deptRepository;
         this.roleRepository = roleRepository;
         this.availableProductsRepository = availableProductsRepository;
-        this.orderRepository = orderRepository;
     }
 
     @GetMapping("/")
@@ -81,80 +80,17 @@ public class AppController {
     public String selectedProducts(@RequestParam List<Long> selectedProducts,
                                    @RequestParam Map<String, String> quantities,
                                    Model model) {
-        if (selectedProducts == null || selectedProducts.isEmpty()) {
+        if (pageDataManager.setSelectedProductsModel(selectedProducts, quantities, model)) {
             return "redirect:/";
         }
-
-        List<OrderItem> orderItems = new ArrayList<>();
-
-        for (Long productId : selectedProducts) {
-            String quantityStr = quantities.get("quantities[" + productId + "]");
-            if (quantityStr != null && !quantityStr.isEmpty()) {
-                AvailableProducts product = availableProductsRepository.findById(productId)
-                        .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
-
-                OrderItem orderItem = new OrderItem();
-                orderItem.setProduct(product);
-                orderItem.setQuantity(Integer.parseInt(quantityStr));
-                orderItems.add(orderItem);
-            }
-        }
-
-        if (orderItems.isEmpty()) {
-            return "redirect:/";
-        }
-
-        model.addAttribute("orderItems", orderItems);
         return "organization/editProducts";
     }
 
     @PostMapping("/confirmOrder")
     public String confirmOrder(@RequestParam Map<String, String> orderItems) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-
-            User user = userRepository.findByName(username)
-                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
-
-            Department department = user.getDepartment();
-
-            Order order = new Order();
-            order.setDeptId(department);
-            order.setStatusId(1L);
-            order.setApprovedByHead(false);
-            order.setApprovedByFinDept(false);
-
-            double totalPrice = 0.0;
-
-
-            for (Map.Entry<String, String> entry : orderItems.entrySet()) {
-                if (entry.getKey().matches("orderItems\\[(\\d+)\\].quantity")) {
-
-                    String productId = entry.getKey().replaceAll("orderItems\\[(\\d+)\\].quantity", "$1");
-                    Integer quantity = Integer.valueOf(entry.getValue());
-
-
-                    AvailableProducts product = availableProductsRepository.findById(Long.valueOf(productId))
-                            .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
-
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setProduct(product);
-                    orderItem.setQuantity(quantity);
-                    orderItem.setPrice((double) (product.getPrice() * quantity));
-
-
-                    order.addOrderItem(orderItem);
-                    totalPrice += orderItem.getPrice();
-                }
-            }
-
-            order.setTotalPrice(totalPrice);
-
-            orderRepository.save(order);
-
+            pageDataManager.saveNewOrder(orderItems);
             return "redirect:/";
-
         } catch (Exception e) {
             e.printStackTrace();
             return "error";
