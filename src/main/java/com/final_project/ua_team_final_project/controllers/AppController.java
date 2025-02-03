@@ -1,6 +1,5 @@
 package com.final_project.ua_team_final_project.controllers;
 
-
 import com.final_project.ua_team_final_project.models.AvailableProducts;
 import com.final_project.ua_team_final_project.models.Order;
 import com.final_project.ua_team_final_project.models.OrderItem;
@@ -61,103 +60,77 @@ public class AppController {
     public String selectedProducts(@RequestParam List<Long> selectedProducts,
                                    @RequestParam Map<String, String> quantities,
                                    Model model) {
-        System.out.println("Selected Products: " + selectedProducts);
-        System.out.println("Quantities: " + quantities);
-
         if (selectedProducts == null || selectedProducts.isEmpty()) {
-            System.out.println("No products selected!");
-            return "error";
+            return "redirect:/";
         }
 
-        List<AvailableProducts> selectedAvailableProducts = availableProductsRepository.findAllById(selectedProducts);
         List<OrderItem> orderItems = new ArrayList<>();
-        for (AvailableProducts product : selectedAvailableProducts) {
-            String quantityKey = "quantities[" + product.getProductId() + "]";
-            if (quantities.containsKey(quantityKey) && !quantities.get(quantityKey).isEmpty()) {
+
+        for (Long productId : selectedProducts) {
+            String quantityStr = quantities.get("quantities[" + productId + "]");
+            if (quantityStr != null && !quantityStr.isEmpty()) {
+                AvailableProducts product = availableProductsRepository.findById(productId)
+                        .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+
                 OrderItem orderItem = new OrderItem();
                 orderItem.setProduct(product);
-                orderItem.setQuantity(Integer.parseInt(quantities.get(quantityKey)));
+                orderItem.setQuantity(Integer.parseInt(quantityStr));
                 orderItems.add(orderItem);
             }
+        }
+
+        if (orderItems.isEmpty()) {
+            return "redirect:/";
         }
 
         model.addAttribute("orderItems", orderItems);
         return "organization/editProducts";
     }
 
-
-
-
-    private double calculateTotalPrice(Map<String, String> orderItems) {
-        double totalPrice = 0.0;
-        for (Map.Entry<String, String> entry : orderItems.entrySet()) {
-            if (entry.getKey().contains("quantity")) {
-                String productIdStr = entry.getKey().replace("orderItems[", "").replace("].quantity", "");
-                try {
-                    Long productId = Long.valueOf(productIdStr);
-                    System.out.println("Checking product with ID: " + productId);
-                    Integer quantity = Integer.valueOf(entry.getValue());
-                    AvailableProducts product = availableProductsRepository.findById(productId)
-                            .orElseThrow(() -> new RuntimeException("Product not found for ID: " + productId));
-                    System.out.println("Found product: " + product.getProductId() + " - " + product.getProductCode());
-                    totalPrice += product.getPrice() * quantity;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid number format for product ID: " + e.getMessage());
-                }
-            }
-        }
-        return totalPrice;
-    }
-
     @PostMapping("/confirmOrder")
-    public String confirmOrder(@RequestParam Map<String, String> orderItems, Model model) {
-        System.out.println("Order items received: " + orderItems);
+    public String confirmOrder(@RequestParam Map<String, String> orderItems) {
+        try {
+            // Create new order
+            Order order = new Order();
+            order.setDeptId(1L);
+            order.setStatusId(1L);
+            order.setApprovedByHead(false);
+            order.setApprovedByFinDept(false);
 
-        Order order = new Order();
-        order.setDeptId(1L);
-        order.setTotalPrice(calculateTotalPrice(orderItems));
-        order.setApprovedByHead(false);
-        order.setApprovedByFinDept(false);
+            double totalPrice = 0.0;
 
-        Long statusId = 1L;
-        if (!orderStatusRepository.existsById(statusId)) {
-            throw new RuntimeException("Order status not found");
-        }
-        order.setStatusId(statusId);
 
-        List<OrderItem> orderItemList = new ArrayList<>();
-        for (Map.Entry<String, String> entry : orderItems.entrySet()) {
-            if (entry.getKey().contains("quantity")) {
-                String productIdStr = entry.getKey().replace("orderItems[", "").replace("].quantity", "");
-                try {
-                    Long productId = Long.valueOf(productIdStr);
-                    System.out.println("Processing product with ID: " + productId);
+            for (Map.Entry<String, String> entry : orderItems.entrySet()) {
+                if (entry.getKey().matches("orderItems\\[(\\d+)\\].quantity")) {
+
+                    String productId = entry.getKey().replaceAll("orderItems\\[(\\d+)\\].quantity", "$1");
                     Integer quantity = Integer.valueOf(entry.getValue());
-                    AvailableProducts product = availableProductsRepository.findById(productId)
-                            .orElseThrow(() -> new RuntimeException("Product not found for ID: " + productId));
+
+
+                    AvailableProducts product = availableProductsRepository.findById(Long.valueOf(productId))
+                            .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
 
                     OrderItem orderItem = new OrderItem();
-                    orderItem.setOrder(order);
                     orderItem.setProduct(product);
                     orderItem.setQuantity(quantity);
                     orderItem.setPrice((double) (product.getPrice() * quantity));
 
-                    orderItemList.add(orderItem);
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid number format: " + e.getMessage());
+                    order.addOrderItem(orderItem);
+                    totalPrice += orderItem.getPrice();
                 }
             }
+
+            order.setTotalPrice(totalPrice);
+
+            orderRepository.save(order);
+
+            return "redirect:/";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
         }
-
-        order.setOrderItems(orderItemList);
-        orderRepository.save(order);
-
-        System.out.println("Order saved successfully: " + order);
-
-        return "redirect:/";
     }
-
-
 
     @GetMapping("/login")
     public String login() {

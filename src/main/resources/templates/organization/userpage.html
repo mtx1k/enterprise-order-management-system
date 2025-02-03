@@ -2,8 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+    <!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+    <!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <title>Admin page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
@@ -98,17 +98,17 @@
 
 
 
-    <div class="pagination-container">
-        <button id="firstPageButton" onclick="goToFirstPage()">First Page</button>
-        <button id="prevPage" onclick="prevPage()">Previous</button>
-        <form class="page-form" onsubmit="moveToPage(); return false;">
-            <label for="pageNumber">Page#</label>
-            <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
-            <button type="button" onclick="moveToPage()">Move</button>
-        </form>
-        <button id="nextPage" onclick="nextPage()">Next</button>
-        <button id="lastPageButton" onclick="goToLastPage()">Last Page</button>
-    </div>
+<div class="pagination-container">
+    <button id="firstPageButton" onclick="goToFirstPage()">First Page</button>
+    <button id="prevPage" onclick="prevPage()">Previous</button>
+    <form class="page-form" onsubmit="moveToPage(); return false;">
+        <label for="pageNumber">Page#</label>
+        <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
+        <button type="button" onclick="moveToPage()">Move</button>
+    </form>
+    <button id="nextPage" onclick="nextPage()">Next</button>
+    <button id="lastPageButton" onclick="goToLastPage()">Last Page</button>
+</div>
 
 
 

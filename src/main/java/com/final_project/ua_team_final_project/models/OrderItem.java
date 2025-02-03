@@ -14,34 +14,37 @@ public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderItemId;
+    private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id", nullable = false)
     private AvailableProducts product;
 
     private Integer quantity;
     private Double price;
 
+    public OrderItem() {
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof OrderItem that)) return false;
-        return Objects.equals(orderItemId, that.orderItemId) && Objects.equals(order, that.order) && Objects.equals(product, that.product) && Objects.equals(quantity, that.quantity) && Objects.equals(price, that.price);
+        if (!(o instanceof OrderItem orderItem)) return false;
+        return Objects.equals(id, orderItem.id) && Objects.equals(order, orderItem.order) && Objects.equals(product, orderItem.product) && Objects.equals(quantity, orderItem.quantity) && Objects.equals(price, orderItem.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderItemId, order, product, quantity, price);
+        return Objects.hash(id, order, product, quantity, price);
     }
 
     @Override
     public String toString() {
         return "OrderItem{" +
-                "orderItemId=" + orderItemId +
+                "id=" + id +
                 ", order=" + order +
                 ", product=" + product +
                 ", quantity=" + quantity +
