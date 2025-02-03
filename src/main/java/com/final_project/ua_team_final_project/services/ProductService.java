@@ -7,6 +7,7 @@ import com.final_project.ua_team_final_project.repositories.SupplierRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,10 +63,9 @@ public class ProductService {
     }
 
     private String extractSupplierName(String fileName) {
-
         String[] parts = fileName.split("-");
 
-        return parts[0];
+        return String.join(" ", Arrays.copyOfRange(parts, 0, parts.length - 1));
     }
 
 }
