@@ -83,11 +83,10 @@
 			<version>2.29.51</version>
 		</dependency>
 
-		<!-- Apache Commons CSV -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<version>1.8</version>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.9</version>
 		</dependency>
 
 	</dependencies>
