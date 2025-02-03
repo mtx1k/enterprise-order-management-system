@@ -7,38 +7,47 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter
 @Entity
-@Table (name = "orders")
+@Table(name = "orders")
 public class Order {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    private Long deptId;
+    @ManyToOne
+    @JoinColumn(name = "dept_id", nullable = false)
+    private Department deptId;
 
     private double totalPrice;
-
     private boolean approvedByHead;
-
     private boolean approvedByFinDept;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     private Long statusId;
 
-    public Order() {
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
     }
 
-    public Order(Long orderId, Long deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, Long statusId) {
+    public Order() { }
+
+    public Order(Long orderId, Department deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, Long statusId) {
         this.orderId = orderId;
         this.deptId = deptId;
         this.totalPrice = totalPrice;

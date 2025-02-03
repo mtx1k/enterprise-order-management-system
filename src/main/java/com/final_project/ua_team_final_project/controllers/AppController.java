@@ -1,5 +1,9 @@
 package com.final_project.ua_team_final_project.controllers;
 
+
+import com.final_project.ua_team_final_project.models.*;
+import com.final_project.ua_team_final_project.repositories.*;
+
 import com.final_project.ua_team_final_project.models.Role;
 import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.DepartmentRepository;
@@ -8,6 +12,7 @@ import com.final_project.ua_team_final_project.repositories.UserRepository;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -15,31 +20,41 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.security.Principal;
+
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class AppController {
+
 
     private final PageDataManager pageDataManager;
     private final UserRepository userRepository;
     private final DepartmentRepository deptRepository;
     private final RoleRepository roleRepository;
+    private final AvailableProductsRepository availableProductsRepository;
 
     public AppController(PageDataManager pageDataManager, UserRepository userRepository,
-                         DepartmentRepository deptRepository, RoleRepository roleRepository) {
+                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository) {
         this.pageDataManager = pageDataManager;
         this.userRepository = userRepository;
         this.deptRepository = deptRepository;
         this.roleRepository = roleRepository;
+        this.availableProductsRepository = availableProductsRepository;
     }
 
     @GetMapping("/")
     public String index(Principal principal, Model model) {
         if (principal == null) {
+
             return "redirect:/login";
         }
 
@@ -52,11 +67,33 @@ public class AppController {
 
         if ("ADMIN".equals(user.getRole().getName())) {
             pageDataManager.setAdminModel(model);
-            return "adminpage";
+            return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
-            return "userpage";
+            getAvailableProductsModel(model);
+            return "organization/userpage";
         } else {
             return "accessDenied";
+        }
+    }
+
+    @PostMapping("/selectedProducts")
+    public String selectedProducts(@RequestParam List<Long> selectedProducts,
+                                   @RequestParam Map<String, String> quantities,
+                                   Model model) {
+        if (pageDataManager.setSelectedProductsModel(selectedProducts, quantities, model)) {
+            return "redirect:/";
+        }
+        return "organization/editProducts";
+    }
+
+    @PostMapping("/confirmOrder")
+    public String confirmOrder(@RequestParam Map<String, String> orderItems) {
+        try {
+            pageDataManager.saveNewOrder(orderItems);
+            return "redirect:/";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
         }
     }
 
@@ -75,6 +112,14 @@ public class AppController {
         pageDataManager.setEditUserModel(id, model);
         return "editUser";
     }
+
+
+    private void getAvailableProductsModel(Model model) {
+        List<AvailableProducts> availableProducts = availableProductsRepository.findAll();
+        model.addAttribute("availableProducts", availableProducts);
+
+    }
+
 
     @PostMapping("/edituser")
     public String editUser(@RequestParam("id") Long id,

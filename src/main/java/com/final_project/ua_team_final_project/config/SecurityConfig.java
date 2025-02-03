@@ -25,11 +25,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/about", "/js/**", "/css/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasRole("USER")
-                .anyRequest().authenticated()
-        )
+            .requestMatchers("/login", "/about", "/js/**", "/css/**").permitAll()
+            .requestMatchers("/organization/**", "/selectedProducts").authenticated()
+            .requestMatchers("/organization/admin/**").hasRole("ADMIN")
+            .requestMatchers("/organization/userpage/**","/organization/**","/organization/editSelectedProducts", "/organization/submitSelection", "/organization/editProducts/**", "/organization/confirmOrder").hasRole("USER")
+            .requestMatchers("/organization/pageofhead/**").hasRole("HEAD")
+            .requestMatchers("/organization/pageoffinco/**").hasRole("FINCO")
+            .requestMatchers("/organization/supply/**").hasRole("SUPPLIER")
+            .anyRequest().authenticated()
+                )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -37,12 +41,13 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 );
+//                .csrf(csrf -> csrf.disable());
 
         httpSecurity.rememberMe(rememberMe -> rememberMe
-                .key(Dotenv.load().get("REMEMBERME_KEY"))
-                .tokenValiditySeconds(7 * 24 * 60 * 60)
-                .tokenRepository(persistentTokenRepository())
-        )
+                        .key(Dotenv.load().get("REMEMBERME_KEY"))
+                        .tokenValiditySeconds(7 * 24 * 60 * 60)
+                        .tokenRepository(persistentTokenRepository())
+                )
                 .userDetailsService(customUserDetailsService);
 
         return httpSecurity.build();
