@@ -50,7 +50,7 @@
 
     <label for="sortOptions">Sort by:</label>
     <select id="sortOptions" onchange="refresh()">
-        <option value="id" th:selected="${order == 'id'}">ID</option>
+        <option value="userId" th:selected="${order == 'userId'}">ID</option>
         <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
         <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
         <option value="login" th:selected="${order == 'login: ASC'}">Login</option>
@@ -63,10 +63,10 @@
 
     <label for="resultsPerPage">Results per page:</label>
     <select id="resultsPerPage" onchange="refresh()">
-        <option value="20" th:selected="${pageSize == 10}">10</option>
-        <option value="50" th:selected="${pageSize == 25}">25</option>
-        <option value="100" th:selected="${pageSize == 50}">50</option>
-        <option value="200" th:selected="${pageSize == 100}">100</option>
+        <option value="10" th:selected="${pageSize == 10}">10</option>
+        <option value="25" th:selected="${pageSize == 25}">25</option>
+        <option value="50" th:selected="${pageSize == 50}">50</option>
+        <option value="100" th:selected="${pageSize == 100}">100</option>
     </select>
 
     <table id="usersTable">

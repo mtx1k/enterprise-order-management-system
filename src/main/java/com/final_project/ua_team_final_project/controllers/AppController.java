@@ -37,7 +37,11 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String index(Principal principal, Model model) {
+    public String index(Principal principal,
+                        @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
+                        @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
+                        @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
+                        Model model) {
         if (principal == null) {
 
             return "redirect:/login";
@@ -51,7 +55,7 @@ public class AppController {
         }
 
         if ("ADMIN".equals(user.getRole().getName())) {
-            pageDataManager.setAdminModel(model);
+            pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order);
             return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model);

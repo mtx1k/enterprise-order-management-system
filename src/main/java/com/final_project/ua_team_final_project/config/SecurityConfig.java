@@ -41,7 +41,6 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 );
-//                .csrf(csrf -> csrf.disable());
 
         httpSecurity.rememberMe(rememberMe -> rememberMe
                         .key(Dotenv.load().get("REMEMBERME_KEY"))
