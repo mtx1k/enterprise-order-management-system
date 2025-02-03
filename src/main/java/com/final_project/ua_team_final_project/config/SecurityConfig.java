@@ -40,15 +40,15 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
-                )
-                .csrf(csrf -> csrf.disable());
+                );
+//                .csrf(csrf -> csrf.disable());
 
-//        httpSecurity.rememberMe(rememberMe -> rememberMe
-//                        .key(Dotenv.load().get("REMEMBERME_KEY"))
-//                        .tokenValiditySeconds(7 * 24 * 60 * 60)
-//                        .tokenRepository(persistentTokenRepository())
-//                )
-//                .userDetailsService(customUserDetailsService);
+        httpSecurity.rememberMe(rememberMe -> rememberMe
+                        .key(Dotenv.load().get("REMEMBERME_KEY"))
+                        .tokenValiditySeconds(7 * 24 * 60 * 60)
+                        .tokenRepository(persistentTokenRepository())
+                )
+                .userDetailsService(customUserDetailsService);
 
         return httpSecurity.build();
     }
@@ -58,10 +58,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public JdbcTokenRepositoryImpl persistentTokenRepository() {
-//        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
-//        tokenRepository.setDataSource(dataSource);
-//        return tokenRepository;
-//    }
+    @Bean
+    public JdbcTokenRepositoryImpl persistentTokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        return tokenRepository;
+    }
 }

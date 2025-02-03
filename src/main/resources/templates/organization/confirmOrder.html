@@ -2,12 +2,15 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Edit Order</title>
 </head>
 <body>
 <h1>Edit Order</h1>
 
 <form th:action="@{/confirmOrder}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
     <table>
         <thead>
         <tr>

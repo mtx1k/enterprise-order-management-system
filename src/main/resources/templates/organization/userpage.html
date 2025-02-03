@@ -2,8 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-    <!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Admin page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
@@ -71,6 +71,7 @@
 </select>
 
 <form id="productForm" action="/selectedProducts" method="POST">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
     <table id="availableProducts">
         <thead>
         <tr>
