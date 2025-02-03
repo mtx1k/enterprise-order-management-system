@@ -1,7 +1,9 @@
 package com.final_project.ua_team_final_project.config;
 
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -13,19 +15,23 @@ import java.net.URI;
 @Configuration
 public class DigitalOceanConfig {
 
-    @Value("${do.region}")
-    private static String region;
+    private final Dotenv dotenv = Dotenv.load();
 
-    @Value("${do.endpoint}")
-    private static String endpoint;
+    @Bean
+    public S3Client getS3Client() {
+        String endpoint = dotenv.get("DO_ENDPOINT");
+        String accessKey = dotenv.get("DO_ACCESS_KEY");
+        String secretKey = dotenv.get("DO_SECRET_KEY");
+        String region = dotenv.get("DO_REGION");
 
-    @Value("${do.access.key}")
-    private static String accessKey;
+        System.out.println("DEBUG: Endpoint -> " + endpoint);
+        System.out.println("DEBUG: Access Key -> " + accessKey);
+        System.out.println("DEBUG: Secret Key -> " + (secretKey != null ? "Loaded" : "NULL"));
+        System.out.println("DEBUG: Region -> " + region);
 
-    @Value("${do.secret.key}")
-    private static String secretKey;
-
-    public static S3Client getS3Client() {
+        if (endpoint == null || accessKey == null || secretKey == null || region == null) {
+            throw new RuntimeException("Missing environment variables! Check application.properties or .env.");
+        }
         return S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
                 .credentialsProvider(StaticCredentialsProvider.create(

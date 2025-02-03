@@ -1,7 +1,7 @@
 package com.final_project.ua_team_final_project.services;
 
-import com.final_project.ua_team_final_project.config.DigitalOceanConfig;
-import org.springframework.beans.factory.annotation.Value;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
@@ -12,11 +12,15 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class StorageService {
-    private final S3Client s3Client = DigitalOceanConfig.getS3Client();
+    private final S3Client s3Client;
 
-    @Value("${do.bucket.name}")
-    private String BUCKET_NAME;
+    public StorageService(S3Client s3Client) {
+        this.s3Client = s3Client;
+    }
+
+    private final String BUCKET_NAME = Dotenv.load().get("DO_BUCKET_NAME");
 
     public List<String> listCsvFiles() {
         ListObjectsV2Request request = ListObjectsV2Request.builder()
