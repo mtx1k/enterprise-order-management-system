@@ -2465,7 +2465,7 @@
         if (e) {
             var r,
                 i = t.style;
-            e in ar && e !== pr && (e = cr), i.removeProperty ? (("ms" !== (r = e.substr(0, 2)) && "webkit" !== e.substr(0, 6)) || (e = "-" + e), i.removeProperty("--" === r ? e : e.replace(hr, "-$1").toLowerCase())) : i.removeAttribute(e);
+            e in ar && e !== pr && (e = cr), i.removeProperty ? (("ms" !== (r = e.substr(0, 2)) && "webkit" !== e.substr(0, 6)) || (e = "-" + e), i.removeProperty("" === r ? e : e.replace(hr, "-$1").toLowerCase())) : i.removeAttribute(e);
         }
     }
     function Yd(t, e, r, i, n, a) {
