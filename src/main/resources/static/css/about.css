@@ -96,13 +96,13 @@
     color: black;
     padding: 1rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 1; /* High z-index to appear above other elements */
+    z-index: 1;
     opacity: 0;
     transition: transform 1.5s ease-in-out, opacity 2s ease-in-out;
     transform: translateX(-50%);;
 }
 .col.active .modal {
-    right: 0; /* Move modal into view when col is active */
+    right: 0;
 }
 .modal.active {
     transform: translateX(0);
@@ -114,11 +114,11 @@
     transition: transform 1.5s ease-in-out, opacity 2s ease-in-out;
 }
 .close-modal {
-    position: absolute; /* Абсолютное позиционирование */
-    bottom: 10px; /* Отступ снизу */
-    right: 10px; /* Отступ справа */
-    padding: 5px 10px; /* Паддинг для кнопки */
-    cursor: pointer; /* Указатель при наведении */
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
 }
 .col.shifted {
     transform: translateX(-90%);
