@@ -69,7 +69,7 @@ public class AppController {
             pageDataManager.setAdminModel(model, user);
             return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
-            getAvailableProductsModel(model);
+            getAvailableProductsModel(model, user);
             return "organization/userpage";
         } else {
             return "accessDenied";
@@ -79,10 +79,13 @@ public class AppController {
     @PostMapping("/selectedProducts")
     public String selectedProducts(@RequestParam List<Long> selectedProducts,
                                    @RequestParam Map<String, String> quantities,
-                                   Model model) {
+                                   Model model,
+                                   Principal principal) {
         if (pageDataManager.setSelectedProductsModel(selectedProducts, quantities, model)) {
             return "redirect:/";
         }
+        model.addAttribute("user", userRepository.findByName(principal.getName()).orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + principal.getName())));
         return "organization/editProducts";
     }
 
@@ -108,16 +111,18 @@ public class AppController {
     }
 
     @GetMapping("/useredit/{id}")
-    public String editUser(@PathVariable Long id, Model model) {
-        pageDataManager.setEditUserModel(id, model);
+    public String editUser(@PathVariable Long id, Model model, Principal principal) {
+        User user = userRepository.findByName(principal.getName()).orElseThrow(() ->
+                new UsernameNotFoundException("User not found: " + principal.getName()));
+        pageDataManager.setEditUserModel(id, model, user);
         return "editUser";
     }
 
 
-    private void getAvailableProductsModel(Model model) {
+    private void getAvailableProductsModel(Model model, User user) {
         List<AvailableProducts> availableProducts = availableProductsRepository.findAll();
         model.addAttribute("availableProducts", availableProducts);
-
+        model.addAttribute("user", user);
     }
 
 

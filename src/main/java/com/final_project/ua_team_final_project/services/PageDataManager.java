@@ -36,8 +36,9 @@ public class PageDataManager {
         model.addAttribute("users", userRepository.findAll());
     }
 
-    public void setEditUserModel(Long id, Model model) {
-        model.addAttribute("user", userRepository.findById(id).orElse(null));
+    public void setEditUserModel(Long id, Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("edituser", userRepository.findById(id).orElse(null));
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("roles", roleRepository.findAll());
     }
