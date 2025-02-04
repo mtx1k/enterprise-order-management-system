@@ -59,7 +59,10 @@ public class AppController {
             return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model);
-            return "organization/userpage";
+            return "organization/userPage";
+        } else if ("HEAD".equals(user.getRole().getName())) {
+            getAvailableProductsModel(model);
+            return "organization/pageOfHead";
         } else {
             return "accessDenied";
         }

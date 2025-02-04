@@ -26,11 +26,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(auth -> auth
             .requestMatchers("/login", "/about", "/js/**", "/css/**", "/images/**").permitAll()
-            .requestMatchers("/organization/**", "/selectedProducts").authenticated()
+            .requestMatchers("/organization/**").authenticated()
             .requestMatchers("/organization/admin/**").hasRole("ADMIN")
-            .requestMatchers("/organization/userpage/**","/organization/**","/organization/editSelectedProducts", "/organization/submitSelection", "/organization/editProducts/**", "/organization/confirmOrder").hasRole("USER")
-            .requestMatchers("/organization/pageofhead/**").hasRole("HEAD")
-            .requestMatchers("/organization/pageoffinco/**").hasRole("FINCO")
+            .requestMatchers("/organization/userPage", "/organization/editProducts", "/organization/confirmOrder").hasRole("USER")
+            .requestMatchers("/organization/pageOfHead").hasRole("HEAD")
+            .requestMatchers("/organization/pageOfFinco/**").hasRole("FINCO")
             .requestMatchers("/organization/supply/**").hasRole("SUPPLIER")
             .anyRequest().authenticated()
                 )
