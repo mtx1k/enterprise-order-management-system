@@ -7,6 +7,11 @@ import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.DepartmentRepository;
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
+import com.final_project.ua_team_final_project.services.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
@@ -16,6 +21,7 @@ import java.time.LocalDate;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class AppController {
@@ -26,14 +32,19 @@ public class AppController {
     private final DepartmentRepository deptRepository;
     private final RoleRepository roleRepository;
     private final AvailableProductsRepository availableProductsRepository;
+    private final OrderRepository orderRepository;
+
+    @Autowired
+    public OrderService orderService;
 
     public AppController(PageDataManager pageDataManager, UserRepository userRepository,
-                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository) {
+                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository) {
         this.pageDataManager = pageDataManager;
         this.userRepository = userRepository;
         this.deptRepository = deptRepository;
         this.roleRepository = roleRepository;
         this.availableProductsRepository = availableProductsRepository;
+        this.orderRepository = orderRepository;
     }
 
     @GetMapping("/")
@@ -56,12 +67,21 @@ public class AppController {
 
         if ("ADMIN".equals(user.getRole().getName())) {
             pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order);
-            return "organization/adminpage";
+            return "organization/adminPage";
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model);
             return "organization/userPage";
         } else if ("HEAD".equals(user.getRole().getName())) {
-            getAvailableProductsModel(model);
+            List<Order> orderForDept = orderService.getOrdersForCurrentUser();
+            if (orderForDept.isEmpty()) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                ResponseEntity.ok(orderForDept);
+            }
+
+
+            model.addAttribute("orderForDept", orderForDept);
+            model.addAttribute("department", user.getDepartment().getName());
             return "organization/pageOfHead";
         } else {
             return "accessDenied";
@@ -112,8 +132,22 @@ public class AppController {
 
     }
 
+    private void getOrdersFromDepartment(Model model) {
+        List<Order> orders = orderRepository.findAll();
+        model.addAttribute("orders", orders);
+    }
 
-    @PostMapping("/edituser")
+
+
+//    @GetMapping
+//    String profilePage(Principal principal, Model model) {
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        Optional<User> user = userRepository.findByName(username);
+//        model.addAttribute("department", user.get().getDepartment().getName());
+//        return "profile";
+//    }
+
+    @PostMapping("/editUser")
     public String editUser(@RequestParam("id") Long id,
                            @RequestParam("department") String department,
                            @RequestParam("name") String name,

@@ -76,10 +76,10 @@ public class PageDataManager {
                     .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
             Department department = user.getDepartment();
-
+            OrderStatus orderStatus = new OrderStatus();
             Order order = new Order();
             order.setDeptId(department);
-            order.setStatusId(1L);
+            order.setStatusId(orderStatus);
             order.setApprovedByHead(false);
             order.setApprovedByFinDept(false);
 

@@ -30,12 +30,14 @@ public class Order {
     private boolean approvedByFinDept;
 
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    private Long statusId;
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private OrderStatus statusId;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -47,7 +49,7 @@ public class Order {
 
     public Order() { }
 
-    public Order(Long orderId, Department deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, Long statusId) {
+    public Order(Long orderId, Department deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept,  OrderStatus statusId) {
         this.orderId = orderId;
         this.deptId = deptId;
         this.totalPrice = totalPrice;
@@ -77,7 +79,7 @@ public class Order {
                 ", approved_by_fin_dept=" + approvedByFinDept +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", status_id=" + statusId +
+                ", statusId=" + statusId +
                 '}';
     }
 }
