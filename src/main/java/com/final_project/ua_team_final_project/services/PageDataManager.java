@@ -31,7 +31,8 @@ public class PageDataManager {
         this.orderRepository = orderRepository;
     }
 
-    public void setAdminModel(Model model) {
+    public void setAdminModel(Model model, User user) {
+        model.addAttribute("user", user);
         model.addAttribute("users", userRepository.findAll());
     }
 

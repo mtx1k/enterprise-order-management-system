@@ -66,7 +66,7 @@ public class AppController {
         }
 
         if ("ADMIN".equals(user.getRole().getName())) {
-            pageDataManager.setAdminModel(model);
+            pageDataManager.setAdminModel(model, user);
             return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model);

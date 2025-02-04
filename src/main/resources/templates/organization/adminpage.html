@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin page</title>
-    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <style>
         a {
             color:black;
@@ -46,6 +46,7 @@
     </style>
 </head>
 <body>
+<header th:replace="~{fragments/fragments :: top}"></header>
     <h1>List of users</h1>
 
     <label for="sortOptions">Sort by:</label>
