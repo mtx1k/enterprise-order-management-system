@@ -38,6 +38,8 @@ public class PageDataManager {
     public void setAdminModel(Model model, User user) {
         model.addAttribute("user", user);
         model.addAttribute("users", userRepository.findAll());
+    }
+
     public void setAdminModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
 
         int pageNumber = urlPageNumber - 1;
@@ -54,7 +56,7 @@ public class PageDataManager {
         try {
             page = userRepository.findAll(pageable);
         } catch (PropertyReferenceException e) {
-            setAdminModel(model, 1, 10, "userId");
+            setAdminModel(model, 1, 10, "userId", user);
         }
         if (page != null) {
             model.addAttribute("user", user);
