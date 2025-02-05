@@ -32,6 +32,7 @@ public class SecurityConfig {
             .requestMatchers("/organization/pageofhead/**").hasRole("HEAD")
             .requestMatchers("/organization/pageoffinco/**").hasRole("FINCO")
             .requestMatchers("/organization/supply/**").hasRole("SUPPLIER")
+            .requestMatchers("/api/products/import").hasRole("ADMIN")
             .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
@@ -48,6 +49,8 @@ public class SecurityConfig {
                         .tokenRepository(persistentTokenRepository())
                 )
                 .userDetailsService(customUserDetailsService);
+
+        httpSecurity.csrf(csrf -> csrf.ignoringRequestMatchers("/api/products/import"));
 
         return httpSecurity.build();
     }
