@@ -77,11 +77,18 @@ public class AppController {
                 new UsernameNotFoundException("User not found: " + principal.getName())));
         return "organization/editProducts";
     }
-
+    @GetMapping("/editProducts")
+    public String editProducts(Model model) {
+        OrderedProduct orderedProduct = new OrderedProduct();
+        orderedProduct.setItemPrice(100.0); // Пример значения
+        orderedProduct.setAmount(2L);       // Пример значения
+        model.addAttribute("orderedProduct", orderedProduct);
+        return "organization/editProducts";
+    }
     @PostMapping("/confirmOrder")
-    public String confirmOrder(@RequestParam Map<String, String> orderItems) {
+    public String confirmOrder(@RequestParam Map<String, String> orderedProducts) {
         try {
-            pageDataManager.saveNewOrder(orderItems);
+            pageDataManager.saveNewOrder(orderedProducts);
             return "redirect:/";
         } catch (Exception e) {
             e.printStackTrace();

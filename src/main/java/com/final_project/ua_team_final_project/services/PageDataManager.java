@@ -75,7 +75,7 @@ public class PageDataManager {
         model.addAttribute("roles", roleRepository.findAll());
     }
 
-    public void saveNewOrder(Map<String, String> orderItems) {
+    public void saveNewOrder(Map<String, String> orderedProducts) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -93,24 +93,24 @@ public class PageDataManager {
         double totalPrice = 0.0;
 
 
-        for (Map.Entry<String, String> entry : orderItems.entrySet()) {
-            if (entry.getKey().matches("orderItems\\[(\\d+)\\].quantity")) {
+        for (Map.Entry<String, String> entry : orderedProducts.entrySet()) {
+            if (entry.getKey().matches("orderedProducts\\[(\\d+)\\].amount")) {
 
-                String productId = entry.getKey().replaceAll("orderItems\\[(\\d+)\\].quantity", "$1");
-                Integer quantity = Integer.valueOf(entry.getValue());
+                String productId = entry.getKey().replaceAll("orderedProducts\\[(\\d+)\\].amount", "$1");
+                Long quantity = Long.valueOf(Integer.valueOf(entry.getValue()));
 
 
                 AvailableProducts product = availableProductsRepository.findById(Long.valueOf(productId))
                         .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
 
-                OrderItem orderItem = new OrderItem();
-                orderItem.setProduct(product);
-                orderItem.setQuantity(quantity);
-                orderItem.setPrice((double) (product.getPrice() * quantity));
+                OrderedProduct orderedProduct = new OrderedProduct();
+                orderedProduct.setOrderedProductId(product.getProductId());
+                orderedProduct.setAmount(quantity);
+                orderedProduct.setItemPrice((double) (product.getPrice() * quantity));
 
 
-                order.addOrderItem(orderItem);
-                totalPrice += orderItem.getPrice();
+                order.addOrderedProduct(orderedProduct);
+                totalPrice += orderedProduct.getItemPrice();
             }
         }
 
@@ -124,7 +124,7 @@ public class PageDataManager {
             return true;
         }
 
-        List<OrderItem> orderItems = new ArrayList<>();
+        List<OrderedProduct> orderedProducts = new ArrayList<>();
 
         for (Long productId : selectedProducts) {
             String quantityStr = quantities.get("quantities[" + productId + "]");
@@ -132,18 +132,18 @@ public class PageDataManager {
                 AvailableProducts product = availableProductsRepository.findById(productId)
                         .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
 
-                OrderItem orderItem = new OrderItem();
-                orderItem.setProduct(product);
-                orderItem.setQuantity(Integer.parseInt(quantityStr));
-                orderItems.add(orderItem);
+                OrderedProduct orderedProduct = new OrderedProduct();
+                orderedProduct.setOrderedProductId(product.getProductId());
+                orderedProduct.setAmount((long) Integer.parseInt(quantityStr));
+                orderedProducts.add(orderedProduct);
             }
         }
 
-        if (orderItems.isEmpty()) {
+        if (orderedProducts.isEmpty()) {
             return true;
         }
 
-        model.addAttribute("orderItems", orderItems);
+        model.addAttribute("orderedProducts", orderedProducts);
         return false;
     }
 }

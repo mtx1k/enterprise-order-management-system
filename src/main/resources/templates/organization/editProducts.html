@@ -19,26 +19,26 @@
             <tr>
                 <th>Product Code</th>
                 <th>Product Name</th>
-                <th>Description</th>
+<!--                <th>Description</th>-->
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Total</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${orderItems}">
-                <td th:text="${item.product.productCode}"></td>
-                <td th:text="${item.product.name}"></td>
-                <td th:text="${item.product.description}"></td>
-                <td th:text="${item.product.price}"></td>
+            <tr th:each="orderedProduct : ${orderedProducts}">
+                <td th:text="${orderedProduct.productCode}"></td>
+                <td th:text="${orderedProduct.name}"></td>
+<!--                <td th:text="${item.description}"></td>-->
+                <td th:text="${orderedProduct.itemPrice}"></td>
                 <td>
                     <input type="number"
-                           th:name="'orderItems[' + ${item.product.productId} + '].quantity'"
-                           th:value="${item.quantity}"
+                           th:name="'orderedProducts[' + ${orderedProduct.order} + '].amount'"
+                           th:value="${orderedProduct.amount}"
                            min="1"
                            class="form-control"/>
                 </td>
-                <td th:text="${item.product.price * item.quantity}"></td>
+                <td th:text="${orderedProduct.itemPrice} * ${orderedProduct.amount}"></td>
             </tr>
             </tbody>
         </table>

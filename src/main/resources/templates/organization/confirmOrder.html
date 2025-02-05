@@ -21,14 +21,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="orderItem, iterStat : ${orderItems}">
-            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.productId'" th:value="${orderItem.product.productId}" />
-            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.productCode'" th:value="${orderItem.product.productCode}" />
-            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.name'" th:value="${orderItem.product.name}" />
-            <input type="hidden" th:name="'orderItems[' + ${iterStat.index} + '].product.description'" th:value="${orderItem.product.description}" />
-            <td th:text="${orderItem.product.productCode}"></td>
-            <td th:text="${orderItem.product.name}"></td>
-            <td><input type="number" th:name="'orderItems[' + ${iterStat.index} + '].quantity'" th:value="${orderItem.quantity}" min="1" required /></td>
+        <tr th:each="orderedProduct, iterStat : ${orderedProducts}">
+            <input type="hidden" th:name="'orderedProducts[' + ${iterStat.index} + '].product.productId'" th:value="${orderedProduct.product.productId}" />
+            <input type="hidden" th:name="'orderedProducts[' + ${iterStat.index} + '].product.productCode'" th:value="${orderedProduct.product.productCode}" />
+            <input type="hidden" th:name="'orderedProducts[' + ${iterStat.index} + '].product.name'" th:value="${orderedProduct.product.name}" />
+            <input type="hidden" th:name="'orderedProducts[' + ${iterStat.index} + '].product.description'" th:value="${orderedProduct.product.description}" />
+            <td th:text="${orderedProduct.product.productCode}"></td>
+            <td th:text="${orderedProduct.product.name}"></td>
+            <td><input type="number" th:name="'orderedProducts[' + ${iterStat.index} + '].amount'" th:value="${orderedProduct.amount}" /></td>
         </tr>
         </tbody>
     </table>

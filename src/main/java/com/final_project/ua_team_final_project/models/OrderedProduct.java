@@ -16,28 +16,29 @@ public class OrderedProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderedProductId;
 
-    private Long ordersOrderId;
+    @ManyToOne
+    @JoinColumn(name = "orders_order_id", nullable = false)
+    private Order order;
 
     private String name;
-
     private String productCode;
 
+    @Column(nullable = false)
     private Double itemPrice;
 
     private Long categoryId;
-
     private Long supplierId;
 
+    @Column(nullable = false)
     private Long amount;
 
     public OrderedProduct() {
     }
 
-    public OrderedProduct(Long orderedProductId, Long ordersOrderId, String name, String productCode, Double itemPrice, Long categoryId, Long supplierId, Long amount) {
+    public OrderedProduct(Long orderedProductId, String productCode, String name, Double itemPrice, Long categoryId, Long supplierId, Long amount) {
         this.orderedProductId = orderedProductId;
-        this.ordersOrderId = ordersOrderId;
-        this.name = name;
         this.productCode = productCode;
+        this.name = name;
         this.itemPrice = itemPrice;
         this.categoryId = categoryId;
         this.supplierId = supplierId;
@@ -47,21 +48,20 @@ public class OrderedProduct {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof OrderedProduct that)) return false;
-        return Double.compare(itemPrice, that.itemPrice) == 0 && Objects.equals(orderedProductId, that.orderedProductId) && Objects.equals(ordersOrderId, that.ordersOrderId) && Objects.equals(name, that.name) && Objects.equals(productCode, that.productCode) && Objects.equals(categoryId, that.categoryId) && Objects.equals(supplierId, that.supplierId) && Objects.equals(amount, that.amount);
+        return Double.compare(itemPrice, that.itemPrice) == 0 && Objects.equals(orderedProductId, that.orderedProductId) && Objects.equals(productCode, that.productCode) && Objects.equals(name, that.name) && Objects.equals(categoryId, that.categoryId) && Objects.equals(supplierId, that.supplierId) && Objects.equals(amount, that.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderedProductId, ordersOrderId, name, productCode, itemPrice, categoryId, supplierId, amount);
+        return Objects.hash(orderedProductId, productCode, name, itemPrice, categoryId, supplierId, amount);
     }
 
     @Override
     public String toString() {
         return "OrderedProduct{" +
                 "orderedProductId=" + orderedProductId +
-                ", ordersOrderId=" + ordersOrderId +
-                ", name='" + name + '\'' +
                 ", productCode='" + productCode + '\'' +
+                ", name='" + name + '\'' +
                 ", itemPrice=" + itemPrice +
                 ", categoryId=" + categoryId +
                 ", supplierId=" + supplierId +
