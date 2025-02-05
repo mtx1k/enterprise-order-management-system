@@ -134,6 +134,7 @@ public class PageDataManager {
 
                 OrderedProduct orderedProduct = new OrderedProduct();
                 orderedProduct.setOrderedProductId(product.getProductId());
+                orderedProduct.setItemPrice(product.getPrice());
                 orderedProduct.setAmount((long) Integer.parseInt(quantityStr));
                 orderedProducts.add(orderedProduct);
             }
