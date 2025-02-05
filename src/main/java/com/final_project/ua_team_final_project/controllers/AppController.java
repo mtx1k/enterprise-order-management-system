@@ -3,17 +3,32 @@ package com.final_project.ua_team_final_project.controllers;
 
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
+
+import com.final_project.ua_team_final_project.models.Role;
 import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.DepartmentRepository;
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import java.security.Principal;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,11 +52,7 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String index(Principal principal,
-                        @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
-                        @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
-                        @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
-                        Model model) {
+    public String index(Principal principal, Model model) {
         if (principal == null) {
 
             return "redirect:/login";
@@ -55,10 +66,10 @@ public class AppController {
         }
 
         if ("ADMIN".equals(user.getRole().getName())) {
-            pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order, user);
+            pageDataManager.setAdminModel(model);
             return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
-            getAvailableProductsModel(model, user);
+            getAvailableProductsModel(model);
             return "organization/userpage";
         } else {
             return "accessDenied";
@@ -68,13 +79,10 @@ public class AppController {
     @PostMapping("/selectedProducts")
     public String selectedProducts(@RequestParam List<Long> selectedProducts,
                                    @RequestParam Map<String, String> quantities,
-                                   Model model,
-                                   Principal principal) {
+                                   Model model) {
         if (pageDataManager.setSelectedProductsModel(selectedProducts, quantities, model)) {
             return "redirect:/";
         }
-        model.addAttribute("user", userRepository.findByName(principal.getName()).orElseThrow(() ->
-                new UsernameNotFoundException("User not found: " + principal.getName())));
         return "organization/editProducts";
     }
 
@@ -100,18 +108,16 @@ public class AppController {
     }
 
     @GetMapping("/useredit/{id}")
-    public String editUser(@PathVariable Long id, Model model, Principal principal) {
-        User user = userRepository.findByName(principal.getName()).orElseThrow(() ->
-                new UsernameNotFoundException("User not found: " + principal.getName()));
-        pageDataManager.setEditUserModel(id, model, user);
+    public String editUser(@PathVariable Long id, Model model) {
+        pageDataManager.setEditUserModel(id, model);
         return "editUser";
     }
 
 
-    private void getAvailableProductsModel(Model model, User user) {
+    private void getAvailableProductsModel(Model model) {
         List<AvailableProducts> availableProducts = availableProductsRepository.findAll();
         model.addAttribute("availableProducts", availableProducts);
-        model.addAttribute("user", user);
+
     }
 
 
