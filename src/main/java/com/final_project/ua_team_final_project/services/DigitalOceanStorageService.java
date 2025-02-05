@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class DigitalOceanStorageService implements StorageService {
+public class DigitalOceanStorageService {
 
     private final S3Client s3Client;
 

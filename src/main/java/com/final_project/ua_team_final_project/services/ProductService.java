@@ -15,19 +15,25 @@ import java.util.Optional;
 public class ProductService {
 
     private final DigitalOceanStorageService digitalOceanService;
-    private final CsvService csvService;
+    private final ParsingService csvService;
     private final AvailableProductsRepository availableProductsRepository;
     private final SupplierRepository supplierRepository;
+    private final TruncateService truncateService;
 
-    public ProductService(DigitalOceanStorageService digitalOceanService, CsvService csvService, AvailableProductsRepository availableProductsRepository, SupplierRepository supplierRepository) {
+    public ProductService(DigitalOceanStorageService digitalOceanService, ParsingService csvService, AvailableProductsRepository availableProductsRepository, SupplierRepository supplierRepository, TruncateService truncateService) {
         this.digitalOceanService = digitalOceanService;
         this.csvService = csvService;
         this.availableProductsRepository = availableProductsRepository;
         this.supplierRepository = supplierRepository;
+        this.truncateService = truncateService;
     }
 
     public void processProducts() {
         List<String> filenames = digitalOceanService.listCsvFiles();
+
+        if (availableProductsRepository.count() > 0) {
+            truncateService.truncateAvailableProductsTable();
+        }
 
         for (String filename : filenames) {
 

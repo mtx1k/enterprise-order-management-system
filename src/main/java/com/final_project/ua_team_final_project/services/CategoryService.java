@@ -2,15 +2,18 @@ package com.final_project.ua_team_final_project.services;
 
 import com.final_project.ua_team_final_project.models.Category;
 import com.final_project.ua_team_final_project.repositories.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
+
+    private final CategoryRepository categoryRepository;
+
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     public void addCategory(String categoryName) {
         Category category = new Category();
@@ -19,7 +22,8 @@ public class CategoryService {
     }
 
     public Optional<Long> getCategoryIdByName(String categoryName) {
-        return categoryRepository.getIdByName(categoryName);
+        Optional<Category> category = categoryRepository.findByName(categoryName);
+        return category.map(Category::getCategoryId);
     }
 
 }

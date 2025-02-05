@@ -3,7 +3,6 @@ package com.final_project.ua_team_final_project.services;
 import com.final_project.ua_team_final_project.models.AvailableProducts;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -16,10 +15,13 @@ import java.util.List;
 
 
 @Service
-public class CsvService {
+public class ParsingService {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
+
+    public ParsingService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     public List<AvailableProducts> parseCsv(InputStream inputStream, Long supplierId) {
         List<AvailableProducts> products = new ArrayList<>();
