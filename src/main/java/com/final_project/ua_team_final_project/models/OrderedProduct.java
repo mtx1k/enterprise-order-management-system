@@ -12,7 +12,6 @@ import java.util.Objects;
 @Table(name = "ordered_products")
 public class OrderedProduct {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderedProductId;
@@ -23,7 +22,7 @@ public class OrderedProduct {
 
     private String productCode;
 
-    private double itemPrice;
+    private Double itemPrice;
 
     private Long categoryId;
 
@@ -34,7 +33,7 @@ public class OrderedProduct {
     public OrderedProduct() {
     }
 
-    public OrderedProduct(Long orderedProductId, Long ordersOrderId, String name, String productCode, double itemPrice, Long categoryId, Long supplierId, Long amount) {
+    public OrderedProduct(Long orderedProductId, Long ordersOrderId, String name, String productCode, Double itemPrice, Long categoryId, Long supplierId, Long amount) {
         this.orderedProductId = orderedProductId;
         this.ordersOrderId = ordersOrderId;
         this.name = name;
