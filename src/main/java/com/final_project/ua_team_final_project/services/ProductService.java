@@ -43,7 +43,7 @@ public class ProductService {
                 availableProductsRepository.saveAll(products);
                 System.out.println("successfully parsed csv file " + filename);
             } catch (Exception e) {
-                e.printStackTrace();
+                 e.printStackTrace();
             }
         }
     }
