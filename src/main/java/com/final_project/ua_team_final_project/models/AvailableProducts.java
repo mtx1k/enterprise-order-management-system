@@ -32,7 +32,7 @@ public class AvailableProducts {
 
     private Long supplierId;
 
-    private Long price;
+    private Double price;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -43,7 +43,7 @@ public class AvailableProducts {
     public AvailableProducts() {
     }
 
-    public AvailableProducts(Long productId, String productCode, String name, String description, Long categoryId, Long supplierId, Long price) {
+    public AvailableProducts(Long productId, String productCode, String name, String description, Long categoryId, Long supplierId, Double price) {
         this.productId = productId;
         this.productCode = productCode;
         this.name = name;
