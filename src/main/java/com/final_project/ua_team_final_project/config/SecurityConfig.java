@@ -41,16 +41,16 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
-                );
-
-        httpSecurity.csrf(csrf -> csrf.ignoringRequestMatchers("/api/products/import"));
-
-        httpSecurity.rememberMe(rememberMe -> rememberMe
+                )
+                .rememberMe(rememberMe -> rememberMe
+                        .rememberMeParameter("remember-me")
                         .key(Dotenv.load().get("REMEMBERME_KEY"))
                         .tokenValiditySeconds(7 * 24 * 60 * 60)
                         .tokenRepository(persistentTokenRepository())
                 )
                 .userDetailsService(customUserDetailsService);
+
+        httpSecurity.csrf(csrf -> csrf.ignoringRequestMatchers("/api/products/import"));
 
         return httpSecurity.build();
     }

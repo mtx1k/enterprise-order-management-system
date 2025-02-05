@@ -47,7 +47,7 @@ public class AppController {
             return "redirect:/login";
         }
 
-        User user = userRepository.findByName(principal.getName()).orElseThrow(() ->
+        User user = userRepository.findByLogin(principal.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User not found: " + principal.getName()));
 
         if (user == null) {
