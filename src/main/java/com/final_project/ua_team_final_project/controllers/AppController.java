@@ -3,32 +3,17 @@ package com.final_project.ua_team_final_project.controllers;
 
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
-
-import com.final_project.ua_team_final_project.models.Role;
 import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.DepartmentRepository;
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
-
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-
-import javax.sql.DataSource;
-import java.util.ArrayList;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import java.security.Principal;
-
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +37,11 @@ public class AppController {
     }
 
     @GetMapping("/")
-    public String index(Principal principal, Model model) {
+    public String index(Principal principal,
+                        @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
+                        @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
+                        @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
+                        Model model) {
         if (principal == null) {
 
             return "redirect:/login";
@@ -66,7 +55,7 @@ public class AppController {
         }
 
         if ("ADMIN".equals(user.getRole().getName())) {
-            pageDataManager.setAdminModel(model);
+            pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order);
             return "organization/adminpage";
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model);

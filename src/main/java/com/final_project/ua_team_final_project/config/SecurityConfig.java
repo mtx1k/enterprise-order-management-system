@@ -25,7 +25,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/login", "/about", "/js/**", "/css/**").permitAll()
+            .requestMatchers("/login", "/about", "/js/**", "/css/**", "/images/**").permitAll()
             .requestMatchers("/organization/**", "/selectedProducts").authenticated()
             .requestMatchers("/organization/admin/**").hasRole("ADMIN")
             .requestMatchers("/organization/userpage/**","/organization/**","/organization/editSelectedProducts", "/organization/submitSelection", "/organization/editProducts/**", "/organization/confirmOrder").hasRole("USER")
@@ -42,7 +42,6 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 );
-//                .csrf(csrf -> csrf.disable());
 
         httpSecurity.csrf(csrf -> csrf.ignoringRequestMatchers("/api/products/import"));
 
