@@ -32,6 +32,7 @@ public class SecurityConfig {
             .requestMatchers("/organization/pageofhead/**").hasRole("HEAD")
             .requestMatchers("/organization/pageoffinco/**").hasRole("FINCO")
             .requestMatchers("/organization/supply/**").hasRole("SUPPLIER")
+            .requestMatchers("/api/products/import").hasRole("ADMIN")
             .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
@@ -41,6 +42,8 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 );
+
+        httpSecurity.csrf(csrf -> csrf.ignoringRequestMatchers("/api/products/import"));
 
         httpSecurity.rememberMe(rememberMe -> rememberMe
                         .key(Dotenv.load().get("REMEMBERME_KEY"))
