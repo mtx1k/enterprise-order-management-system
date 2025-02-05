@@ -35,7 +35,10 @@ public class PageDataManager {
         this.orderRepository = orderRepository;
     }
 
-    public void setAdminModel(Model model, Integer urlPageNumber, Integer pageSize, String order) {
+    public void setAdminModel(Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("users", userRepository.findAll());
+    public void setAdminModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
 
         int pageNumber = urlPageNumber - 1;
 
@@ -54,6 +57,7 @@ public class PageDataManager {
             setAdminModel(model, 1, 10, "userId");
         }
         if (page != null) {
+            model.addAttribute("user", user);
             model.addAttribute("users", page.getContent());
             model.addAttribute("pageNumber", urlPageNumber);
             model.addAttribute("pageSize", pageSize);
@@ -62,8 +66,9 @@ public class PageDataManager {
         }
     }
 
-    public void setEditUserModel(Long id, Model model) {
-        model.addAttribute("user", userRepository.findById(id).orElse(null));
+    public void setEditUserModel(Long id, Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("edituser", userRepository.findById(id).orElse(null));
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("roles", roleRepository.findAll());
     }
