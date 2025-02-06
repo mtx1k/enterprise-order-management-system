@@ -2,6 +2,7 @@ package com.final_project.ua_team_final_project.repositories;
 
 import com.final_project.ua_team_final_project.models.Department;
 import com.final_project.ua_team_final_project.models.Order;
+import com.final_project.ua_team_final_project.models.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByApprovedByHead(boolean approvedByHead);
     Optional<Order> findByCreatedAt(LocalDateTime createdAt);
     Optional<Order> findByUpdatedAt(LocalDateTime updatedAt);
-    Optional<Order> findByStatusId(Long statusId);
+    Optional<Order> findByStatusId(OrderStatus statusId);
 
 }

@@ -24,15 +24,17 @@ public class OrderService {
     private final SupplierRepository supplierRepository;
     private final CategoryRepository categoryRepository;
     private final AvailableProductsRepository availableProductsRepository;
+    private final OrderStatusRepository orderStatusRepository;
 
     private final OrderRepository orderRepository;
     private final OrderedProductRepository orderedProductRepository;
 
-    public OrderService(UserRepository userRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
+    public OrderService(UserRepository userRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, AvailableProductsRepository availableProductsRepository, OrderStatusRepository orderStatusRepository, OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
         this.userRepository = userRepository;
         this.supplierRepository = supplierRepository;
         this.categoryRepository = categoryRepository;
         this.availableProductsRepository = availableProductsRepository;
+        this.orderStatusRepository = orderStatusRepository;
         this.orderRepository = orderRepository;
         this.orderedProductRepository = orderedProductRepository;
     }
@@ -53,14 +55,15 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         Department department = user.getDepartment();
-        OrderStatus orderStatus = new OrderStatus();
+
 
 
 
         Order order = new Order();
-
+        OrderStatus orderStatus = orderStatusRepository.findById(1L) // Assuming 1L is the ID you want
+                .orElseThrow(() -> new RuntimeException("OrderStatus not found: 1"));
         order.setDeptId(department);
-        order.setStatusId(1L);
+        order.setStatusId(orderStatus);
         order.setApprovedByHead(false);
         order.setApprovedByFinDept(false);
 
