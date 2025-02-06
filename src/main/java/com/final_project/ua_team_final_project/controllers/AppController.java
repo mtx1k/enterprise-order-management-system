@@ -60,9 +60,11 @@ public class AppController {
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model, user);
             return "organization/userpage";
-        } else {
-            return "accessDenied";
+        } else if ("FINCO".equals(user.getRole().getName())) {
+            pageDataManager.setFincoModel(model, user);
+            return "organization/pageoffinco";
         }
+        return "error";
     }
 
     @PostMapping("/selectedProducts")
@@ -143,6 +145,12 @@ public class AppController {
     @GetMapping("/deleteuser/{id}")
     public String deleteUser(@PathVariable Long id) {
         userRepository.deleteById(id);
+        return "redirect:/";
+    }
+
+    @PostMapping("/approveOrders")
+    public String approveOrders(@RequestParam Map<String, String> orderItems) {
+        System.out.println(orderItems);
         return "redirect:/";
     }
 }
