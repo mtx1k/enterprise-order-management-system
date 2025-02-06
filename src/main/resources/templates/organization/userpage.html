@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>Admin page</title>
+    <title><span th:text="${department}"></span>  page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
         a {
@@ -50,7 +50,7 @@
 </head>
 <body>
 <header th:replace="~{fragments/fragments :: top}"></header>
-<h1>List of products</h1>
+<h1>List of products for <span th:text="${department}"></span>  </h1>
 
 <label for="sortOptions">Sort by:</label>
 <select id="sortOptions" onchange="refresh()">

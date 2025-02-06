@@ -7,6 +7,7 @@ import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.DepartmentRepository;
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
+import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
@@ -27,14 +28,16 @@ public class AppController {
     private final DepartmentRepository deptRepository;
     private final RoleRepository roleRepository;
     private final AvailableProductsRepository availableProductsRepository;
+    private final OrderService orderService;
 
     public AppController(PageDataManager pageDataManager, UserRepository userRepository,
-                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository) {
+                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository, OrderService orderService) {
         this.pageDataManager = pageDataManager;
         this.userRepository = userRepository;
         this.deptRepository = deptRepository;
         this.roleRepository = roleRepository;
         this.availableProductsRepository = availableProductsRepository;
+        this.orderService = orderService;
     }
 
     @GetMapping("/")
@@ -71,7 +74,7 @@ public class AppController {
                                    @RequestParam Map<String, String> quantities,
                                    Model model,
                                    Principal principal) {
-        if (pageDataManager.setSelectedProductsModel(selectedProducts, quantities, model)) {
+        if (orderService.setSelectedProductsModel(selectedProducts, quantities, model)) {
             return "redirect:/";
         }
         model.addAttribute("user", userRepository.findByName(principal.getName()).orElseThrow(() ->
@@ -92,15 +95,17 @@ public class AppController {
         Map<Long, Long> productQuantities = new HashMap<>();
         for (int i = 0; i < selectedProducts.size(); i++) {
             productQuantities.put(selectedProducts.get(i), quantities.get(i));
+            orderService.saveNewOrder(productQuantities);
         }
-        try {
-            pageDataManager.saveNewOrder(orderedProducts);
-            return "redirect:/";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
-        }
-        System.out.println(productQuantities);
+
+//        try {
+//
+//            return "redirect:/";
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return "error";
+//        }
+
         // TODO: rewrite pageDataManager.saveNewOrder to user new Map of product ids and quantities
         return "redirect:/";
 
