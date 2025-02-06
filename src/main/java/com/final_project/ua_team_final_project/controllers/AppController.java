@@ -98,15 +98,6 @@ public class AppController {
 
         }
         orderService.saveNewOrder(productQuantities);
-//        try {
-//
-//            return "redirect:/";
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return "error";
-//        }
-
-        // TODO: rewrite pageDataManager.saveNewOrder to user new Map of product ids and quantities
         return "redirect:/";
 
 
