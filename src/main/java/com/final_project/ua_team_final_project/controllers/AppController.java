@@ -80,8 +80,8 @@ public class AppController {
     @GetMapping("/editProducts")
     public String editProducts(Model model) {
         OrderedProduct orderedProduct = new OrderedProduct();
-        orderedProduct.setItemPrice(100.0); // Пример значения
-        orderedProduct.setAmount(2L);       // Пример значения
+        orderedProduct.setItemPrice(100.0);
+        orderedProduct.setAmount(2L);
         model.addAttribute("orderedProduct", orderedProduct);
         return "organization/editProducts";
     }

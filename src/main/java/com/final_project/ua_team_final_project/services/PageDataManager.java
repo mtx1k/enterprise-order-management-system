@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Component
@@ -68,6 +70,7 @@ public class PageDataManager {
         }
     }
 
+
     public void setEditUserModel(Long id, Model model, User user) {
         model.addAttribute("user", user);
         model.addAttribute("edituser", userRepository.findById(id).orElse(null));
@@ -94,32 +97,41 @@ public class PageDataManager {
 
 
         for (Map.Entry<String, String> entry : orderedProducts.entrySet()) {
-            if (entry.getKey().matches("orderedProducts\\[(\\d+)\\].amount")) {
+            Pattern pattern = Pattern.compile("orderedProducts\\[(\\d+)\\]\\.amount");
+            Matcher matcher = pattern.matcher(entry.getKey());
+            System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
 
-                String productId = entry.getKey().replaceAll("orderedProducts\\[(\\d+)\\].amount", "$1");
-                Long quantity = Long.valueOf(Integer.valueOf(entry.getValue()));
+            if (matcher.matches()) {
+                int index = Integer.parseInt(matcher.group(1));
+                String productIdKey = "orderedProducts[" + index + "].product.productId";
 
+                if (!orderedProducts.containsKey(productIdKey)) {
+                    System.err.println("ERROR: productId not found for index " + index);
+                    continue;
+                }
 
-                AvailableProducts product = availableProductsRepository.findById(Long.valueOf(productId))
+                String productIdStr = orderedProducts.get(productIdKey);
+                System.out.println("Processing product ID: " + productIdStr);
+
+                Long productId = Long.valueOf(productIdStr);
+                Long quantity = Long.valueOf(entry.getValue());
+
+                AvailableProducts product = availableProductsRepository.findById(productId)
                         .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
 
                 OrderedProduct orderedProduct = new OrderedProduct();
                 orderedProduct.setOrderedProductId(product.getProductId());
                 orderedProduct.setAmount(quantity);
-                orderedProduct.setItemPrice((double) (product.getPrice() * quantity));
-
+                orderedProduct.setItemPrice(product.getPrice() * quantity);
+                orderedProduct.setOrder(order);
 
                 order.addOrderedProduct(orderedProduct);
                 totalPrice += orderedProduct.getItemPrice();
             }
         }
-
-        order.setTotalPrice(totalPrice);
-
-        orderRepository.save(order);
     }
 
-    public boolean setSelectedProductsModel(List<Long> selectedProducts, Map<String, String> quantities, Model model) {
+        public boolean setSelectedProductsModel(List<Long> selectedProducts, Map<String, String> quantities, Model model) {
         if (selectedProducts == null || selectedProducts.isEmpty()) {
             return true;
         }
