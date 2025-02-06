@@ -26,17 +26,22 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="orderedProduct : ${orderedProducts}">
+            <tr th:each="orderedProduct, iterStat : ${orderedProducts}">
                 <td th:text="${orderedProduct.productCode}"></td>
                 <td th:text="${orderedProduct.name}"></td>
 <!--                <td th:text="${item.description}"></td>-->
                 <td th:text="${orderedProduct.itemPrice}"></td>
                 <td>
-                    <input type="number"
-                           th:name="'orderedProducts[' + ${orderedProduct.order} + '].amount'"
-                           th:value="${orderedProduct.amount}"
-                           min="1"
-                           class="form-control"/>
+                    <input type="hidden" name="selectedProducts" th:value="${orderedProduct.orderedProductId}">
+                    <input type="number" name="quantities" th:value="${orderedProduct.amount}"
+                        min="1"
+                        class="form-control"
+                    />
+<!--                    <input type="number"-->
+<!--                           th:name="'orderedProducts[' + ${orderedProduct.order} + '].amount'"-->
+<!--                           th:value="${orderedProduct.amount}"-->
+<!--                           min="1"-->
+<!--                           class="form-control"/>-->
                 </td>
                 <td th:text="${orderedProduct.itemPrice} * ${orderedProduct.amount}"></td>
             </tr>
