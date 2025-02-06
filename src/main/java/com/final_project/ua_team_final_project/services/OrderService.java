@@ -48,7 +48,7 @@ public class OrderService {
         Department department = user.getDepartment();
 
         Order order = new Order();
-        order.setOrderId(order.getOrderId());
+        order.setOrderId(1L);
         order.setDeptId(department);
         order.setStatusId(1L);
         order.setApprovedByHead(false);
