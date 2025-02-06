@@ -19,5 +19,6 @@ public interface AvailableProductsRepository extends JpaRepository<AvailableProd
     Optional<AvailableProducts> findByProductCodeAndCategoryId(String productCode, Long categoryId);
     Optional<AvailableProducts> findAllByCategoryId(Long categoryId);
     Optional<AvailableProducts> findAllByNameAndCategoryId(String productName, Long categoryId);
+    Optional<AvailableProducts> findByPrice(Double price);
 
 }
