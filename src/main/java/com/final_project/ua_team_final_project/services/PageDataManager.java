@@ -149,6 +149,6 @@ public class PageDataManager {
 
     public void setFincoModel(Model model, User user) {
         model.addAttribute("user", user);
-        model.addAttribute("orders", orderRepository.findByApprovedByHead(true));
+        model.addAttribute("orders", orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptFalse());
     }
 }

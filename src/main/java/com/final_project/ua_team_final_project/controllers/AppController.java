@@ -26,14 +26,16 @@ public class AppController {
     private final DepartmentRepository deptRepository;
     private final RoleRepository roleRepository;
     private final AvailableProductsRepository availableProductsRepository;
+    private final OrderRepository orderRepository;
 
     public AppController(PageDataManager pageDataManager, UserRepository userRepository,
-                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository) {
+                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository) {
         this.pageDataManager = pageDataManager;
         this.userRepository = userRepository;
         this.deptRepository = deptRepository;
         this.roleRepository = roleRepository;
         this.availableProductsRepository = availableProductsRepository;
+        this.orderRepository = orderRepository;
     }
 
     @GetMapping("/")
@@ -149,8 +151,13 @@ public class AppController {
     }
 
     @PostMapping("/approveOrders")
-    public String approveOrders(@RequestParam Map<String, String> orderItems) {
-        System.out.println(orderItems);
+    public String approveOrders(@RequestParam("selectedOrders") List<Long> orders) {
+        for (Long id: orders) {
+            Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+            order.setApprovedByFinDept(true);
+            order.setStatusId(2L);
+            orderRepository.save(order);
+        }
         return "redirect:/";
     }
 }

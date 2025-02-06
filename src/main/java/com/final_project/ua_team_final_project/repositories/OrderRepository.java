@@ -14,7 +14,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderId(Long orderId);
     Optional<Order> findByDeptId(Department deptId);
     Optional<Order> findByTotalPrice(double totalPrice);
-    List<Order> findByApprovedByHead(boolean approvedByHead);
+    List<Order> findByApprovedByHeadTrueAndApprovedByFinDeptFalse();
     Optional<Order> findByCreatedAt(LocalDateTime createdAt);
     Optional<Order> findByUpdatedAt(LocalDateTime updatedAt);
     Optional<Order> findByStatusId(Long statusId);
