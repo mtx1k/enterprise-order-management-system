@@ -24,7 +24,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "dept_id", nullable = false)
     private Department deptId;
-
+    @Column(name = "total_price")
     private double totalPrice;
     private boolean approvedByHead;
     private boolean approvedByFinDept;

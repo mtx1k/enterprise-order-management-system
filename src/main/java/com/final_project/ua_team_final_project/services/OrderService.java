@@ -5,6 +5,7 @@ import com.final_project.ua_team_final_project.repositories.AvailableProductsRep
 import com.final_project.ua_team_final_project.repositories.OrderedProductRepository;
 import com.final_project.ua_team_final_project.repositories.OrderRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,14 +21,18 @@ import java.util.Map;
 @Service
 public class OrderService {
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private AvailableProductsRepository availableProductsRepository;
-    
+    private EntityManager entityManager;
+
+    private final UserRepository userRepository;
+
+    private final AvailableProductsRepository availableProductsRepository;
+
     private final OrderRepository orderRepository;
     private final OrderedProductRepository orderedProductRepository;
 
-    public OrderService(OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
+    public OrderService(UserRepository userRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
+        this.userRepository = userRepository;
+        this.availableProductsRepository = availableProductsRepository;
         this.orderRepository = orderRepository;
         this.orderedProductRepository = orderedProductRepository;
     }
@@ -35,8 +41,9 @@ public class OrderService {
     public void saveOrder(Order order, List<OrderedProduct> orderedProducts) {
         orderRepository.save(order);
 
-       
+
     }
+
     @Transactional
     public void saveNewOrder(Map<Long, Long> orderedProducts) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -46,14 +53,16 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         Department department = user.getDepartment();
+        OrderStatus orderStatus = new OrderStatus();
 
         Order order = new Order();
-        order.setOrderId(1L);
+
         order.setDeptId(department);
         order.setStatusId(1L);
         order.setApprovedByHead(false);
         order.setApprovedByFinDept(false);
-        order.setTotalPrice(0.0);
+
+        double totalPrice = 0.0;
 
 
         for (Map.Entry<Long, Long> entry : orderedProducts.entrySet()) {
@@ -72,21 +81,32 @@ public class OrderService {
             orderedProduct.setOrder(order);
             orderedProduct.setName(product.getName());
             orderedProduct.setProductCode(product.getProductCode());
-            orderedProduct.setItemPrice(product.getPrice() * quantity);
+            orderedProduct.setItemPrice(product.getPrice());
             orderedProduct.setCategoryId(product.getCategoryId());
             orderedProduct.setSupplierId(product.getSupplierId());
             orderedProduct.setAmount(quantity);
 
 
-            order.addOrderedProduct(orderedProduct);
+
             order.setTotalPrice(order.getTotalPrice() + orderedProduct.getItemPrice());
             System.out.println("Order saved: " + order);
+            System.out.println("Order saved: " + orderedProduct);
+//            order.addOrderedProduct(orderedProduct);
+            double itemTotal = product.getPrice() * quantity;
+
+            totalPrice += itemTotal;
         }
 
+
+        order.setTotalPrice(totalPrice);
         orderRepository.save(order);
 
 
     }
+
+
+
+
 
 
     public boolean setSelectedProductsModel(List<Long> selectedProducts, Map<String, String> quantities, Model model) {
@@ -119,5 +139,7 @@ public class OrderService {
         model.addAttribute("orderedProducts", orderedProducts);
         return false;
     }
+
+
 }
 

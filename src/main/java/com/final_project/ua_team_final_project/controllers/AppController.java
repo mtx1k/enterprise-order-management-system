@@ -95,9 +95,9 @@ public class AppController {
         Map<Long, Long> productQuantities = new HashMap<>();
         for (int i = 0; i < selectedProducts.size(); i++) {
             productQuantities.put(selectedProducts.get(i), quantities.get(i));
-            orderService.saveNewOrder(productQuantities);
-        }
 
+        }
+        orderService.saveNewOrder(productQuantities);
 //        try {
 //
 //            return "redirect:/";
