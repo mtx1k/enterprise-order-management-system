@@ -28,7 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/about", "/js/**", "/css/**", "/images/**").permitAll()
                         .requestMatchers("/organization/**", "/selectedProducts").authenticated()
                         .requestMatchers("/organization/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/organization/userpage/**","/organization/**",  "/organization/editProducts/**", "/organization/confirmOrder/**").hasRole("USER")
+                        .requestMatchers("/organization/userpage","/organization/**",  "/organization/editProducts", "/organization/confirmOrder").hasRole("USER")
                         .requestMatchers("/organization/pageofhead/**").hasRole("HEAD")
                         .requestMatchers("/organization/pageoffinco/**").hasRole("FINCO")
                         .requestMatchers("/organization/supply/**").hasRole("SUPPLIER")
