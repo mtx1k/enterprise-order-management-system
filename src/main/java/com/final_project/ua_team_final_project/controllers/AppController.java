@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,14 +87,25 @@ public class AppController {
         return "organization/editProducts";
     }
     @PostMapping("/confirmOrder")
-    public String confirmOrder(@RequestParam Map<String, String> orderedProducts) {
-        try {
-            pageDataManager.saveNewOrder(orderedProducts);
-            return "redirect:/";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
+    public String confirmOrder(@RequestParam List<Long> selectedProducts,
+                               @RequestParam List<Long> quantities) {
+        Map<Long, Long> productQuantities = new HashMap<>();
+        for (int i = 0; i < selectedProducts.size(); i++) {
+            productQuantities.put(selectedProducts.get(i), quantities.get(i));
         }
+
+        System.out.println(productQuantities);
+        // TODO: rewrite pageDataManager.saveNewOrder to user new Map of product ids and quantities
+        return "redirect:/";
+//
+//
+//        try {
+//            pageDataManager.saveNewOrder(orderedProducts);
+//            return "redirect:/";
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return "error";
+//        }
     }
 
     @GetMapping("/login")
