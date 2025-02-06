@@ -1,6 +1,8 @@
 package com.final_project.ua_team_final_project.repositories;
 
+import com.final_project.ua_team_final_project.models.Category;
 import com.final_project.ua_team_final_project.models.OrderedProduct;
+import com.final_project.ua_team_final_project.models.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +15,8 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
     Optional<OrderedProduct> findByName(String name);
     Optional<OrderedProduct> findByProductCode(String productCode);
     Optional<OrderedProduct> findAllByItemPrice(double itemPrice);
-    Optional<OrderedProduct> findAllByCategoryId(Long categoryId);
-    Optional<OrderedProduct> findAllBySupplierId(Long supplierId);
+    Optional<OrderedProduct> findAllByCategoryId(Category categoryId);
+    Optional<OrderedProduct> findAllBySupplierId(Supplier supplierId);
     Optional<OrderedProduct> findAllByAmount(Long amount);
 
 

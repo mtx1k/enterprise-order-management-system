@@ -84,8 +84,8 @@ public class AppController {
     @GetMapping("/editProducts")
     public String editProducts(Model model) {
         OrderedProduct orderedProduct = new OrderedProduct();
-        orderedProduct.setItemPrice(100.0);
-        orderedProduct.setAmount(2L);
+        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
+        orderedProduct.setAmount(orderedProduct.getAmount());
         model.addAttribute("orderedProduct", orderedProduct);
         return "organization/editProducts";
     }

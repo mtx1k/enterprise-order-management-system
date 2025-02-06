@@ -1,10 +1,7 @@
 package com.final_project.ua_team_final_project.services;
 
 import com.final_project.ua_team_final_project.models.*;
-import com.final_project.ua_team_final_project.repositories.AvailableProductsRepository;
-import com.final_project.ua_team_final_project.repositories.OrderedProductRepository;
-import com.final_project.ua_team_final_project.repositories.OrderRepository;
-import com.final_project.ua_team_final_project.repositories.UserRepository;
+import com.final_project.ua_team_final_project.repositories.*;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -24,14 +21,17 @@ public class OrderService {
     private EntityManager entityManager;
 
     private final UserRepository userRepository;
-
+    private final SupplierRepository supplierRepository;
+    private final CategoryRepository categoryRepository;
     private final AvailableProductsRepository availableProductsRepository;
 
     private final OrderRepository orderRepository;
     private final OrderedProductRepository orderedProductRepository;
 
-    public OrderService(UserRepository userRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
+    public OrderService(UserRepository userRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
         this.userRepository = userRepository;
+        this.supplierRepository = supplierRepository;
+        this.categoryRepository = categoryRepository;
         this.availableProductsRepository = availableProductsRepository;
         this.orderRepository = orderRepository;
         this.orderedProductRepository = orderedProductRepository;
@@ -55,6 +55,8 @@ public class OrderService {
         Department department = user.getDepartment();
         OrderStatus orderStatus = new OrderStatus();
 
+
+
         Order order = new Order();
 
         order.setDeptId(department);
@@ -63,8 +65,8 @@ public class OrderService {
         order.setApprovedByFinDept(false);
 
         double totalPrice = 0.0;
-
-
+        List<OrderedProduct> orderedProductList = new ArrayList<>();
+        orderRepository.save(order);
         for (Map.Entry<Long, Long> entry : orderedProducts.entrySet()) {
 
             Long productId = entry.getKey();
@@ -72,18 +74,32 @@ public class OrderService {
 
             AvailableProducts product = availableProductsRepository
                     .findById(productId).orElseThrow(() -> new RuntimeException("Product not found " + productId));
+            Long supplierId = product.getSupplierId();
+            if (supplierId == null) {
+                throw new RuntimeException("Supplier ID not found for product: " + productId);
+            }
 
+            Supplier supplier = supplierRepository.findById(supplierId) // Fetch the Supplier object
+                    .orElseThrow(() -> new RuntimeException("Supplier not found: " + supplierId));
+
+            Long categoryId = product.getCategoryId();
+            if (categoryId == null) {
+                throw new RuntimeException("Category ID not found for product: " + productId);
+            }
+
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId));
 
             System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
 
             OrderedProduct orderedProduct = new OrderedProduct();
-            orderedProduct.setOrderedProductId(product.getProductId());
+//            orderedProduct.setOrderedProductId(1L);
             orderedProduct.setOrder(order);
             orderedProduct.setName(product.getName());
             orderedProduct.setProductCode(product.getProductCode());
             orderedProduct.setItemPrice(product.getPrice());
-            orderedProduct.setCategoryId(product.getCategoryId());
-            orderedProduct.setSupplierId(product.getSupplierId());
+            orderedProduct.setCategoryId(category);
+            orderedProduct.setSupplierId(supplier);
             orderedProduct.setAmount(quantity);
 
 
@@ -92,12 +108,15 @@ public class OrderService {
             System.out.println("Order saved: " + order);
             System.out.println("Order saved: " + orderedProduct);
 //            order.addOrderedProduct(orderedProduct);
+            orderedProductList.add(orderedProduct);
             double itemTotal = product.getPrice() * quantity;
 
             totalPrice += itemTotal;
+
+
         }
 
-
+        orderedProductRepository.saveAll(orderedProductList);
         order.setTotalPrice(totalPrice);
         orderRepository.save(order);
 
