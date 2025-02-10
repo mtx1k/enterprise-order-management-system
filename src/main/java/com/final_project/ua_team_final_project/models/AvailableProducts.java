@@ -28,9 +28,12 @@ public class AvailableProducts {
 
     private String description;
 
-    private Long categoryId;
-
-    private Long supplierId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
 
     private Double price;
 
@@ -43,26 +46,27 @@ public class AvailableProducts {
     public AvailableProducts() {
     }
 
-    public AvailableProducts(Long productId, String productCode, String name, String description, Long categoryId, Long supplierId, Double price) {
+    public AvailableProducts(Long productId, String productCode, String name, String description, Category category, Supplier supplier, Double price, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.productId = productId;
         this.productCode = productCode;
         this.name = name;
         this.description = description;
-        this.categoryId = categoryId;
-        this.supplierId = supplierId;
+        this.category = category;
+        this.supplier = supplier;
         this.price = price;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
-
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof AvailableProducts that)) return false;
-        return Objects.equals(productId, that.productId) && Objects.equals(productCode, that.productCode) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(categoryId, that.categoryId) && Objects.equals(supplierId, that.supplierId) && Objects.equals(price, that.price) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+        if (!(o instanceof AvailableProducts products)) return false;
+        return Objects.equals(productId, products.productId) && Objects.equals(productCode, products.productCode) && Objects.equals(name, products.name) && Objects.equals(description, products.description) && Objects.equals(category, products.category) && Objects.equals(supplier, products.supplier) && Objects.equals(price, products.price) && Objects.equals(createdAt, products.createdAt) && Objects.equals(updatedAt, products.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productId, productCode, name, description, categoryId, supplierId, price, createdAt, updatedAt);
+        return Objects.hash(productId, productCode, name, description, category, supplier, price, createdAt, updatedAt);
     }
 
     @Override
@@ -72,8 +76,8 @@ public class AvailableProducts {
                 ", productCode='" + productCode + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", categoryId=" + categoryId +
-                ", supplierId=" + supplierId +
+                ", category=" + category +
+                ", supplier=" + supplier +
                 ", price=" + price +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

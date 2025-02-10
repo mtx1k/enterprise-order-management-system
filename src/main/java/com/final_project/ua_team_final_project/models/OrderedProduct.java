@@ -28,10 +28,10 @@ public class OrderedProduct {
     private Double itemPrice;
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private Category categoryId;
+    private Category category;
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
-    private Supplier supplierId;
+    private Supplier supplier;
 
     @Column(nullable = false)
     private Long amount;
@@ -39,26 +39,26 @@ public class OrderedProduct {
     public OrderedProduct() {
     }
 
-    public OrderedProduct(Long orderedProductId, Order order, String name, String productCode, Double itemPrice, Category categoryId, Supplier supplierId, Long amount) {
+    public OrderedProduct(Long orderedProductId, Order order, String name, String productCode, Double itemPrice, Category category, Supplier supplier, Long amount) {
         this.orderedProductId = orderedProductId;
         this.order = order;
         this.name = name;
         this.productCode = productCode;
         this.itemPrice = itemPrice;
-        this.categoryId = categoryId;
-        this.supplierId = supplierId;
+        this.category = category;
+        this.supplier = supplier;
         this.amount = amount;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof OrderedProduct that)) return false;
-        return Objects.equals(orderedProductId, that.orderedProductId) && Objects.equals(order, that.order) && Objects.equals(name, that.name) && Objects.equals(productCode, that.productCode) && Objects.equals(itemPrice, that.itemPrice) && Objects.equals(categoryId, that.categoryId) && Objects.equals(supplierId, that.supplierId) && Objects.equals(amount, that.amount);
+        return Objects.equals(orderedProductId, that.orderedProductId) && Objects.equals(order, that.order) && Objects.equals(name, that.name) && Objects.equals(productCode, that.productCode) && Objects.equals(itemPrice, that.itemPrice) && Objects.equals(category, that.category) && Objects.equals(supplier, that.supplier) && Objects.equals(amount, that.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderedProductId, order, name, productCode, itemPrice, categoryId, supplierId, amount);
+        return Objects.hash(orderedProductId, order, name, productCode, itemPrice, category, supplier, amount);
     }
 
     @Override
@@ -69,8 +69,8 @@ public class OrderedProduct {
                 ", name='" + name + '\'' +
                 ", productCode='" + productCode + '\'' +
                 ", itemPrice=" + itemPrice +
-                ", categoryId=" + categoryId +
-                ", supplierId=" + supplierId +
+                ", category=" + category +
+                ", supplier=" + supplier +
                 ", amount=" + amount +
                 '}';
     }

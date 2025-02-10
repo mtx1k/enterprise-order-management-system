@@ -1,6 +1,7 @@
 package com.final_project.ua_team_final_project.repositories;
 
 import com.final_project.ua_team_final_project.models.AvailableProducts;
+import com.final_project.ua_team_final_project.models.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,10 +16,10 @@ public interface AvailableProductsRepository extends JpaRepository<AvailableProd
 
     Optional<AvailableProducts> findByProductCode(String productCode);
     Optional<AvailableProducts> findByName(String name);
-    Optional<AvailableProducts> findByCategoryId(Long categoryId);
-    Optional<AvailableProducts> findByProductCodeAndCategoryId(String productCode, Long categoryId);
-    Optional<AvailableProducts> findAllByCategoryId(Long categoryId);
-    Optional<AvailableProducts> findAllByNameAndCategoryId(String productName, Long categoryId);
+    Optional<AvailableProducts> findByCategory(Category category);
+    Optional<AvailableProducts> findByProductCodeAndCategory(String productCode, Category category);
+    Optional<AvailableProducts> findAllByCategory(Category category);
+    Optional<AvailableProducts> findAllByNameAndCategory(String productName, Category category);
     Optional<AvailableProducts> findByPrice(Double price);
 
 }

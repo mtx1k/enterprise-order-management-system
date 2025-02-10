@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,14 +55,11 @@ public class OrderService {
 
         Department department = user.getDepartment();
 
-
-
-
         Order order = new Order();
         OrderStatus orderStatus = orderStatusRepository.findById(1L) // Assuming 1L is the ID you want
                 .orElseThrow(() -> new RuntimeException("OrderStatus not found: 1"));
         order.setDeptId(department);
-        order.setStatusId(orderStatus);
+        order.setStatus(orderStatus);
         order.setApprovedByHead(false);
         order.setApprovedByFinDept(false);
 
@@ -77,20 +73,20 @@ public class OrderService {
 
             AvailableProducts product = availableProductsRepository
                     .findById(productId).orElseThrow(() -> new RuntimeException("Product not found " + productId));
-            Long supplierId = product.getSupplierId();
+            Supplier supplierId = product.getSupplier();
             if (supplierId == null) {
                 throw new RuntimeException("Supplier ID not found for product: " + productId);
             }
 
-            Supplier supplier = supplierRepository.findById(supplierId) // Fetch the Supplier object
+            Supplier supplier = supplierRepository.findById(supplierId.getSupplierId()) // Fetch the Supplier object
                     .orElseThrow(() -> new RuntimeException("Supplier not found: " + supplierId));
 
-            Long categoryId = product.getCategoryId();
+            Category categoryId = product.getCategory();
             if (categoryId == null) {
                 throw new RuntimeException("Category ID not found for product: " + productId);
             }
 
-            Category category = categoryRepository.findById(categoryId)
+            Category category = categoryRepository.findById(categoryId.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found: " + categoryId));
 
             System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
@@ -101,8 +97,8 @@ public class OrderService {
             orderedProduct.setName(product.getName());
             orderedProduct.setProductCode(product.getProductCode());
             orderedProduct.setItemPrice(product.getPrice());
-            orderedProduct.setCategoryId(category);
-            orderedProduct.setSupplierId(supplier);
+            orderedProduct.setCategory(category);
+            orderedProduct.setSupplier(supplier);
             orderedProduct.setAmount(quantity);
 
 

@@ -15,8 +15,8 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
     Optional<OrderedProduct> findByName(String name);
     Optional<OrderedProduct> findByProductCode(String productCode);
     Optional<OrderedProduct> findAllByItemPrice(double itemPrice);
-    Optional<OrderedProduct> findAllByCategoryId(Category categoryId);
-    Optional<OrderedProduct> findAllBySupplierId(Supplier supplierId);
+    Optional<OrderedProduct> findAllByCategory(Category category);
+    Optional<OrderedProduct> findAllBySupplier(Supplier supplier);
     Optional<OrderedProduct> findAllByAmount(Long amount);
 
 

@@ -43,8 +43,8 @@ public class ParsingService {
                 if (categoryService.getCategoryIdByName(line[3]).isEmpty()) {
                     categoryService.addCategory(line[3]);
                 }
-                product.setCategoryId(categoryService.getCategoryIdByName(line[3]).get());
-                product.setSupplierId(supplierId);
+                product.setCategory(categoryService.getCategoryIdByName(line[3]).get());
+                product.setSupplier(supplierId);
                 product.setPrice(Double.parseDouble(line[4]));
 
                 products.add(product);
