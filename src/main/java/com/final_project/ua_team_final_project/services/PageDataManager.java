@@ -90,7 +90,7 @@ public class PageDataManager {
     public void setFincoModel(Model model, User user) {
         model.addAttribute("user", user);
         List<Order> orders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptFalse();
-        orders = orders.stream().filter(order -> order.getStatusId() != 4L).toList();
+        orders = orders.stream().filter(order -> order.getStatus().getStatusId() != 4L).toList();
         model.addAttribute("orders", orders);
     }
 }

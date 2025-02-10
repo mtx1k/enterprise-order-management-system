@@ -13,11 +13,10 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderId(Long orderId);
-    Optional<Order> findByDeptId(Department deptId);
+    List<Order> findByDept(Department dept);
     Optional<Order> findByTotalPrice(double totalPrice);
     List<Order> findByApprovedByHeadTrueAndApprovedByFinDeptFalse();
     Optional<Order> findByCreatedAt(LocalDateTime createdAt);
     Optional<Order> findByUpdatedAt(LocalDateTime updatedAt);
-    Optional<Order> findByStatusId(Long statusId);
     Optional<Order> findByStatus(OrderStatus orderStatus);
 }

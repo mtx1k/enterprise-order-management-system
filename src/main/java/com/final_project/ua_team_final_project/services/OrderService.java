@@ -58,7 +58,7 @@ public class OrderService {
         Order order = new Order();
         OrderStatus orderStatus = orderStatusRepository.findById(1L) // Assuming 1L is the ID you want
                 .orElseThrow(() -> new RuntimeException("OrderStatus not found: 1"));
-        order.setDeptId(department);
+        order.setDept(department);
         order.setStatus(orderStatus);
         order.setApprovedByHead(false);
         order.setApprovedByFinDept(false);
@@ -157,9 +157,7 @@ public class OrderService {
 
         User user = userRepository.findByLogin(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
 
-        List<Order> orders = orderRepository.findByDeptId(user.getDepartment());
-
-        return orders;
+        return orderRepository.findByDept(user.getDepartment());
     }
 
 }

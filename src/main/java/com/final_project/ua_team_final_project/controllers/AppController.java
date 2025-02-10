@@ -8,6 +8,7 @@ import com.final_project.ua_team_final_project.repositories.DepartmentRepository
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,19 +27,21 @@ import java.util.Map;
 public class AppController {
 
     @Autowired
-    private final PageDataManager pageDataManager;
+    private PageDataManager pageDataManager;
     @Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    private final DepartmentRepository deptRepository;
+    private DepartmentRepository deptRepository;
     @Autowired
-    private final RoleRepository roleRepository;
+    private RoleRepository roleRepository;
     @Autowired
-    private final AvailableProductsRepository availableProductsRepository;
+    private AvailableProductsRepository availableProductsRepository;
     @Autowired
-    private final OrderRepository orderRepository;
+    private OrderRepository orderRepository;
     @Autowired
-    private final OrderService orderService;
+    private OrderService orderService;
+    @Autowired
+    private OrderStatusRepository orderStatusRepository;
 
 
     @GetMapping("/")
@@ -80,7 +83,7 @@ public class AppController {
 
         } else if ("FINCO".equals(user.getRole().getName())) {
             pageDataManager.setFincoModel(model, user);
-            return "organization/pageoffinco";
+            return "organization/pageOfFinco";
         } else {
             return "accessDenied";
         }
@@ -186,7 +189,7 @@ public class AppController {
         for (Long id: orders) {
             Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
             order.setApprovedByFinDept(true);
-            order.setStatusId(2L);
+            order.setStatus(orderStatusRepository.findById(2L).orElseThrow(IllegalArgumentException::new));
             orderRepository.save(order);
         }
         return "redirect:/";
@@ -196,7 +199,7 @@ public class AppController {
     public String rejectOrders(@RequestParam("selectedOrders") List<Long> orders) {
         for (Long id: orders) {
             Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-            order.setStatusId(4L);
+            order.setStatus(orderStatusRepository.findById(4L).orElseThrow(IllegalArgumentException::new));
             orderRepository.save(order);
         }
         return "redirect:/";
