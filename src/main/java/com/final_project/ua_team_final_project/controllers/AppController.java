@@ -15,6 +15,7 @@ import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.security.Principal;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ public class AppController {
                 ResponseEntity.ok(orderForDept);
             }
 
-
+            System.out.println(orderForDept);
             model.addAttribute("orderForDept", orderForDept);
             model.addAttribute("department", user.getDepartment().getName());
             return "organization/pageOfHead";
@@ -96,6 +97,7 @@ public class AppController {
                 new UsernameNotFoundException("User not found: " + principal.getName())));
         return "organization/editProducts";
     }
+
     @GetMapping("/editProducts")
     public String editProducts(Model model) {
         OrderedProduct orderedProduct = new OrderedProduct();
@@ -104,6 +106,7 @@ public class AppController {
         model.addAttribute("orderedProduct", orderedProduct);
         return "organization/editProducts";
     }
+
     @PostMapping("/confirmOrder")
     public String confirmOrder(@RequestParam List<Long> selectedProducts,
                                @RequestParam List<Long> quantities) {
@@ -116,7 +119,6 @@ public class AppController {
 
         // TODO: or NOT TODO that is the question
         return "redirect:/";
-
 
 
     }

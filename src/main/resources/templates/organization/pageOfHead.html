@@ -88,7 +88,7 @@
             <td><input type="checkbox" name="selectedProducts" th:value="${order.orderId}"/></td>
             <td th:text="${order.orderId}"></td>
 
-            <td th:text="${order.statusId}"></td>
+            <td th:text="${order.status.getStatusText()}"></td>
             <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
         </tr>
         </tbody>
@@ -115,8 +115,8 @@
 
 
 <script>
-    let currentPageNumber = [[${pageNumber}]];
-    const totalPages = [[${totalPages}]];
+    let currentPageNumber = 0;
+    const totalPages = 0;
 
     document.getElementById('prevPage').classList.toggle('disabled', currentPageNumber === 1);
     document.getElementById('firstPageButton').classList.toggle('disabled', currentPageNumber === 1);

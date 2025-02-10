@@ -150,11 +150,16 @@ public class OrderService {
         model.addAttribute("orderedProducts", orderedProducts);
         return false;
     }
+
     public List<Order> getOrdersForCurrentUser() {
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return userRepository.findByName(username)
-                .map(user -> orderRepository.findByDeptId(user.getDepartment())).orElse(List.of());
+        User user = userRepository.findByLogin(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+        List<Order> orders = orderRepository.findByDeptId(user.getDepartment());
+
+        return orders;
     }
 
 }
