@@ -139,7 +139,7 @@ public class AppController {
 
     @GetMapping("/useredit/{id}")
     public String editUser(@PathVariable Long id, Model model, Principal principal) {
-        User user = userRepository.findByName(principal.getName()).orElseThrow(() ->
+        User user = userRepository.findByLogin(principal.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User not found: " + principal.getName()));
         pageDataManager.setEditUserModel(id, model, user);
         return "editUser";
