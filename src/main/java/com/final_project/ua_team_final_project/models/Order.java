@@ -24,7 +24,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "dept_id", nullable = false)
     private Department deptId;
-
+    @Column(name = "total_price")
     private double totalPrice;
     private boolean approvedByHead;
     private boolean approvedByFinDept;
@@ -34,50 +34,55 @@ public class Order {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    private Long statusId;
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private OrderStatus status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
-    public void addOrderItem(OrderItem orderItem) {
-        orderItems.add(orderItem);
-        orderItem.setOrder(this);
+    public void addOrderedProduct(OrderedProduct orderedProduct) {
+        orderedProducts.add(orderedProduct);
+        orderedProduct.setOrder(this);
     }
 
     public Order() { }
 
-    public Order(Long orderId, Department deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, Long statusId) {
+    public Order(Long orderId, Department deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, LocalDateTime createdAt, LocalDateTime updatedAt, OrderStatus status, List<OrderedProduct> orderedProducts) {
         this.orderId = orderId;
         this.deptId = deptId;
         this.totalPrice = totalPrice;
         this.approvedByHead = approvedByHead;
         this.approvedByFinDept = approvedByFinDept;
-        this.statusId = statusId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.status = status;
+        this.orderedProducts = orderedProducts;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Order order)) return false;
-        return Double.compare(totalPrice, order.totalPrice) == 0 && approvedByHead == order.approvedByHead && approvedByFinDept == order.approvedByFinDept && Objects.equals(orderId, order.orderId) && Objects.equals(deptId, order.deptId) && Objects.equals(createdAt, order.createdAt) && Objects.equals(updatedAt, order.updatedAt) && Objects.equals(statusId, order.statusId);
+        return Double.compare(totalPrice, order.totalPrice) == 0 && approvedByHead == order.approvedByHead && approvedByFinDept == order.approvedByFinDept && Objects.equals(orderId, order.orderId) && Objects.equals(deptId, order.deptId) && Objects.equals(createdAt, order.createdAt) && Objects.equals(updatedAt, order.updatedAt) && Objects.equals(status, order.status) && Objects.equals(orderedProducts, order.orderedProducts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, deptId, totalPrice, approvedByHead, approvedByFinDept, createdAt, updatedAt, statusId);
+        return Objects.hash(orderId, deptId, totalPrice, approvedByHead, approvedByFinDept, createdAt, updatedAt, status, orderedProducts);
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                "order_id=" + orderId +
-                ", dept_id=" + deptId +
-                ", total_price=" + totalPrice +
-                ", approved_by_head=" + approvedByHead +
-                ", approved_by_fin_dept=" + approvedByFinDept +
+                "orderId=" + orderId +
+                ", deptId=" + deptId +
+                ", totalPrice=" + totalPrice +
+                ", approvedByHead=" + approvedByHead +
+                ", approvedByFinDept=" + approvedByFinDept +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", status_id=" + statusId +
+                ", status=" + status +
+                ", orderedProducts=" + orderedProducts +
                 '}';
     }
 }

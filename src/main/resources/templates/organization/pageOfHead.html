@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>User page</title>
+    <title>Head of Department page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
         a {
@@ -49,8 +49,8 @@
     </style>
 </head>
 <body>
-<header th:replace="~{fragments/fragments :: top}"></header>
-<h1>List of products</h1>
+<!--<header th:replace="~{fragments/fragments :: top}"></header>-->
+<h1><span th:text="${department}"></span> department</h1>
 
 <label for="sortOptions">Sort by:</label>
 <select id="sortOptions" onchange="refresh()">
@@ -71,30 +71,30 @@
     <option value="100" th:selected="${pageSize == 100}">100</option>
 </select>
 
-<form id="productForm" action="/selectedProducts" method="POST">
+<!--<form id="productForm" action="/selectedProducts" method="POST">-->
     <input type="hidden" name="_csrf" th:value="${_csrf.token}">
     <table id="availableProducts">
         <thead>
         <tr>
             <th>Select</th>
-            <th>Product Code</th>
-            <th>Product Name</th>
-            <th>Description</th>
-            <th>Quantity</th>
+            <th>Id</th>
+<!--            <th>Name</th>-->
+            <th>Status</th>
+            <th>Date of Creation</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="availableProduct : ${availableProducts}">
-            <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/></td>
-            <td th:text="${availableProduct.productCode}"></td>
-            <td th:text="${availableProduct.name}"></td>
-            <td th:text="${availableProduct.description}"></td>
-            <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'" /></td>
+        <tr th:each="order : ${orderForDept}">
+            <td><input type="checkbox" name="selectedProducts" th:value="${order.orderId}"/></td>
+            <td th:text="${order.orderId}"></td>
+
+            <td th:text="${order.status.getStatusText()}"></td>
+            <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
         </tr>
         </tbody>
     </table>
     <button type="submit">Create Order</button>
-</form>
+<!--</form>-->
 
 
 
@@ -115,8 +115,8 @@
 
 
 <script>
-    let currentPageNumber = [[${pageNumber}]];
-    const totalPages = [[${totalPages}]];
+    let currentPageNumber = 0;
+    const totalPages = 0;
 
     document.getElementById('prevPage').classList.toggle('disabled', currentPageNumber === 1);
     document.getElementById('firstPageButton').classList.toggle('disabled', currentPageNumber === 1);

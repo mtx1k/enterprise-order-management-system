@@ -7,36 +7,39 @@ import com.final_project.ua_team_final_project.models.User;
 import com.final_project.ua_team_final_project.repositories.DepartmentRepository;
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
+import com.final_project.ua_team_final_project.services.OrderService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class AppController {
 
-
+    @Autowired
     private final PageDataManager pageDataManager;
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final DepartmentRepository deptRepository;
+    @Autowired
     private final RoleRepository roleRepository;
+    @Autowired
     private final AvailableProductsRepository availableProductsRepository;
+    @Autowired
     private final OrderRepository orderRepository;
+    @Autowired
+    private final OrderService orderService;
 
-    public AppController(PageDataManager pageDataManager, UserRepository userRepository,
-                         DepartmentRepository deptRepository, RoleRepository roleRepository, AvailableProductsRepository availableProductsRepository, OrderRepository orderRepository) {
-        this.pageDataManager = pageDataManager;
-        this.userRepository = userRepository;
-        this.deptRepository = deptRepository;
-        this.roleRepository = roleRepository;
-        this.availableProductsRepository = availableProductsRepository;
-        this.orderRepository = orderRepository;
-    }
 
     @GetMapping("/")
     public String index(Principal principal,
@@ -62,11 +65,25 @@ public class AppController {
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model, user);
             return "organization/userpage";
+        } else if ("HEAD".equals(user.getRole().getName())) {
+            List<Order> orderForDept = orderService.getOrdersForCurrentUser();
+            if (orderForDept.isEmpty()) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                ResponseEntity.ok(orderForDept);
+            }
+
+            System.out.println(orderForDept);
+            model.addAttribute("orderForDept", orderForDept);
+            model.addAttribute("department", user.getDepartment().getName());
+            return "organization/pageOfHead";
+
         } else if ("FINCO".equals(user.getRole().getName())) {
             pageDataManager.setFincoModel(model, user);
             return "organization/pageoffinco";
+        } else {
+            return "accessDenied";
         }
-        return "error";
     }
 
     @PostMapping("/selectedProducts")
@@ -74,7 +91,7 @@ public class AppController {
                                    @RequestParam Map<String, String> quantities,
                                    Model model,
                                    Principal principal) {
-        if (pageDataManager.setSelectedProductsModel(selectedProducts, quantities, model)) {
+        if (orderService.setSelectedProductsModel(selectedProducts, quantities, model)) {
             return "redirect:/";
         }
         model.addAttribute("user", userRepository.findByName(principal.getName()).orElseThrow(() ->
@@ -82,15 +99,29 @@ public class AppController {
         return "organization/editProducts";
     }
 
+    @GetMapping("/editProducts")
+    public String editProducts(Model model) {
+        OrderedProduct orderedProduct = new OrderedProduct();
+        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
+        orderedProduct.setAmount(orderedProduct.getAmount());
+        model.addAttribute("orderedProduct", orderedProduct);
+        return "organization/editProducts";
+    }
+
     @PostMapping("/confirmOrder")
-    public String confirmOrder(@RequestParam Map<String, String> orderItems) {
-        try {
-            pageDataManager.saveNewOrder(orderItems);
-            return "redirect:/";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error";
+    public String confirmOrder(@RequestParam List<Long> selectedProducts,
+                               @RequestParam List<Long> quantities) {
+        Map<Long, Long> productQuantities = new HashMap<>();
+        for (int i = 0; i < selectedProducts.size(); i++) {
+            productQuantities.put(selectedProducts.get(i), quantities.get(i));
+
         }
+        orderService.saveNewOrder(productQuantities);
+
+        // TODO: or NOT TODO that is the question
+        return "redirect:/";
+
+
     }
 
     @GetMapping("/login")

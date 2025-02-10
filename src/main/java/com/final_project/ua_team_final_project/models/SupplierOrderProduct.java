@@ -16,40 +16,43 @@ public class SupplierOrderProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long supplierOrderId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "supplier_order_id", nullable = false)
+    private SupplierOrders supplierOrder;
 
-    private Long orderProductId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ordered_product_id", nullable = false)
+    private OrderedProduct orderProduct;
 
     private Long amount;
 
     public SupplierOrderProduct() {
     }
 
-    public SupplierOrderProduct(Long id, Long supplierOrderId, Long orderProductId, Long amount) {
+    public SupplierOrderProduct(Long id, SupplierOrders supplierOrder, OrderedProduct orderProduct, Long amount) {
         this.id = id;
-        this.supplierOrderId = supplierOrderId;
-        this.orderProductId = orderProductId;
+        this.supplierOrder = supplierOrder;
+        this.orderProduct = orderProduct;
         this.amount = amount;
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SupplierOrderProduct that)) return false;
-        return Objects.equals(id, that.id) && Objects.equals(supplierOrderId, that.supplierOrderId) && Objects.equals(orderProductId, that.orderProductId) && Objects.equals(amount, that.amount);
+        return Objects.equals(id, that.id) && Objects.equals(supplierOrder, that.supplierOrder) && Objects.equals(orderProduct, that.orderProduct) && Objects.equals(amount, that.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, supplierOrderId, orderProductId, amount);
+        return Objects.hash(id, supplierOrder, orderProduct, amount);
     }
 
     @Override
     public String toString() {
         return "SupplierOrderProduct{" +
                 "id=" + id +
-                ", supplierOrderId=" + supplierOrderId +
-                ", orderProductId=" + orderProductId +
+                ", supplierOrder=" + supplierOrder +
+                ", orderProduct=" + orderProduct +
                 ", amount=" + amount +
                 '}';
     }
