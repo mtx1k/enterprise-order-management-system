@@ -2,6 +2,8 @@ package com.final_project.ua_team_final_project.services;
 
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
+import jakarta.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,15 +12,23 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Component
+@Service
 public class PageDataManager {
+    @Autowired
+    private EntityManager entityManager;
+
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
     private final RoleRepository roleRepository;
@@ -35,7 +45,12 @@ public class PageDataManager {
         this.orderRepository = orderRepository;
     }
 
-    public void setAdminModel(Model model, Integer urlPageNumber, Integer pageSize, String order) {
+    public void setAdminModel(Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("users", userRepository.findAll());
+    }
+
+    public void setAdminModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
 
         int pageNumber = urlPageNumber - 1;
 
@@ -51,9 +66,10 @@ public class PageDataManager {
         try {
             page = userRepository.findAll(pageable);
         } catch (PropertyReferenceException e) {
-            setAdminModel(model, 1, 10, "userId");
+            setAdminModel(model, 1, 10, "userId", user);
         }
         if (page != null) {
+            model.addAttribute("user", user);
             model.addAttribute("users", page.getContent());
             model.addAttribute("pageNumber", urlPageNumber);
             model.addAttribute("pageSize", pageSize);
@@ -62,81 +78,13 @@ public class PageDataManager {
         }
     }
 
-    public void setEditUserModel(Long id, Model model) {
-        model.addAttribute("user", userRepository.findById(id).orElse(null));
+
+    public void setEditUserModel(Long id, Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("edituser", userRepository.findById(id).orElse(null));
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("roles", roleRepository.findAll());
     }
 
-    public void saveNewOrder(Map<String, String> orderItems) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
 
-            User user = userRepository.findByName(username)
-                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
-
-            Department department = user.getDepartment();
-            OrderStatus orderStatus = new OrderStatus();
-            Order order = new Order();
-            order.setDeptId(department);
-            order.setStatusId(orderStatus);
-            order.setApprovedByHead(false);
-            order.setApprovedByFinDept(false);
-
-            double totalPrice = 0.0;
-
-
-            for (Map.Entry<String, String> entry : orderItems.entrySet()) {
-                if (entry.getKey().matches("orderItems\\[(\\d+)\\].quantity")) {
-
-                    String productId = entry.getKey().replaceAll("orderItems\\[(\\d+)\\].quantity", "$1");
-                    Integer quantity = Integer.valueOf(entry.getValue());
-
-
-                    AvailableProducts product = availableProductsRepository.findById(Long.valueOf(productId))
-                            .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
-
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setProduct(product);
-                    orderItem.setQuantity(quantity);
-                    orderItem.setPrice((double) (product.getPrice() * quantity));
-
-
-                    order.addOrderItem(orderItem);
-                    totalPrice += orderItem.getPrice();
-                }
-            }
-
-            order.setTotalPrice(totalPrice);
-
-            orderRepository.save(order);
-    }
-
-    public boolean setSelectedProductsModel(List<Long> selectedProducts, Map<String, String> quantities, Model model) {
-        if (selectedProducts == null || selectedProducts.isEmpty()) {
-            return true;
-        }
-
-        List<OrderItem> orderItems = new ArrayList<>();
-
-        for (Long productId : selectedProducts) {
-            String quantityStr = quantities.get("quantities[" + productId + "]");
-            if (quantityStr != null && !quantityStr.isEmpty()) {
-                AvailableProducts product = availableProductsRepository.findById(productId)
-                        .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
-
-                OrderItem orderItem = new OrderItem();
-                orderItem.setProduct(product);
-                orderItem.setQuantity(Integer.parseInt(quantityStr));
-                orderItems.add(orderItem);
-            }
-        }
-
-        if (orderItems.isEmpty()) {
-            return true;
-        }
-
-        model.addAttribute("orderItems", orderItems);
-        return false;
-    }
 }

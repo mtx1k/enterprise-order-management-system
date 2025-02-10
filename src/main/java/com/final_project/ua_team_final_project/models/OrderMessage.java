@@ -16,40 +16,46 @@ public class OrderMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
 
-    private Long userId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    private Long orderId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
-    private Long supplierOrderId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "supplier_order_id", nullable = false)
+    private SupplierOrders supplierOrders;
 
     public OrderMessage() {
     }
 
-    public OrderMessage(Long messageId, Long userId, Long orderId, Long supplierOrderId) {
+    public OrderMessage(Long messageId, User user, Order order, SupplierOrders supplierOrders) {
         this.messageId = messageId;
-        this.userId = userId;
-        this.orderId = orderId;
-        this.supplierOrderId = supplierOrderId;
+        this.user = user;
+        this.order = order;
+        this.supplierOrders = supplierOrders;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof OrderMessage that)) return false;
-        return Objects.equals(messageId, that.messageId) && Objects.equals(userId, that.userId) && Objects.equals(orderId, that.orderId) && Objects.equals(supplierOrderId, that.supplierOrderId);
+        return Objects.equals(messageId, that.messageId) && Objects.equals(user, that.user) && Objects.equals(order, that.order) && Objects.equals(supplierOrders, that.supplierOrders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(messageId, userId, orderId, supplierOrderId);
+        return Objects.hash(messageId, user, order, supplierOrders);
     }
 
     @Override
     public String toString() {
         return "OrderMessage{" +
                 "messageId=" + messageId +
-                ", userId=" + userId +
-                ", orderId=" + orderId +
-                ", supplierOrderId=" + supplierOrderId +
+                ", user=" + user +
+                ", order=" + order +
+                ", supplierOrders=" + supplierOrders +
                 '}';
     }
 }

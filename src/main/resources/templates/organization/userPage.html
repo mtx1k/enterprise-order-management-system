@@ -2,9 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-        <meta name="_csrf" th:content="${_csrf.token}"/>
-        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <title>Admin page</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>User page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
         a {
@@ -49,6 +49,7 @@
     </style>
 </head>
 <body>
+<header th:replace="~{fragments/fragments :: top}"></header>
 <h1>List of products</h1>
 
 <label for="sortOptions">Sort by:</label>

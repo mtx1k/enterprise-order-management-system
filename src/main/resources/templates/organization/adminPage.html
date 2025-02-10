@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin page</title>
-    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <style>
         a {
             color:black;
@@ -46,6 +46,7 @@
     </style>
 </head>
 <body>
+<header th:replace="~{fragments/fragments :: top}"></header>
     <h1>List of users</h1>
 
     <label for="sortOptions">Sort by:</label>
@@ -108,6 +109,12 @@
         <button id="lastPageButton" onclick="lastPage()">Last Page</button>
     </div>
 
+    <button id="updatePriceList"
+            style="margin-top: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
+        Update Price List
+    </button>
+
+
     <script>
         const pageNumber = [[${pageNumber}]];
         const totalPages = [[${totalPages}]];
@@ -152,6 +159,30 @@
 
             window.location.href = `/?page=` + moveToPageNumber + `&page_size=` + pageSize + `&order=${order}`;
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("updatePriceList").addEventListener("click", function () {
+                fetch('/api/products/import', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Для обхода CSRF-защиты
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to update price list');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        alert('Price list updated successfully!');
+                    })
+                    .catch(error => {
+                        alert('Error updating price list: ' + error.message);
+                    });
+            });
+        });
+
     </script>
     <script src="/js/bootstrap.bundle.js"></script>
 </body>
