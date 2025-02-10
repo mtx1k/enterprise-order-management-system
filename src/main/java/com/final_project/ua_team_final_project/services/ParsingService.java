@@ -1,6 +1,9 @@
 package com.final_project.ua_team_final_project.services;
 
 import com.final_project.ua_team_final_project.models.AvailableProducts;
+import com.final_project.ua_team_final_project.models.Category;
+import com.final_project.ua_team_final_project.models.Supplier;
+import com.final_project.ua_team_final_project.repositories.CategoryRepository;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,14 @@ public class ParsingService {
 
     private final CategoryService categoryService;
 
-    public ParsingService(CategoryService categoryService) {
+    private final CategoryRepository categoryRepository;
+
+    public ParsingService(CategoryService categoryService, CategoryRepository categoryRepository) {
         this.categoryService = categoryService;
+        this.categoryRepository = categoryRepository;
     }
 
-    public List<AvailableProducts> parseCsv(InputStream inputStream, Long supplierId) {
+    public List<AvailableProducts> parseCsv(InputStream inputStream, Supplier supplierId) {
         List<AvailableProducts> products = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -40,10 +46,10 @@ public class ParsingService {
                 product.setProductCode(line[0]);
                 product.setName(line[1]);
                 product.setDescription(line[2]);
-                if (categoryService.getCategoryIdByName(line[3]).isEmpty()) {
-                    categoryService.addCategory(line[3]);
+                if (categoryRepository.findByName(line[3]).isEmpty()) {
+                    categoryRepository.save(new Category(line[3]));
                 }
-                product.setCategory(categoryService.getCategoryIdByName(line[3]).get());
+                product.setCategory(categoryRepository.findByName(line[3]).get());
                 product.setSupplier(supplierId);
                 product.setPrice(Double.parseDouble(line[4]));
 
