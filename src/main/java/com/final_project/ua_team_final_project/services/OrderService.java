@@ -56,7 +56,7 @@ public class OrderService {
         Department department = user.getDepartment();
 
         Order order = new Order();
-        OrderStatus orderStatus = orderStatusRepository.findById(1L) // Assuming 1L is the ID you want
+        OrderStatus orderStatus = orderStatusRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("OrderStatus not found: 1"));
         order.setDept(department);
         order.setStatus(orderStatus);
@@ -78,7 +78,7 @@ public class OrderService {
                 throw new RuntimeException("Supplier ID not found for product: " + productId);
             }
 
-            Supplier supplier = supplierRepository.findById(supplierId.getSupplierId()) // Fetch the Supplier object
+            Supplier supplier = supplierRepository.findById(supplierId.getSupplierId())
                     .orElseThrow(() -> new RuntimeException("Supplier not found: " + supplierId));
 
             Category categoryId = product.getCategory();

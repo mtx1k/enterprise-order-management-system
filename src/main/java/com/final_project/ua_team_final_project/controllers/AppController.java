@@ -1,6 +1,7 @@
 package com.final_project.ua_team_final_project.controllers;
 
 
+import com.final_project.ua_team_final_project.dto.OrderDTO;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import com.final_project.ua_team_final_project.models.User;
@@ -125,6 +126,12 @@ public class AppController {
         return "redirect:/";
 
 
+    }
+    @GetMapping("/orderDetails/{orderId}")
+    @ResponseBody
+    public ResponseEntity<Order> getOrderDetails(@PathVariable Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order ID: " + orderId));
+        return ResponseEntity.ok(order);
     }
 
     @GetMapping("/login")

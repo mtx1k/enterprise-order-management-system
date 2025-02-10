@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/organization/**", "/selectedProducts").authenticated()
                         .requestMatchers("/organization/admin/**").hasRole("ADMIN")
                         .requestMatchers("/organization/userpage","/organization/**",  "/organization/editProducts", "/organization/confirmOrder").hasRole("USER")
-                        .requestMatchers("/organization/pageOfHead").hasRole("HEAD")
+                        .requestMatchers("/organization/pageOfHead", "/orderDetails/**").hasRole("HEAD")
                         .requestMatchers("/organization/pageOfFinco").hasRole("FINCO")
                         .requestMatchers("/organization/supply/**").hasRole("SUPPLIER")
                         .requestMatchers("/api/products/import").hasRole("ADMIN")
