@@ -160,4 +160,14 @@ public class AppController {
         }
         return "redirect:/";
     }
+
+    @PostMapping("/rejectOrders")
+    public String rejectOrders(@RequestParam("selectedOrders") List<Long> orders) {
+        for (Long id: orders) {
+            Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+            order.setStatusId(4L);
+            orderRepository.save(order);
+        }
+        return "redirect:/";
+    }
 }

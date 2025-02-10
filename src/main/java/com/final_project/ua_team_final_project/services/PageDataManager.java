@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -149,6 +150,8 @@ public class PageDataManager {
 
     public void setFincoModel(Model model, User user) {
         model.addAttribute("user", user);
-        model.addAttribute("orders", orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptFalse());
+        List<Order> orders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptFalse();
+        orders = orders.stream().filter(order -> order.getStatusId() != 4L).toList();
+        model.addAttribute("orders", orders);
     }
 }
