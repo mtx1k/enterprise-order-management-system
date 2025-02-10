@@ -101,8 +101,6 @@ public class OrderService {
             orderedProduct.setSupplier(supplier);
             orderedProduct.setAmount(quantity);
 
-
-
             order.setTotalPrice(order.getTotalPrice() + orderedProduct.getItemPrice());
             System.out.println("Order saved: " + order);
             System.out.println("Order saved: " + orderedProduct);
@@ -121,11 +119,6 @@ public class OrderService {
 
 
     }
-
-
-
-
-
 
     public boolean setSelectedProductsModel(List<Long> selectedProducts, Map<String, String> quantities, Model model) {
         if (selectedProducts == null || selectedProducts.isEmpty()) {
@@ -158,6 +151,16 @@ public class OrderService {
         return false;
     }
 
+    public List<Order> getOrdersForCurrentUser() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByLogin(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+        List<Order> orders = orderRepository.findByDeptId(user.getDepartment());
+
+        return orders;
+    }
 
 }
 
