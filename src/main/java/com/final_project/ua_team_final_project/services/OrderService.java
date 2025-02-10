@@ -50,7 +50,7 @@ public class OrderService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userRepository.findByName(username)
+        User user = userRepository.findByLogin(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         Department department = user.getDepartment();
