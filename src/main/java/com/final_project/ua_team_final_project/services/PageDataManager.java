@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -86,5 +87,10 @@ public class PageDataManager {
         model.addAttribute("roles", roleRepository.findAll());
     }
 
-
+    public void setFincoModel(Model model, User user) {
+        model.addAttribute("user", user);
+        List<Order> orders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptFalse();
+        orders = orders.stream().filter(order -> order.getStatus().getStatusId() != 4L).toList();
+        model.addAttribute("orders", orders);
+    }
 }

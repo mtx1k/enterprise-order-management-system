@@ -23,7 +23,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "dept_id", nullable = false)
-    private Department deptId;
+    private Department dept;
     @Column(name = "total_price")
     private double totalPrice;
     private boolean approvedByHead;
@@ -48,9 +48,9 @@ public class Order {
 
     public Order() { }
 
-    public Order(Long orderId, Department deptId, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, LocalDateTime createdAt, LocalDateTime updatedAt, OrderStatus status, List<OrderedProduct> orderedProducts) {
+    public Order(Long orderId, Department dept, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, LocalDateTime createdAt, LocalDateTime updatedAt, OrderStatus status, List<OrderedProduct> orderedProducts) {
         this.orderId = orderId;
-        this.deptId = deptId;
+        this.dept = dept;
         this.totalPrice = totalPrice;
         this.approvedByHead = approvedByHead;
         this.approvedByFinDept = approvedByFinDept;
@@ -63,19 +63,19 @@ public class Order {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Order order)) return false;
-        return Double.compare(totalPrice, order.totalPrice) == 0 && approvedByHead == order.approvedByHead && approvedByFinDept == order.approvedByFinDept && Objects.equals(orderId, order.orderId) && Objects.equals(deptId, order.deptId) && Objects.equals(createdAt, order.createdAt) && Objects.equals(updatedAt, order.updatedAt) && Objects.equals(status, order.status) && Objects.equals(orderedProducts, order.orderedProducts);
+        return Double.compare(totalPrice, order.totalPrice) == 0 && approvedByHead == order.approvedByHead && approvedByFinDept == order.approvedByFinDept && Objects.equals(orderId, order.orderId) && Objects.equals(dept, order.dept) && Objects.equals(createdAt, order.createdAt) && Objects.equals(updatedAt, order.updatedAt) && Objects.equals(status, order.status) && Objects.equals(orderedProducts, order.orderedProducts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, deptId, totalPrice, approvedByHead, approvedByFinDept, createdAt, updatedAt, status, orderedProducts);
+        return Objects.hash(orderId, dept, totalPrice, approvedByHead, approvedByFinDept, createdAt, updatedAt, status, orderedProducts);
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "orderId=" + orderId +
-                ", deptId=" + deptId +
+                ", deptId=" + dept +
                 ", totalPrice=" + totalPrice +
                 ", approvedByHead=" + approvedByHead +
                 ", approvedByFinDept=" + approvedByFinDept +
