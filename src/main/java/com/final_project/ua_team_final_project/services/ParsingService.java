@@ -20,12 +20,9 @@ import java.util.List;
 @Service
 public class ParsingService {
 
-    private final CategoryService categoryService;
-
     private final CategoryRepository categoryRepository;
 
-    public ParsingService(CategoryService categoryService, CategoryRepository categoryRepository) {
-        this.categoryService = categoryService;
+    public ParsingService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
