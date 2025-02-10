@@ -8,6 +8,8 @@ import com.final_project.ua_team_final_project.repositories.DepartmentRepository
 import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
@@ -64,6 +66,19 @@ public class AppController {
         } else if ("USER".equals(user.getRole().getName())) {
             getAvailableProductsModel(model, user);
             return "organization/userpage";
+        } else if ("HEAD".equals(user.getRole().getName())) {
+            List<Order> orderForDept = orderService.getOrdersForCurrentUser();
+            if (orderForDept.isEmpty()) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                ResponseEntity.ok(orderForDept);
+            }
+
+
+            model.addAttribute("orderForDept", orderForDept);
+            model.addAttribute("department", user.getDepartment().getName());
+            return "organization/pageOfHead";
+
         } else {
             return "accessDenied";
         }
