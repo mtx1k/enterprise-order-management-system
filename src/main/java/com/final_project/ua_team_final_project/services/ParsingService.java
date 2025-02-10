@@ -29,7 +29,7 @@ public class ParsingService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<AvailableProducts> parseCsv(InputStream inputStream, Supplier supplierId) {
+    public List<AvailableProducts> parseCsv(InputStream inputStream, Supplier supplier) {
         List<AvailableProducts> products = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -50,7 +50,7 @@ public class ParsingService {
                     categoryRepository.save(new Category(line[3]));
                 }
                 product.setCategory(categoryRepository.findByName(line[3]).get());
-                product.setSupplier(supplierId);
+                product.setSupplier(supplier);
                 product.setPrice(Double.parseDouble(line[4]));
 
                 products.add(product);

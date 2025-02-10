@@ -37,15 +37,15 @@ public class ProductService {
 
         for (String filename : filenames) {
 
-            Long supplierId = getSupplierId(filename);
+            Supplier supplier = getSupplierByName(filename);
 
-            if (supplierId == null) {
+            if (supplier == null) {
                 continue;
             }
 
             try {
                 InputStream inputStream = digitalOceanService.downloadFile(filename);
-                List<AvailableProducts> products = csvService.parseCsv(inputStream, supplierId);
+                List<AvailableProducts> products = csvService.parseCsv(inputStream, supplier);
                 availableProductsRepository.saveAll(products);
                 System.out.println("successfully parsed csv file " + filename);
             } catch (Exception e) {
@@ -54,7 +54,7 @@ public class ProductService {
         }
     }
 
-    private Long getSupplierId(String fileName) {
+    private Supplier getSupplierByName(String fileName) {
 
         String supplierName = extractSupplierName(fileName);
 
@@ -65,7 +65,7 @@ public class ProductService {
             return null;
         }
 
-        return supplier.get().getSupplierId();
+        return supplier.get();
     }
 
     private String extractSupplierName(String fileName) {
