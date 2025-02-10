@@ -97,7 +97,7 @@ public class AppController {
         if (orderService.setSelectedProductsModel(selectedProducts, quantities, model)) {
             return "redirect:/";
         }
-        model.addAttribute("user", userRepository.findByName(principal.getName()).orElseThrow(() ->
+        model.addAttribute("user", userRepository.findByLogin(principal.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User not found: " + principal.getName())));
         return "organization/editProducts";
     }
