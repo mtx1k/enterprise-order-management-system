@@ -84,6 +84,9 @@ public class AppController {
         } else if ("FINCO".equals(user.getRole().getName())) {
             pageDataManager.setFincoModel(model, user);
             return "organization/pageOfFinco";
+        } else if ("SUPPLIER".equals(user.getRole().getName())) {
+            pageDataManager.setSupplierModel(model, user);
+            return "organization/pageOfSupplier";
         } else {
             return "accessDenied";
         }
