@@ -53,8 +53,8 @@
 <label for="sortOptions">Sort by:</label>
 <select id="sortOptions" onchange="refresh()">
     <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
-    <option value="deptId" th:selected="${order == 'deptId: ASC'}">Department</option>
-    <option value="deptId_desc" th:selected="${order == 'deptId: DESC'}">Department DESC</option>
+    <option value="dept" th:selected="${order == 'dept: ASC'}">Department</option>
+    <option value="dept_desc" th:selected="${order == 'dept: DESC'}">Department DESC</option>
     <option value="totalPrice" th:selected="${order == 'totalPrice: ASC'}">Total Price</option>
     <option value="totalPrice_desc" th:selected="${order == 'totalPrice: DESC'}">Total Price DESC</option>
 </select>
@@ -106,8 +106,8 @@
 </div>
 
 <script>
-    const pageNumber = 0;
-    const totalPages = 0;
+    const pageNumber = [[${pageNumber}]];
+    const totalPages = [[${totalPages}]];
 
     document.getElementById('prevPage').classList.toggle('disabled', pageNumber === 1);
     document.getElementById('firstPageButton').classList.toggle('disabled', pageNumber === 1);
