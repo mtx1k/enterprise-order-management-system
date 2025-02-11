@@ -47,7 +47,7 @@
             align-items: center;
         }
         .modal {
-            display: none;
+            display: none; /* Hidden by default */
             position: fixed;
             z-index: 1;
             left: 0;
@@ -64,7 +64,7 @@
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 80%; /* Could be adjusted */
         }
 
         .close {
@@ -80,10 +80,21 @@
             text-decoration: none;
             cursor: pointer;
         }
+        /* Style for the order details table inside the modal */
+        .modal-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modal-content th, .modal-content td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
-<!--<header th:replace="~{fragments/fragments :: top}"></header>-->
+<header th:replace="~{fragments/fragments :: top}"></header>
 <h1><span th:text="${department}"></span> department</h1>
 
 <label for="sortOptions">Sort by:</label>
@@ -112,32 +123,43 @@
         <tr>
             <th>Select</th>
             <th>Id</th>
-<!--            <th>Name</th>-->
             <th>Status</th>
             <th>Date of Creation</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="order : ${orderForDept}">
+        <tr th:each="order : ${orderForDept}" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|">
             <td><input type="checkbox" name="selectedProducts" th:value="${order.orderId}"/></td>
-            <td th:data-order-id="${order.orderId}" th:text="${order.orderId}"></td>
+            <td  th:text="${order.orderId}"></td>
 
             <td th:text="${order.status.getStatusText()}"></td>
             <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+
         </tr>
         </tbody>
     </table>
     <button type="submit">Create Order</button>
-    <div id="orderDetailsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Order Details</h2>
-            <p id="orderDetails"></p>
-        </div>
-    </div>
+
 </form>
+<div th:each="order : ${orderForDept}" th:id="'modal-' + ${order.orderId}" class="modal">
+    <div class="modal-content">
+        <span class="close" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
+        <h2>Order Details</h2>
+        <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
+        <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
+        <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
+        <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
+        <p><strong>Ordered by:</strong> <span th:text="${order.user.name}"></span></p>
 
-
+        <p><strong>Created At:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+        <h3>Ordered Products</h3>
+        <ul>
+            <li th:each="product : ${order.orderedProducts}">
+                <span th:text="${product.name} + ' (' + ${product.amount} + ' pcs)'"></span>
+            </li>
+        </ul>
+    </div>
+</div>
 
 
 
@@ -153,73 +175,7 @@
     <button id="lastPageButton" onclick="goToLastPage()">Last Page</button>
 </div>
 
-<script th:inline="javascript">
 
-    const modal = document.getElementById("orderDetailsModal");
-    const span = document.getElementsByClassName("close")[0]; // Close button
-    const orderDetailsElement = document.getElementById("orderDetails");
-
-
-    function openModal(orderId) {
-        fetch(`/orderDetails/${orderId}`)
-            .then(response => response.json())
-            .then(order => {
-                let orderDetailsHTML = `
-                        <p>Order ID: ${order.orderId}</p>
-                        <p>Status: ${order.status.statusText}</p>
-                        <p>Created At: ${new Date(order.createdAt).toLocaleString()}</p>
-                        <p>Ordered Products:</p><ul>`;
-
-                if (order.orderedProducts && order.orderedProducts.length > 0) {
-                    order.orderedProducts.forEach(product => {
-                        orderDetailsHTML += `
-                                <li>
-                                    <p>Product Name: ${product.name}</p>
-                                    <p>Product Code: ${product.productCode}</p>
-                                    <p>Amount: ${product.amount}</p>
-                                    <p>Price: ${product.itemPrice}</p>
-                                     <p>Supplier: ${product.supplier.name}</p>
-                                </li>
-                            `;
-                    });
-                } else {
-                    orderDetailsHTML += "<p>No products found for this order.</p>";
-                }
-
-                orderDetailsHTML += "</ul>";
-                orderDetailsElement.innerHTML = orderDetailsHTML;
-                modal.style.display = "block";
-            })
-            .catch(error => {
-                console.error('Error fetching order details:', error);
-                orderDetailsElement.innerHTML = "<p>Error loading order details.</p>";
-                modal.style.display = "block"; // Show modal even with error
-            });
-    }
-
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
-    document.querySelectorAll('#availableProducts tbody tr').forEach(row => {
-        row.onclick = function() {
-            const orderIdElement = this.querySelector('[data-order-id]');
-            if (orderIdElement) {
-                const orderId = orderIdElement.textContent;
-                openModal(orderId);
-            } else {
-                console.error('Element with data-order-id not found');
-            }
-        };
-    });
-
-</script>
 
 <script>
     let currentPageNumber = 0;

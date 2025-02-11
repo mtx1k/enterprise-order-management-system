@@ -7,7 +7,7 @@ public record OrderedProductDTO(
         String productCode,
         Double itemPrice,
         Long categoryId,
-        Long supplierId,
+        SupplierDTO supplier,
         Long amount
 ) {
 }

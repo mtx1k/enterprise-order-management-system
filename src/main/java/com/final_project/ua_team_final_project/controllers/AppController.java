@@ -1,5 +1,6 @@
 package com.final_project.ua_team_final_project.controllers;
 
+import com.final_project.ua_team_final_project.dto.OrderDTO;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import com.final_project.ua_team_final_project.models.User;
@@ -8,6 +9,7 @@ import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -69,13 +71,14 @@ public class AppController {
             return "organization/userpage";
         } else if ("HEAD".equals(user.getRole().getName())) {
             List<Order> orderForDept = orderService.getOrdersForCurrentUser();
+            model.addAttribute("user", user);
             if (orderForDept.isEmpty()) {
                 ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             } else {
 //                ResponseEntity.ok(orderForDept);
             }
 
-//            System.out.println(orderForDept);
+
             model.addAttribute("orderForDept", orderForDept);
             model.addAttribute("department", user.getDepartment().getName());
             return "organization/pageOfHead";
@@ -124,13 +127,6 @@ public class AppController {
         return "redirect:/";
 
 
-    }
-    @GetMapping("/orderDetails/{orderId}")
-    @ResponseBody
-    public ResponseEntity<Order> getOrderDetails(@PathVariable Long orderId) {
-        System.out.println(orderId);
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order ID: " + orderId));
-        return ResponseEntity.ok(order);
     }
 
     @GetMapping("/login")
