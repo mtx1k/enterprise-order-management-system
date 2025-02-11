@@ -125,6 +125,7 @@
             <th>Id</th>
             <th>Status</th>
             <th>Date of Creation</th>
+            <th>From </th>
         </tr>
         </thead>
         <tbody>
@@ -134,6 +135,8 @@
 
             <td th:text="${order.status.getStatusText()}"></td>
             <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+            <td th:text="${order.user.getName()}"></td>
+
 
         </tr>
         </tbody>
@@ -149,8 +152,6 @@
         <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
         <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
         <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
-        <p><strong>Ordered by:</strong> <span th:text="${order.user.name}"></span></p>
-
         <p><strong>Created At:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
         <h3>Ordered Products</h3>
         <ul>
