@@ -1,7 +1,5 @@
 package com.final_project.ua_team_final_project.controllers;
 
-
-import com.final_project.ua_team_final_project.dto.OrderDTO;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import com.final_project.ua_team_final_project.models.User;
@@ -74,10 +72,10 @@ public class AppController {
             if (orderForDept.isEmpty()) {
                 ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             } else {
-                ResponseEntity.ok(orderForDept);
+//                ResponseEntity.ok(orderForDept);
             }
 
-            System.out.println(orderForDept);
+//            System.out.println(orderForDept);
             model.addAttribute("orderForDept", orderForDept);
             model.addAttribute("department", user.getDepartment().getName());
             return "organization/pageOfHead";
@@ -130,6 +128,7 @@ public class AppController {
     @GetMapping("/orderDetails/{orderId}")
     @ResponseBody
     public ResponseEntity<Order> getOrderDetails(@PathVariable Long orderId) {
+        System.out.println(orderId);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order ID: " + orderId));
         return ResponseEntity.ok(order);
     }
