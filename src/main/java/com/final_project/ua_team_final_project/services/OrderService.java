@@ -62,6 +62,7 @@ public class OrderService {
         order.setStatus(orderStatus);
         order.setApprovedByHead(false);
         order.setApprovedByFinDept(false);
+        order.setUser(user);
 
         double totalPrice = 0.0;
         List<OrderedProduct> orderedProductList = new ArrayList<>();
