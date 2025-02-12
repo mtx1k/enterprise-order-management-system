@@ -1,11 +1,8 @@
 package com.final_project.ua_team_final_project.services;
 
-import com.final_project.ua_team_final_project.dto.*;
-
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
