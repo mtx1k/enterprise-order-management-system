@@ -98,7 +98,6 @@ public class PageDataManager {
     public void setSupplierModel(Model model, User user) {
         model.addAttribute("user", user);
         List<Order> orders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptTrue();
-       // orders = orders.stream().filter(order -> order.getStatus().getStatusId() != 2L).toList();
         model.addAttribute("orders", orders);
         model.addAttribute("department", user.getDepartment().getName());
     }

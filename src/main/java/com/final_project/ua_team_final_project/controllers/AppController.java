@@ -96,7 +96,7 @@ public class AppController {
             case "SUPPLIER" -> {
                 pageDataManager.setSupplierModel(model, user);
                 return "organization/pageOfSupplier";
-               
+            }
             case null, default -> {
                 return "accessDenied";
             }
