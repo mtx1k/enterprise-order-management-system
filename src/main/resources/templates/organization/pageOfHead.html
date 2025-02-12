@@ -129,10 +129,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="order : ${orderForDept}" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|">
+        <tr th:each="order : ${orderForDept}" >
             <td><input type="checkbox" name="selectedProducts" th:value="${order.orderId}"/></td>
-            <td  th:text="${order.orderId}"></td>
-
+            <td  th:text="${order.orderId}" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|" style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
             <td th:text="${order.status.getStatusText()}"></td>
             <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
             <td th:text="${order.user.getName()}"></td>
@@ -141,7 +140,8 @@
         </tr>
         </tbody>
     </table>
-    <button type="submit">Create Order</button>
+    <button type="submit">Approve Order</button>
+    <button type="button" onclick="reject()">Reject Order</button>
 
 </form>
 <div th:each="order : ${orderForDept}" th:id="'modal-' + ${order.orderId}" class="modal">
