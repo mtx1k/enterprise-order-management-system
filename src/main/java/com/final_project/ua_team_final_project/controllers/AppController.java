@@ -63,31 +63,40 @@ public class AppController {
             return "redirect:/login";
         }
 
-        if ("ADMIN".equals(user.getRole().getName())) {
-            pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order, user);
-            return "organization/adminpage";
-        } else if ("USER".equals(user.getRole().getName())) {
-            getAvailableProductsModel(model, user);
-            return "organization/userpage";
-        } else if ("HEAD".equals(user.getRole().getName())) {
-            List<Order> orderForDept = orderService.getOrdersForCurrentUser();
-            model.addAttribute("user", user);
-            if (orderForDept.isEmpty()) {
-                ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            } else {
+
+        switch (user.getRole().getName()) {
+            case "ADMIN" -> {
+                pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order, user);
+                return "organization/adminpage";
+            }
+            case "USER" -> {
+                getAvailableProductsModel(model, user);
+                return "organization/userpage";
+            }
+            case "HEAD" -> {
+                List<Order> orderForDept = orderService.getOrdersForCurrentUser();
+               model.addAttribute("user", user);
+                if (orderForDept.isEmpty()) {
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                } else {
 //                ResponseEntity.ok(orderForDept);
+                }
+
+                model.addAttribute("orderForDept", orderForDept);
+                model.addAttribute("department", user.getDepartment().getName());
+                return "organization/pageOfHead";
+            }
+            case "FINCO" -> {
+                if (order.equals("userId")) {
+                    order = "orderId";
+                }
+                pageDataManager.setFincoModel(model, urlPageNumber, pageSize, order, user);
+                return "organization/pageOfFinco";
+            }
+            case null, default -> {
+                return "accessDenied";
             }
 
-
-            model.addAttribute("orderForDept", orderForDept);
-            model.addAttribute("department", user.getDepartment().getName());
-            return "organization/pageOfHead";
-
-        } else if ("FINCO".equals(user.getRole().getName())) {
-            pageDataManager.setFincoModel(model, user);
-            return "organization/pageOfFinco";
-        } else {
-            return "accessDenied";
         }
     }
 
