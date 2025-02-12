@@ -46,10 +46,55 @@
             display: flex;
             align-items: center;
         }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be adjusted */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Style for the order details table inside the modal */
+        .modal-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modal-content th, .modal-content td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
-<!--<header th:replace="~{fragments/fragments :: top}"></header>-->
+<header th:replace="~{fragments/fragments :: top}"></header>
 <h1><span th:text="${department}"></span> department</h1>
 
 <label for="sortOptions">Sort by:</label>
@@ -71,32 +116,51 @@
     <option value="100" th:selected="${pageSize == 100}">100</option>
 </select>
 
-<!--<form id="productForm" action="/selectedProducts" method="POST">-->
+<form id="productForm" action="/selectedProducts" method="POST">
     <input type="hidden" name="_csrf" th:value="${_csrf.token}">
     <table id="availableProducts">
         <thead>
         <tr>
             <th>Select</th>
             <th>Id</th>
-<!--            <th>Name</th>-->
             <th>Status</th>
             <th>Date of Creation</th>
+            <th>From </th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="order : ${orderForDept}">
+        <tr th:each="order : ${orderForDept}" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|">
             <td><input type="checkbox" name="selectedProducts" th:value="${order.orderId}"/></td>
-            <td th:text="${order.orderId}"></td>
+            <td  th:text="${order.orderId}"></td>
 
             <td th:text="${order.status.getStatusText()}"></td>
             <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+            <td th:text="${order.user.getName()}"></td>
+
+
         </tr>
         </tbody>
     </table>
     <button type="submit">Create Order</button>
-<!--</form>-->
 
-
+</form>
+<div th:each="order : ${orderForDept}" th:id="'modal-' + ${order.orderId}" class="modal">
+    <div class="modal-content">
+        <span class="close" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
+        <h2>Order Details</h2>
+        <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
+        <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
+        <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
+        <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
+        <p><strong>Created At:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+        <h3>Ordered Products</h3>
+        <ul>
+            <li th:each="product : ${order.orderedProducts}">
+                <span th:text="${product.name} + ' (' + ${product.amount} + ' pcs)'"></span>
+            </li>
+        </ul>
+    </div>
+</div>
 
 
 
