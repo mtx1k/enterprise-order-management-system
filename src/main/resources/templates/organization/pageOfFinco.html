@@ -44,6 +44,51 @@
             display: flex;
             align-items: center;
         }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be adjusted */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Style for the order details table inside the modal */
+        .modal-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modal-content th, .modal-content td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
@@ -53,8 +98,8 @@
 <label for="sortOptions">Sort by:</label>
 <select id="sortOptions" onchange="refresh()">
     <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
-    <option value="deptId" th:selected="${order == 'deptId: ASC'}">Department</option>
-    <option value="deptId_desc" th:selected="${order == 'deptId: DESC'}">Department DESC</option>
+    <option value="dept" th:selected="${order == 'dept: ASC'}">Department</option>
+    <option value="dept_desc" th:selected="${order == 'dept: DESC'}">Department DESC</option>
     <option value="totalPrice" th:selected="${order == 'totalPrice: ASC'}">Total Price</option>
     <option value="totalPrice_desc" th:selected="${order == 'totalPrice: DESC'}">Total Price DESC</option>
 </select>
@@ -80,9 +125,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="order : ${orders}">
+        <tr th:each="order : ${orders}" >
             <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
-            <td th:text="${order.orderId}"></td>
+            <td th:text="${order.orderId}" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|" style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
             <td th:text="${order.dept.getName()}"></td>
             <td th:text="${order.totalPrice}"></td>
             <td th:text="${order.createdAt}"></td>
@@ -92,6 +137,24 @@
     <button type="submit">Approve Order</button>
     <button type="button" onclick="reject()">Reject Order</button>
 </form>
+
+<div th:each="order : ${orders}" th:id="'modal-' + ${order.orderId}" class="modal">
+    <div class="modal-content">
+        <span class="close" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
+        <h2>Order Details</h2>
+        <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
+        <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
+        <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
+        <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
+        <p><strong>Created At:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+        <h3>Ordered Products</h3>
+        <ul>
+            <li th:each="product : ${order.orderedProducts}">
+                <span th:text="${product.name} + ' (' + ${product.amount} + ' pcs)'"></span>
+            </li>
+        </ul>
+    </div>
+</div>
 
 <div class="pagination-container">
     <button id="firstPageButton" onclick="refresh()">First Page</button>
@@ -106,8 +169,8 @@
 </div>
 
 <script>
-    const pageNumber = 0;
-    const totalPages = 0;
+    const pageNumber = [[${pageNumber}]];
+    const totalPages = [[${totalPages}]];
 
     document.getElementById('prevPage').classList.toggle('disabled', pageNumber === 1);
     document.getElementById('firstPageButton').classList.toggle('disabled', pageNumber === 1);
