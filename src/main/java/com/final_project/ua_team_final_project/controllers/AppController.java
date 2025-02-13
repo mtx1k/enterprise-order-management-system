@@ -212,10 +212,12 @@ public class AppController {
     }
 
     @PostMapping("/approveOrdersByHead")
-    public String approveOrdersByHead(@RequestParam("selectedOrders") List<Long> orders) {
+    public String approveOrdersByHead(@RequestParam("selectedOrders") List<Long> orders, Principal principal) {
+        User user = userRepository.findByLogin(principal.getName()).get();
         for (Long id : orders) {
             Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
             order.setApprovedByHead(true);
+            order.setUser(user);
             order.setStatus(orderStatusRepository.findById(2L).orElseThrow(IllegalArgumentException::new));
             orderRepository.save(order);
         }
