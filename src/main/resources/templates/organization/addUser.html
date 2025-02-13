@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new User Page</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/flatpickr.min.css">
+    <script src="/js/flatpickr"></script>
+</head>
+<body>
+<header th:replace="~{fragments/fragments :: top}"></header>
+<h1>Edit User page</h1>
+<form action="/createUser" method="post" id="userForm">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+    <table>
+        <tr>
+            <td><h5><label for="name">Name</label></h5></td>
+            <td><input type="text" name="name" id="name" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><h5><label for="depts"></label>Department</h5></td>
+            <td>
+                <select name="department" id="depts">
+                    <option
+                            th:each="dept : ${departments}"
+                            th:value="${dept.getName()}"
+                            th:text="${dept.getName()}">
+                    </option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><h5><label for="roles"></label>Role</h5></td>
+            <td>
+                <select name="role" id="roles">
+                    <option
+                            th:each="role : ${roles}"
+                            th:value="${role.getName()}"
+                            th:text="${role.getName()}">
+                    </option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><h5><label for="login">Login</label></h5></td>
+            <td><input type="text" name="login" id="login" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><h5><label for="phone">Phone</label></h5></td>
+            <td><input type="text" name="phone" id="phone" class="form-control"></td>
+        </tr>
+        <tr>
+            <td><h5><label for="email">Email</label></h5></td>
+            <td><input type="email" name="email" id="email" class="form-control"></td>
+        </tr>
+    </table>
+    <button type="submit" id="saveBtn" class="btn btn-primary mt-3">Save changes</button>
+</form>
+<form action="/">
+    <button>Cancel</button>
+</form>
+<script>
+    document.getElementById("userForm").addEventListener("submit", function(event) {
+        let isValid = true;
+        const inputs = document.querySelectorAll("#userForm input, #userForm select");
+
+        inputs.forEach(input => {
+            const errorMsg = document.createElement("div");
+            errorMsg.classList.add("error-message");
+            errorMsg.style.color = "red";
+            errorMsg.style.fontSize = "12px";
+            errorMsg.style.marginTop = "5px";
+            errorMsg.innerText = "Field can not be empty";
+
+            if (!input.value.trim()) {
+                isValid = false;
+                input.style.border = "2px solid red";
+
+                if (!input.nextElementSibling || !input.nextElementSibling.classList.contains("error-message")) {
+                    input.parentNode.appendChild(errorMsg);
+                }
+            } else {
+                input.style.border = "";
+                if (input.nextElementSibling && input.nextElementSibling.classList.contains("error-message")) {
+                    input.nextElementSibling.remove();
+                }
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+
+</script>
+</body>
+</html>

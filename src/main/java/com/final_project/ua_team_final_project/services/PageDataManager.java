@@ -101,4 +101,10 @@ public class PageDataManager {
         model.addAttribute("orders", orders);
         model.addAttribute("department", user.getDepartment().getName());
     }
+
+    public void setNewUserModel(Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("departments", departmentRepository.findAll());
+        model.addAttribute("roles", roleRepository.findAll());
+    }
 }

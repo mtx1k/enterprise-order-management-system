@@ -160,13 +160,11 @@ public class AppController {
         return "editUser";
     }
 
-
     private void getAvailableProductsModel(Model model, User user) {
         List<AvailableProducts> availableProducts = availableProductsRepository.findAll();
         model.addAttribute("availableProducts", availableProducts);
         model.addAttribute("user", user);
     }
-
 
     @PostMapping("/edituser")
     public String editUser(@RequestParam("id") Long id,
@@ -217,6 +215,33 @@ public class AppController {
             order.setStatus(orderStatusRepository.findById(4L).orElseThrow(IllegalArgumentException::new));
             orderRepository.save(order);
         }
+        return "redirect:/";
+    }
+
+    @GetMapping("/addUser")
+    public String addUser(Model model, Principal principal) {
+        User user = userRepository.findByLogin(principal.getName()).orElseThrow(() ->
+            new UsernameNotFoundException("User not found: " + principal.getName()));
+        pageDataManager.setNewUserModel(model, user);
+        return "/organization/addUser";
+    }
+
+    @PostMapping("/createUser")
+    public String createUser(@RequestParam("department") String department,
+                             @RequestParam("name") String name,
+                             @RequestParam("role") String role,
+                             @RequestParam("login") String login,
+                             @RequestParam("phone") String phone,
+                             @RequestParam("email") String email) {
+        User user = new User();
+        user.setDepartment(deptRepository.findByName(department).orElse(null));
+        user.setName(name);
+        user.setLogin(login);
+        user.setPhone(phone);
+        user.setEmail(email);
+        user.setRole(roleRepository.findByName(role).orElse(null));
+        user.setPasswordEnc("$2a$12$7xYK.QaW9kmjU8Lbqu.cauuL7Dl4SidrO2O/2P2na8ujC0cKdHbtK");
+        userRepository.save(user);
         return "redirect:/";
     }
 }
