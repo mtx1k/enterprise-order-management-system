@@ -215,6 +215,17 @@ public class AppController {
         return "redirect:/";
     }
 
+    @PostMapping("/approveOrdersByHead")
+    public String approveOrdersByHead(@RequestParam("selectedOrders") List<Long> orders) {
+        for (Long id : orders) {
+            Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+            order.setApprovedByHead(true);
+            order.setStatus(orderStatusRepository.findById(2L).orElseThrow(IllegalArgumentException::new));
+            orderRepository.save(order);
+        }
+        return "redirect:/";
+    }
+
     @PostMapping("/rejectOrders")
     public String rejectOrders(@RequestParam("selectedOrders") List<Long> orders) {
         for (Long id : orders) {
