@@ -39,11 +39,6 @@
             cursor: pointer;
         }
 
-        .disabled {
-            color: #ccc;
-            pointer-events: none;
-        }
-
         #pageNumber {
             width: 50px;
         }
@@ -145,11 +140,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="order : ${orderForDept}"
-                    th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|">
+                <tr th:each="order : ${orderForDept}">
                     <td><input type="checkbox" name="selectedProducts" th:value="${order.orderId}"/></td>
-                    <td th:text="${order.orderId}"></td>
-
+                    <td th:text="${order.orderId}"
+                        th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
+                        style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
                     <td th:text="${order.status.getStatusText()}"></td>
                     <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
                     <td th:text="${order.user.getName()}"></td>
@@ -158,13 +153,14 @@
                 </tr>
                 </tbody>
             </table>
-            <button type="submit">Create Order</button>
+            <button type="submit">Approve Order</button>
+            <button type="button" onclick="reject()">Reject Order</button>
 
         </form>
         <div th:each="order : ${orderForDept}" th:id="'modal-' + ${order.orderId}" class="modal">
             <div class="modal-content">
-                <span class="close"
-                      th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
+            <span class="close"
+                  th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
                 <h2>Order Details</h2>
                 <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
                 <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
@@ -181,21 +177,23 @@
             </div>
         </div>
 
+
         <div class="pagination-container">
-            <button id="firstPageButton" onclick="goToFirstPage()">First Page</button>
+            <button id="firstPageButton" onclick="refresh()">First Page</button>
             <button id="prevPage" onclick="prevPage()">Previous</button>
-            <form class="page-form" onsubmit="moveToPage(); return false;">
+            <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
                 <label for="pageNumber">Page#</label>
                 <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
-                <button type="button" onclick="moveToPage()">Move</button>
+                <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
             </form>
             <button id="nextPage" onclick="nextPage()">Next</button>
-            <button id="lastPageButton" onclick="goToLastPage()">Last Page</button>
+            <button id="lastPageButton" onclick="lastPage()">Last Page</button>
         </div>
-
     </div>
     <footer th:replace="~{fragments/fragments :: bottom}"></footer>
+
 </div>
+
 <script>
     let currentPageNumber = 0;
     const totalPages = 0;
@@ -205,37 +203,46 @@
     document.getElementById('lastPageButton').classList.toggle('disabled', currentPageNumber === totalPages);
     document.getElementById('nextPage').classList.toggle('disabled', currentPageNumber === totalPages);
 
-    function goToFirstPage() {
-        refresh(1);
-    }
-
-    function prevPage() {
-        refresh(currentPageNumber - 1);
-    }
-
-    function nextPage() {
-        refresh(currentPageNumber + 1);
-    }
-
     function reject() {
         let form = document.getElementById('ordersForm');
         form.action = "/rejectOrders";
         form.submit();
     }
 
-    function goToLastPage() {
-        refresh(totalPages);
+    function prevPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=${pageNumber - 1}&page_size=` + pageSize + `&order=${order}`;
+    }
+
+    function nextPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=${pageNumber + 1}&page_size=` + pageSize + `&order=${order}`;
+    }
+
+    function refresh() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=1&page_size=` + pageSize + `&order=` + order;
+    }
+
+    function lastPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+
+        window.location.href = `/?page=` + totalPages + `&page_size=` + pageSize + `&order=` + order;
     }
 
     function moveToPage() {
-        const pageNumber = document.getElementById('pageNumber').value;
-        refresh(pageNumber);
-    }
-
-    function refresh(pageNumber = 1) {
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
-        window.location.href = `/?page=${pageNumber}&page_size=${pageSize}&order=${order}`;
+        const moveToPageNumber = document.getElementById('pageNumber').value;
+
+        window.location.href = `/?page=` + moveToPageNumber + `&page_size=` + pageSize + `&order=${order}`;
     }
 
 

@@ -37,11 +37,6 @@
             cursor: pointer;
         }
 
-        .disabled {
-            color: #ccc;
-            pointer-events: none;
-        }
-
         #pageNumber {
             width: 50px;
         }
@@ -152,6 +147,25 @@
             <button type="submit">Approve Order</button>
             <button type="button" onclick="reject()">Reject Order</button>
         </form>
+
+        <div th:each="order : ${orders}" th:id="'modal-' + ${order.orderId}" class="modal">
+            <div class="modal-content">
+                <span class="close" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
+                <h2>Order Details</h2>
+                <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
+                <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
+                <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
+                <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
+                <p><strong>Created At:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+                <h3>Ordered Products</h3>
+                <ul>
+                    <li th:each="product : ${order.orderedProducts}">
+                        <span th:text="${product.name} + ' (' + ${product.amount} + ' pcs)'"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
 
         <div class="pagination-container">
             <button id="firstPageButton" onclick="refresh()">First Page</button>

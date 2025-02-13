@@ -75,15 +75,20 @@ public class AppController {
             }
             case "HEAD" -> {
                 List<Order> orderForDept = orderService.getOrdersForCurrentUser();
-               model.addAttribute("user", user);
-                if (orderForDept.isEmpty()) {
-                    ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-                } else {
-//                ResponseEntity.ok(orderForDept);
+                model.addAttribute("user", user);
+                if (order.equals("userId")) {
+                    order = "orderId";
                 }
+//                if (orderForDept.isEmpty()) {
+//                    ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//                } else {
+////                ResponseEntity.ok(orderForDept);
+//                }
 
                 model.addAttribute("orderForDept", orderForDept);
                 model.addAttribute("department", user.getDepartment().getName());
+                orderService.setHeadOfDepModel(model, urlPageNumber, pageSize, order, user);
+
                 return "organization/pageOfHead";
             }
             case "FINCO" -> {
@@ -201,7 +206,7 @@ public class AppController {
 
     @PostMapping("/approveOrders")
     public String approveOrders(@RequestParam("selectedOrders") List<Long> orders) {
-        for (Long id: orders) {
+        for (Long id : orders) {
             Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
             order.setApprovedByFinDept(true);
             order.setStatus(orderStatusRepository.findById(2L).orElseThrow(IllegalArgumentException::new));
@@ -212,7 +217,7 @@ public class AppController {
 
     @PostMapping("/rejectOrders")
     public String rejectOrders(@RequestParam("selectedOrders") List<Long> orders) {
-        for (Long id: orders) {
+        for (Long id : orders) {
             Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
             order.setStatus(orderStatusRepository.findById(4L).orElseThrow(IllegalArgumentException::new));
             orderRepository.save(order);
