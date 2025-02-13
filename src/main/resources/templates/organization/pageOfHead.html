@@ -217,6 +217,12 @@
         refresh(currentPageNumber + 1);
     }
 
+    function reject() {
+        let form = document.getElementById('ordersForm');
+        form.action = "/rejectOrders";
+        form.submit();
+    }
+
     function goToLastPage() {
         refresh(totalPages);
     }
