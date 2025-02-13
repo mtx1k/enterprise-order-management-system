@@ -23,7 +23,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByUpdatedAt(LocalDateTime updatedAt);
     Optional<Order> findByStatus(OrderStatus orderStatus);
 
-//    @Query(value = "SELECT * FROM orders WHERE approved_by_head = 1 AND approved_by_fin_dept = 0 AND status_id != 4")
+
+    List<Order> findByApprovedByHeadTrueAndApprovedByFinDeptTrue();
+
+    //@Query(value = "SELECT * FROM orders WHERE approved_by_head = 1 AND approved_by_fin_dept = 0 AND status_id != 4")
     Page<Order> findByApprovedByHeadAndApprovedByFinDeptAndStatusNot(
             boolean approvedByHead, boolean approvedByFinDept, OrderStatus status, Pageable pageable);
+
 }

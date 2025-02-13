@@ -94,4 +94,11 @@ public class PageDataManager {
         model.addAttribute("orders", page.getContent());
         model.addAttribute("order", sort.toString());
     }
+
+    public void setSupplierModel(Model model, User user) {
+        model.addAttribute("user", user);
+        List<Order> orders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptTrue();
+        model.addAttribute("orders", orders);
+        model.addAttribute("department", user.getDepartment().getName());
+    }
 }

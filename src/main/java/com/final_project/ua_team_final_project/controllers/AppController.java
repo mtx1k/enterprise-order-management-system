@@ -93,6 +93,10 @@ public class AppController {
                 pageDataManager.setFincoModel(model, urlPageNumber, pageSize, order, user);
                 return "organization/pageOfFinco";
             }
+            case "SUPPLIER" -> {
+                pageDataManager.setSupplierModel(model, user);
+                return "organization/pageOfSupplier";
+            }
             case null, default -> {
                 return "accessDenied";
             }
