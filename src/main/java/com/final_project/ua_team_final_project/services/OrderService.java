@@ -155,6 +155,33 @@ public class OrderService {
         return false;
     }
 
+    public void setHeadOfDepModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
+
+        int pageNumber = urlPageNumber - 1;
+
+        Sort.Direction direction = Sort.Direction.ASC;
+
+        if (order.endsWith("desc")) {
+            direction = Sort.Direction.DESC;
+            order = order.substring(0, order.length() - 5);
+        }
+        Sort sort = Sort.by(direction, order);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Order> page = null;
+
+        try {
+            page = orderRepository.findByApprovedByHeadAndApprovedByFinDeptAndStatusNot(false,
+                    false, orderStatusRepository.findById(4L).orElse(null), pageable);
+        } catch (PropertyReferenceException e) {
+            setHeadOfDepModel(model, 1, 10, "orderId", user);
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("pageNumber", urlPageNumber);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("orders", page.getContent());
+        model.addAttribute("order", sort.toString());
+    }
     public List<Order> getOrdersForCurrentUser() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -163,7 +190,6 @@ public class OrderService {
 
         return orderRepository.findByDept(user.getDepartment());
     }
-
 
 }
 
