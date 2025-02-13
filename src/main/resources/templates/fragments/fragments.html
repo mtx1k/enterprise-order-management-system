@@ -1,7 +1,13 @@
 <header th:fragment="top" class="d-flex justify-content-between align-items-center p-3 bg-light border-bottom">
-    <h1 class="h3">Hello, you are logged in as <span th:text="${user.login}"></span> from<span th:text="${department}"> </span> </h1>
+    <h1 class="h3">Hello, you are logged in as <span th:text="${user.login}"></span> from<span
+            th:text="${department}"> </span></h1>
     <form id="logoutForm" action="/logout" method="post" class="d-inline">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <button type="submit" class="btn btn-danger">Logout</button>
     </form>
 </header>
+
+<footer th:fragment="bottom" class="d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+    <span>&copy; 2025 AlViOl GmbH</span>
+    <a href="/about" class="text-white">About us</a>
+</footer>
