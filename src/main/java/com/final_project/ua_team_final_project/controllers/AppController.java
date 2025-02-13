@@ -74,16 +74,12 @@ public class AppController {
                 return "organization/userpage";
             }
             case "HEAD" -> {
-                List<Order> orderForDept = orderService.getOrdersForCurrentUser();
+                List<Order> orderForDept = orderRepository.findByDept_DeptIdAndStatus_StatusIdIn(
+                        user.getDepartment().getDeptId(), List.of(1L, 4L));
                 model.addAttribute("user", user);
                 if (order.equals("userId")) {
                     order = "orderId";
                 }
-//                if (orderForDept.isEmpty()) {
-//                    ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//                } else {
-////                ResponseEntity.ok(orderForDept);
-//                }
 
                 model.addAttribute("orderForDept", orderForDept);
                 model.addAttribute("department", user.getDepartment().getName());

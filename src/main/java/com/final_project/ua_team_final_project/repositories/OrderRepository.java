@@ -23,6 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByUpdatedAt(LocalDateTime updatedAt);
     Optional<Order> findByStatus(OrderStatus orderStatus);
 
+    List<Order> findByDept_DeptIdAndStatus_StatusIdIn(Long deptId, List<Long> statusIds);
     List<Order> findByApprovedByHeadTrueAndApprovedByFinDeptTrue();
 
     Page<Order> findByApprovedByHeadAndApprovedByFinDeptAndStatusNot(
