@@ -141,7 +141,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="order : ${orderForDept}">
-                    <td><input type="checkbox" name="selectedProducts" th:value="${order.orderId}"/></td>
+                    <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
                     <td th:text="${order.orderId}"
                         th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
                         style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
