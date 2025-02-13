@@ -87,7 +87,7 @@ public class AppController {
 
                 model.addAttribute("orderForDept", orderForDept);
                 model.addAttribute("department", user.getDepartment().getName());
-                orderService.setHeadOfDepModel(model, urlPageNumber, pageSize, order, user);
+                pageDataManager.setHeadOfDepModel(model, urlPageNumber, pageSize, order, user);
 
                 return "organization/pageOfHead";
             }

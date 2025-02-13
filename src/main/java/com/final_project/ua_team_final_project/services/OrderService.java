@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Component
 @Service
 public class OrderService {
 
@@ -45,12 +47,6 @@ public class OrderService {
         this.orderedProductRepository = orderedProductRepository;
     }
 
-    @Transactional
-    public void saveOrder(Order order, List<OrderedProduct> orderedProducts) {
-        orderRepository.save(order);
-
-
-    }
 
     @Transactional
     public void saveNewOrder(Map<Long, Long> orderedProducts) {
@@ -168,31 +164,6 @@ public class OrderService {
         return orderRepository.findByDept(user.getDepartment());
     }
 
-    public void setHeadOfDepModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
 
-        int pageNumber = urlPageNumber - 1;
-
-        Sort.Direction direction = Sort.Direction.ASC;
-
-        if (order.endsWith("desc")) {
-            direction = Sort.Direction.DESC;
-            order = order.substring(0, order.length() - 5);
-        }
-        Sort sort = Sort.by(direction, order);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-        Page<Order> page = null;
-        try {
-            page = orderRepository.findByApprovedByHeadAndApprovedByFinDeptAndStatusNot(true,
-                    false, orderStatusRepository.findById(4L).orElse(null), pageable);
-        } catch (PropertyReferenceException e) {
-            setHeadOfDepModel(model, 1, 10, "orderId", user);
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("pageNumber", urlPageNumber);
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("orders", page.getContent());
-        model.addAttribute("order", sort.toString());
-    }
 }
 
