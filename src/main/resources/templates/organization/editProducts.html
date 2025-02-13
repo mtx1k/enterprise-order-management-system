@@ -5,55 +5,73 @@
 
     <title>Edit Selected Products</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
-<header th:replace="~{fragments/fragments :: top}"></header>
-<div class="container mt-4">
-    <h2>Review and Edit Selected Products</h2>
+<div class="wrapper">
+    <div class="content">
+        <header th:replace="~{fragments/fragments :: top}"></header>
+        <div class="container mt-4">
+            <h2>Review and Edit Selected Products</h2>
 
-    <form action="/confirmOrder" method="POST">
-        <input type="hidden" name="_csrf" th:value="${_csrf.token}">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Product Code</th>
-                <th>Product Name</th>
-<!--                <th>Description</th>-->
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="orderedProduct, iterStat : ${orderedProducts}">
-                <td th:text="${orderedProduct.productCode}"></td>
-                <td th:text="${orderedProduct.name}"></td>
-<!--                <td th:text="${item.description}"></td>-->
-                <td th:text="${orderedProduct.itemPrice}"></td>
-                <td>
-                    <input type="hidden" name="selectedProducts" th:value="${orderedProduct.orderedProductId}">
-                    <input type="number" name="quantities" th:value="${orderedProduct.amount}"
-                        min="1"
-                        class="form-control"
-                    />
-<!--                    <input type="number"-->
-<!--                           th:name="'orderedProducts[' + ${orderedProduct.order} + '].amount'"-->
-<!--                           th:value="${orderedProduct.amount}"-->
-<!--                           min="1"-->
-<!--                           class="form-control"/>-->
-                </td>
-                <td th:text="${orderedProduct.itemPrice} * ${orderedProduct.amount}"></td>
-            </tr>
-            </tbody>
-        </table>
+            <form action="/confirmOrder" method="POST">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Product Code</th>
+                        <th>Product Name</th>
+                        <!--                <th>Description</th>-->
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="orderedProduct, iterStat : ${orderedProducts}">
+                        <td th:text="${orderedProduct.productCode}"></td>
+                        <td th:text="${orderedProduct.name}"></td>
+                        <!--                <td th:text="${item.description}"></td>-->
+                        <td th:text="${orderedProduct.itemPrice}"></td>
+                        <td>
+                            <input type="hidden" name="selectedProducts" th:value="${orderedProduct.orderedProductId}">
+                            <input type="number" name="quantities" th:value="${orderedProduct.amount}"
+                                   min="1"
+                                   class="form-control"
+                            />
+                            <!--                    <input type="number"-->
+                            <!--                           th:name="'orderedProducts[' + ${orderedProduct.order} + '].amount'"-->
+                            <!--                           th:value="${orderedProduct.amount}"-->
+                            <!--                           min="1"-->
+                            <!--                           class="form-control"/>-->
+                        </td>
+                        <td th:text="${orderedProduct.itemPrice} * ${orderedProduct.amount}"></td>
+                    </tr>
+                    </tbody>
+                </table>
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="/" class="btn btn-secondary">Back</a>
-            <button type="submit" class="btn btn-primary">Confirm Order</button>
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="/" class="btn btn-secondary">Back</a>
+                    <button type="submit" class="btn btn-primary">Confirm Order</button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
+    <footer th:replace="~{fragments/fragments :: bottom}"></footer>
 </div>
-
 <script src="/js/bootstrap.bundle.js"></script>
 </body>
 </html>

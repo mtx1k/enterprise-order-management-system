@@ -5,6 +5,18 @@
     <title>Financial Control Page</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
         a {
             color: black;
             text-decoration: none;
@@ -47,64 +59,69 @@
     </style>
 </head>
 <body>
-<header th:replace="~{fragments/fragments :: top}"></header>
-<h1>List of orders</h1>
+<div class="wrapper">
+    <div class="content">
 
-<label for="sortOptions">Sort by:</label>
-<select id="sortOptions" onchange="refresh()">
-    <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
-    <option value="dept" th:selected="${order == 'dept: ASC'}">Department</option>
-    <option value="dept_desc" th:selected="${order == 'dept: DESC'}">Department DESC</option>
-    <option value="totalPrice" th:selected="${order == 'totalPrice: ASC'}">Total Price</option>
-    <option value="totalPrice_desc" th:selected="${order == 'totalPrice: DESC'}">Total Price DESC</option>
-</select>
+        <header th:replace="~{fragments/fragments :: top}"></header>
+        <h1>List of orders</h1>
 
-<label for="resultsPerPage">Results per page:</label>
-<select id="resultsPerPage" onchange="refresh()">
-    <option value="10" th:selected="${pageSize == 10}">10</option>
-    <option value="25" th:selected="${pageSize == 25}">25</option>
-    <option value="50" th:selected="${pageSize == 50}">50</option>
-    <option value="100" th:selected="${pageSize == 100}">100</option>
-</select>
+        <label for="sortOptions">Sort by:</label>
+        <select id="sortOptions" onchange="refresh()">
+            <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
+            <option value="dept" th:selected="${order == 'dept: ASC'}">Department</option>
+            <option value="dept_desc" th:selected="${order == 'dept: DESC'}">Department DESC</option>
+            <option value="totalPrice" th:selected="${order == 'totalPrice: ASC'}">Total Price</option>
+            <option value="totalPrice_desc" th:selected="${order == 'totalPrice: DESC'}">Total Price DESC</option>
+        </select>
 
-<form id="ordersForm" action="/approveOrders" method="POST">
-    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
-    <table id="ordersTable">
-        <thead>
-        <tr>
-            <th>Select</th>
-            <th>Order ID</th>
-            <th>Department</th>
-            <th>Total Price</th>
-            <th>Created at</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orders}">
-            <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
-            <td th:text="${order.orderId}"></td>
-            <td th:text="${order.dept.getName()}"></td>
-            <td th:text="${order.totalPrice}"></td>
-            <td th:text="${order.createdAt}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <button type="submit">Approve Order</button>
-    <button type="button" onclick="reject()">Reject Order</button>
-</form>
+        <label for="resultsPerPage">Results per page:</label>
+        <select id="resultsPerPage" onchange="refresh()">
+            <option value="10" th:selected="${pageSize == 10}">10</option>
+            <option value="25" th:selected="${pageSize == 25}">25</option>
+            <option value="50" th:selected="${pageSize == 50}">50</option>
+            <option value="100" th:selected="${pageSize == 100}">100</option>
+        </select>
 
-<div class="pagination-container">
-    <button id="firstPageButton" onclick="refresh()">First Page</button>
-    <button id="prevPage" onclick="prevPage()">Previous</button>
-    <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
-        <label for="pageNumber">Page#</label>
-        <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
-        <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
-    </form>
-    <button id="nextPage" onclick="nextPage()">Next</button>
-    <button id="lastPageButton" onclick="lastPage()">Last Page</button>
+        <form id="ordersForm" action="/approveOrders" method="POST">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+            <table id="ordersTable">
+                <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Order ID</th>
+                    <th>Department</th>
+                    <th>Total Price</th>
+                    <th>Created at</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
+                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${order.dept.getName()}"></td>
+                    <td th:text="${order.totalPrice}"></td>
+                    <td th:text="${order.createdAt}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="submit">Approve Order</button>
+            <button type="button" onclick="reject()">Reject Order</button>
+        </form>
+
+        <div class="pagination-container">
+            <button id="firstPageButton" onclick="refresh()">First Page</button>
+            <button id="prevPage" onclick="prevPage()">Previous</button>
+            <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
+                <label for="pageNumber">Page#</label>
+                <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
+                <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
+            </form>
+            <button id="nextPage" onclick="nextPage()">Next</button>
+            <button id="lastPageButton" onclick="lastPage()">Last Page</button>
+        </div>
+    </div>
+    <footer th:replace="~{fragments/fragments :: bottom}"></footer>
 </div>
-
 <script>
     const pageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
