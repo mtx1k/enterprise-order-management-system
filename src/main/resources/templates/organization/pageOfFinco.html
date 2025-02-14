@@ -9,14 +9,17 @@
             height: 100%;
             margin: 0;
         }
+
         .wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
+
         .content {
             flex: 1;
         }
+
         a {
             color: black;
             text-decoration: none;
@@ -51,6 +54,7 @@
             display: flex;
             align-items: center;
         }
+
         .modal {
             display: none; /* Hidden by default */
             position: fixed;
@@ -60,8 +64,8 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
@@ -85,6 +89,7 @@
             text-decoration: none;
             cursor: pointer;
         }
+
         /* Style for the order details table inside the modal */
         .modal-content table {
             width: 100%;
@@ -137,7 +142,9 @@
                 <tbody>
                 <tr th:each="order : ${orders}">
                     <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
-                    <td th:text="${order.orderId}"   th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"></td>
+                    <td th:text="${order.orderId}"
+                        th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
+                        style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
                     <td th:text="${order.dept.getName()}"></td>
                     <td th:text="${order.totalPrice}"></td>
                     <td th:text="${order.createdAt}"></td>
@@ -150,13 +157,15 @@
 
         <div th:each="order : ${orders}" th:id="'modal-' + ${order.orderId}" class="modal">
             <div class="modal-content">
-                <span class="close" th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
+                <span class="close"
+                      th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
                 <h2>Order Details</h2>
                 <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
                 <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
                 <p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span></p>
                 <p><strong>Status:</strong> <span th:text="${order.status.statusText}"></span></p>
-                <p><strong>Created At:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+                <p><strong>Created At:</strong> <span
+                        th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
                 <h3>Ordered Products</h3>
                 <ul>
                     <li th:each="product : ${order.orderedProducts}">
