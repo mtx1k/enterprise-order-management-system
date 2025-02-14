@@ -137,7 +137,7 @@
                 <tbody>
                 <tr th:each="order : ${orders}">
                     <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
-                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${order.orderId}"   th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"></td>
                     <td th:text="${order.dept.getName()}"></td>
                     <td th:text="${order.totalPrice}"></td>
                     <td th:text="${order.createdAt}"></td>
