@@ -18,7 +18,7 @@ public class OrderedProduct {
     private Long orderedProductId;
 
     @ManyToOne
-    @JoinColumn(name = "orders_order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     private String name;
@@ -26,9 +26,11 @@ public class OrderedProduct {
 
     @Column(nullable = false)
     private Double itemPrice;
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;

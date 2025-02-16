@@ -191,5 +191,9 @@ public class OrderService {
         return orderRepository.findByDept(user.getDepartment());
     }
 
+    public List<OrderedProduct> getOrderedProductsForOrders(List<Long> orderIds) {
+        return orderedProductRepository.findByOrderOrderIdIn(orderIds);
+    }
+
 }
 
