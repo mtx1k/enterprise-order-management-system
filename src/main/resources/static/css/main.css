@@ -11,7 +11,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 70%;
+    width: 85%;
 }
 
 .start{
@@ -86,7 +86,7 @@ button {
 }
 
 .logo-left img, .logo-right img {
-    width: 400px;
+    width: 550px;
     height: auto;
 }
 
