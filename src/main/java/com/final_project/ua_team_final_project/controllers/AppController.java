@@ -50,6 +50,8 @@ public class AppController {
                         @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
                         @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
                         @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
+                        @RequestParam(name = "products", required = false) List<Long> products,
+                        @RequestParam(name = "quantities", required = false) List<Integer> quantities,
                         Model model) {
         if (principal == null) {
 
@@ -70,7 +72,10 @@ public class AppController {
                 return "organization/adminpage";
             }
             case "USER" -> {
-                getAvailableProductsModel(model, user);
+                if (order.equals("userId")) {
+                    order = "productCode";
+                }
+                pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user);
                 return "organization/userpage";
             }
             case "HEAD" -> {

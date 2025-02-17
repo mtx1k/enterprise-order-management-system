@@ -49,7 +49,7 @@
         }
 
         .table-header {
-            display: flex;
+            /*display: flex;*/
             justify-content: space-between;
             align-items: center;
             background: #fff;
@@ -130,9 +130,7 @@
         <div class="table-header">
             <label for="sortOptions">Sort by:</label>
             <select id="sortOptions" onchange="refresh()">
-                <option value="scales" th:selected="${order == 'scales'}">Scaled</option>
-                <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
-                <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
+
                 <option value="productCode" th:selected="${order == 'productCode: ASC'}">Product Code</option>
                 <option value="productCode_desc" th:selected="${order == 'productCode: DESC'}">Product Code DESC
                 </option>
