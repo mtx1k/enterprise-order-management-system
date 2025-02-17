@@ -47,7 +47,6 @@ public class OrderService {
         this.orderedProductRepository = orderedProductRepository;
     }
 
-
     @Transactional
     public void saveNewOrder(Map<Long, Long> orderedProducts) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
