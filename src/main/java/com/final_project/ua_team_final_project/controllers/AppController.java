@@ -63,14 +63,16 @@ public class AppController {
             return "redirect:/login";
         }
 
-
         switch (user.getRole().getName()) {
             case "ADMIN" -> {
                 pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order, user);
                 return "organization/adminpage";
             }
             case "USER" -> {
-                getAvailableProductsModel(model, user);
+                if (order.equals("userId")) {
+                    order = "productCode";
+                }
+                pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user);
                 return "organization/userpage";
             }
             case "HEAD" -> {
@@ -161,11 +163,7 @@ public class AppController {
         return "editUser";
     }
 
-    private void getAvailableProductsModel(Model model, User user) {
-        List<AvailableProducts> availableProducts = availableProductsRepository.findAll();
-        model.addAttribute("availableProducts", availableProducts);
-        model.addAttribute("user", user);
-    }
+
 
     @PostMapping("/edituser")
     public String editUser(@RequestParam("id") Long id,
