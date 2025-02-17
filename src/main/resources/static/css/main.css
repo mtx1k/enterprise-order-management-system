@@ -45,23 +45,34 @@ h1 {
     text-shadow: 0px 0px 2px rgba(0,0,0,0.5);
     margin-bottom: 60px;
 }
-label {
+.label {
     color: rgba(255,255,255,0.8);
     text-transform: uppercase;
     font-size: 20px;
     letter-spacing: 2px;
     padding-left: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    translate: 10px 10px;
+    color: #fff;
+    transition: translate 500ms, scale 500ms;
 }
-input {
-    background: rgba(255,255,255,0.3);
-    height: 60px;
-    line-height: 60px;
+
+.input {
     border-radius: 20px;
-    padding: 0px 20px;
     border: none;
     margin-bottom: 30px;
     color: white;
     font-size: 30px;
+    padding: 10px;
+    outline: 2px solid #fff;
+    background-color: transparent;
+    transition: outline-color 500ms;
+}
+
+.input:is(:focus, :valid){
+    outline-color: #3c50eb
 }
 button {
     background: rgb(45,126,231);
@@ -93,4 +104,14 @@ button {
 .show-logo {
     opacity: 1;
 }
-
+.input-group {
+    position: relative;
+    margin: 10px;
+}
+.input:focus + .label,
+.input:valid + .label{
+    padding-inline: 5px ;
+    translate:15px -20px;
+    scale: 0.8;
+    background-color: transparent;
+}
