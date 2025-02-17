@@ -74,16 +74,17 @@ public class AppController {
                 return "organization/userpage";
             }
             case "HEAD" -> {
-                List<Order> orderForDept = orderService.getOrdersForCurrentUser();
-               model.addAttribute("user", user);
-                if (orderForDept.isEmpty()) {
-                    ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-                } else {
-//                ResponseEntity.ok(orderForDept);
+                List<Order> orderForDept = orderRepository.findByDept_DeptIdAndStatus_StatusIdIn(
+                        user.getDepartment().getDeptId(), List.of(1L, 4L));
+                model.addAttribute("user", user);
+                if (order.equals("userId")) {
+                    order = "orderId";
                 }
 
                 model.addAttribute("orderForDept", orderForDept);
                 model.addAttribute("department", user.getDepartment().getName());
+                orderService.setHeadOfDepModel(model, urlPageNumber, pageSize, order, user);
+
                 return "organization/pageOfHead";
             }
             case "FINCO" -> {
@@ -199,7 +200,7 @@ public class AppController {
 
     @PostMapping("/approveOrders")
     public String approveOrders(@RequestParam("selectedOrders") List<Long> orders) {
-        for (Long id: orders) {
+        for (Long id : orders) {
             Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
             order.setApprovedByFinDept(true);
             order.setStatus(orderStatusRepository.findById(2L).orElseThrow(IllegalArgumentException::new));
@@ -208,9 +209,32 @@ public class AppController {
         return "redirect:/";
     }
 
+    @PostMapping("/approveOrdersByHead")
+    public String approveOrdersByHead(@RequestParam("selectedOrders") List<Long> orders, Principal principal) {
+        User user = userRepository.findByLogin(principal.getName()).get();
+        for (Long id : orders) {
+            Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+            order.setApprovedByHead(true);
+            order.setUser(user);
+            order.setStatus(orderStatusRepository.findById(2L).orElseThrow(IllegalArgumentException::new));
+            orderRepository.save(order);
+        }
+        return "redirect:/";
+    }
+
     @PostMapping("/rejectOrders")
     public String rejectOrders(@RequestParam("selectedOrders") List<Long> orders) {
-        for (Long id: orders) {
+        for (Long id : orders) {
+            Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+            order.setStatus(orderStatusRepository.findById(4L).orElseThrow(IllegalArgumentException::new));
+            orderRepository.save(order);
+        }
+        return "redirect:/";
+    }
+
+    @PostMapping("/rejectOrdersByHead")
+    public String rejectOrdersByHead(@RequestParam("selectedOrders") List<Long> orders) {
+        for (Long id : orders) {
             Order order = orderRepository.findById(id).orElseThrow(IllegalArgumentException::new);
             order.setStatus(orderStatusRepository.findById(4L).orElseThrow(IllegalArgumentException::new));
             orderRepository.save(order);
