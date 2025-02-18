@@ -104,6 +104,7 @@ public class PageDataManager {
         model.addAttribute("department", user.getDepartment().getName());
     }
 
+
     public void getAvailableProductsModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
         int pageNumber = urlPageNumber - 1;
         Sort.Direction direction = Sort.Direction.ASC;
@@ -125,5 +126,11 @@ public class PageDataManager {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("order", sort.toString());
         model.addAttribute("availableProducts", page.getContent());
+    }
+    public void setNewUserModel(Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("departments", departmentRepository.findAll());
+        model.addAttribute("roles", roleRepository.findAll());
+
     }
 }
