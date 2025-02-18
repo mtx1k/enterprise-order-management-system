@@ -1,0 +1,92 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f8f9fa;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 70%;
+}
+
+.start{
+    margin: auto;
+    margin-top: 10% ;
+    border: 1px solid black;
+    width: 400px;
+    height: 500px;
+    background: url('https://cms-cdn.bayleys.co.nz/00000000-0000-0000-0000-000000000000/892b88e5-c9e0-4cef-a615-64701c456ee2/2e1fdaab-2b8e-4688-9922-f9c737f4af27/SY2415-Capital-Markets-Header-823x625.jpg?width=900');
+    color: white;
+    border-radius: 20px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.75);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+form {
+    display: block;
+    box-sizing: border-box;
+    padding: 40px;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: brightness(40%);
+    flex-direction: column;
+    display: flex;
+    gap: 5px;
+}
+h1 {
+    font-weight: normal;
+    font-size: 24px;
+    text-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+    margin-bottom: 60px;
+}
+label {
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding-left: 10px;
+}
+input {
+    background: rgba(255,255,255,0.3);
+    height: 40px;
+    line-height: 40px;
+    border-radius: 20px;
+    padding: 0px 20px;
+    border: none;
+    margin-bottom: 20px;
+    color: white;
+}
+button {
+    background: rgb(45,126,231);
+    height: 40px;
+    line-height: 40px;
+    border-radius: 40px;
+    border: none;
+    margin: 10px 0px;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+    color: white;
+    font-size: 12px;
+    text-transform: uppercase;
+
+}
+.logo-left, .logo-right {
+    width: 100px;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+
+.logo-left img, .logo-right img {
+    width: 100%;
+    height: auto;
+}
+
+.show-logo {
+    opacity: 1;
+}
+
