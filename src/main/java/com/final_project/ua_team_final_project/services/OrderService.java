@@ -32,7 +32,6 @@ public class OrderService {
     private final CategoryRepository categoryRepository;
     private final AvailableProductsRepository availableProductsRepository;
     private final OrderStatusRepository orderStatusRepository;
-
     private final OrderRepository orderRepository;
     private final OrderedProductRepository orderedProductRepository;
 
@@ -42,7 +41,6 @@ public class OrderService {
         this.categoryRepository = categoryRepository;
         this.availableProductsRepository = availableProductsRepository;
         this.orderStatusRepository = orderStatusRepository;
-
         this.orderRepository = orderRepository;
         this.orderedProductRepository = orderedProductRepository;
     }

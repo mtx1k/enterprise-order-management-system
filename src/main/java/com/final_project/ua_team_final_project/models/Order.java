@@ -45,11 +45,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
-    public void addOrderedProduct(OrderedProduct orderedProduct) {
-        orderedProducts.add(orderedProduct);
-        orderedProduct.setOrder(this);
-    }
-
     public Order() { }
 
     public Order(Long orderId, Department dept, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, LocalDateTime createdAt, LocalDateTime updatedAt, OrderStatus status, List<OrderedProduct> orderedProducts) {
