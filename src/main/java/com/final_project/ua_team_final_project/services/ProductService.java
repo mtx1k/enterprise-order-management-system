@@ -15,14 +15,14 @@ import java.util.Optional;
 public class ProductService {
 
     private final DigitalOceanStorageService digitalOceanService;
-    private final ParsingService csvService;
+    private final ParsingService parsingService;
     private final AvailableProductsRepository availableProductsRepository;
     private final SupplierRepository supplierRepository;
     private final TruncateService truncateService;
 
-    public ProductService(DigitalOceanStorageService digitalOceanService, ParsingService csvService, AvailableProductsRepository availableProductsRepository, SupplierRepository supplierRepository, TruncateService truncateService) {
+    public ProductService(DigitalOceanStorageService digitalOceanService, ParsingService parsingService, AvailableProductsRepository availableProductsRepository, SupplierRepository supplierRepository, TruncateService truncateService) {
         this.digitalOceanService = digitalOceanService;
-        this.csvService = csvService;
+        this.parsingService = parsingService;
         this.availableProductsRepository = availableProductsRepository;
         this.supplierRepository = supplierRepository;
         this.truncateService = truncateService;
@@ -45,7 +45,7 @@ public class ProductService {
 
             try {
                 InputStream inputStream = digitalOceanService.downloadFile(filename);
-                List<AvailableProducts> products = csvService.parseCsv(inputStream, supplier);
+                List<AvailableProducts> products = parsingService.parseCsv(inputStream, supplier);
                 availableProductsRepository.saveAll(products);
                 System.out.println("successfully parsed csv file " + filename);
             } catch (Exception e) {

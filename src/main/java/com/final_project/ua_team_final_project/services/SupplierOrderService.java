@@ -20,14 +20,11 @@ import java.util.stream.Collectors;
 @Service
 public class SupplierOrderService {
 
-    private final OrderRepository orderRepository;
-
     private final OrderService orderService;
 
     private final SupplierRepository supplierRepository;
 
-    public SupplierOrderService(OrderRepository orderRepository, OrderService orderService, SupplierRepository supplierRepository) {
-        this.orderRepository = orderRepository;
+    public SupplierOrderService(OrderService orderService, SupplierRepository supplierRepository) {
         this.orderService = orderService;
         this.supplierRepository = supplierRepository;
     }

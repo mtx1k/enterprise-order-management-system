@@ -43,4 +43,8 @@ public class DigitalOceanStorageService {
                 .build();
         return s3Client.getObject(request);
     }
+
+    public void uploadFile(String fileName, InputStream inputStream) {
+
+    }
 }
