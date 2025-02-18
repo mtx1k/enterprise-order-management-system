@@ -1,15 +1,15 @@
 package com.final_project.ua_team_final_project.services;
 
-import com.final_project.ua_team_final_project.models.Order;
 import com.final_project.ua_team_final_project.models.OrderedProduct;
 import com.final_project.ua_team_final_project.models.Supplier;
-import com.final_project.ua_team_final_project.repositories.OrderRepository;
-import com.final_project.ua_team_final_project.repositories.OrderedProductRepository;
-import com.final_project.ua_team_final_project.repositories.SupplierOrdersRepository;
 import com.final_project.ua_team_final_project.repositories.SupplierRepository;
-import lombok.RequiredArgsConstructor;
+import com.opencsv.CSVWriter;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +24,12 @@ public class SupplierOrderService {
 
     private final SupplierRepository supplierRepository;
 
-    public SupplierOrderService(OrderService orderService, SupplierRepository supplierRepository) {
+    private final DigitalOceanStorageService digitalOceanStorageService;
+
+    public SupplierOrderService(OrderService orderService, SupplierRepository supplierRepository, DigitalOceanStorageService digitalOceanStorageService) {
         this.orderService = orderService;
         this.supplierRepository = supplierRepository;
+        this.digitalOceanStorageService = digitalOceanStorageService;
     }
 
     public Map<String, String> processOrders(List<Long> orderIds) {
@@ -80,31 +83,40 @@ public class SupplierOrderService {
         return supplierName + "_" + LocalDate.now() + ".csv";
     }
 
-//    private byte[] generateCsvContent(List<Order> orders) {
-//        try (StringWriter writer = new StringWriter();
-//             CSVWriter csvWriter = new CSVWriter(writer)) {
-//
-//            csvWriter.writeNext(new String[]{"Order ID", "Department", "Total Price", "Created At"});
-//
-//            for (Order order : orders) {
-//                csvWriter.writeNext(new String[]{
-//                        order.getId().toString(),
-//                        order.getDept().getName(),
-//                        order.getTotalPrice().toString(),
-//                        order.getCreatedAt().toString()
-//                });
-//            }
-//
-//            return writer.toString().getBytes(StandardCharsets.UTF_8);
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException("Error generating CSV", e);
-//        }
-//    }
-//
-//    private void saveFileToStorage(String fileName, byte[] data) {
-//        // TODO: Сохранить файл в хранилище (например, S3, FTP, локальную папку)
-//        System.out.println("Saving file: " + fileName);
-//    }
+    public void generateAndUploadCsv(Map<Long, List<OrderedProduct>> supplierProducts) {
+        LocalDate today = LocalDate.now();
+
+        supplierProducts.forEach((supplierId, products) -> {
+            String fileName = "SupplierOrdersHistory/" + "supplier_" + supplierId + "_" + today + ".csv";
+
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+                 CSVWriter csvWriter = new CSVWriter(writer)) {
+
+                // Header
+                csvWriter.writeNext(new String[]{"Product Code", "Name", "Item Price", "Amount"});
+
+                // Products
+                double price = 0.0;
+                for (OrderedProduct product : products) {
+                    price += product.getItemPrice() * product.getAmount();
+                    csvWriter.writeNext(new String[]{
+                            product.getName(),
+                            product.getProductCode(),
+                            product.getItemPrice().toString(),
+                            product.getAmount().toString()
+                    });
+                }
+                csvWriter.writeNext(new String[]{"Price: ", String.format("%.2f", price)});
+
+                csvWriter.flush();
+                digitalOceanStorageService.uploadFile(fileName, outputStream.toByteArray());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 }
 

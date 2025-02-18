@@ -2,11 +2,9 @@ package com.final_project.ua_team_final_project.services;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.InputStream;
 import java.util.List;
@@ -44,7 +42,18 @@ public class DigitalOceanStorageService {
         return s3Client.getObject(request);
     }
 
-    public void uploadFile(String fileName, InputStream inputStream) {
+    public void uploadFile(String fileName, byte[] fileData) {
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(BUCKET_NAME)
+                    .key(fileName)
+                    .contentType("text/csv")
+                    .build();
 
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(fileData));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
