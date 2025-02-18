@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,46 +29,16 @@ public class SupplierOrderService {
         this.digitalOceanStorageService = digitalOceanStorageService;
     }
 
-    public Map<String, String> processOrders(List<Long> orderIds) {
+    public Map<Long, List<OrderedProduct>> processOrders(List<Long> orderIds) {
         List<OrderedProduct> orderedProducts = orderService.getOrderedProductsForOrders(orderIds);
         // System.out.println(orderedProducts);
 
-        // Orders by supplier
         Map<Long, List<OrderedProduct>> orderedProductsBySupplier = orderedProducts.stream()
                 .collect(Collectors.groupingBy(product -> product.getSupplier().getSupplierId()));
 //        orderedProductsBySupplier.forEach((supplier, products) -> {
 //            System.out.println(supplier + " " + products);
 //        });
-
-        Map<String, String> fileLinks = new HashMap<>();
-
-        for (Map.Entry<Long, List<OrderedProduct>> entry : orderedProductsBySupplier.entrySet()) {
-            Long supplierId = entry.getKey();
-            List<OrderedProduct> products = entry.getValue();
-
-            String fileName = generateFileName(supplierId);
-            //String link = generateLink(fileName);
-
-            //byte[] csvData = generateCsvContent(supplierOrders);
-            //saveFileToStorage(fileName, csvData);
-
-        }
-
-//        for (Map.Entry<Long, List<Order>> entry : ordersBySupplier.entrySet()) {
-//            Long supplierId = entry.getKey();
-//            List<Order> supplierOrders = entry.getValue();
-//            String fileName = "supplier_" + supplierId + "_" + LocalDate.now() + ".csv";
-//
-//            // Генерация CSV
-//            byte[] csvData = generateCsvContent(supplierOrders);
-//
-//            // TODO: Записать файл в хранилище
-//            saveFileToStorage(fileName, csvData);
-//
-//            fileLinks.put(fileName, "/storage/" + fileName);
-//        }
-
-        return fileLinks;
+        return orderedProductsBySupplier;
     }
 
     private String generateFileName(Long supplierId) {
@@ -79,15 +46,15 @@ public class SupplierOrderService {
         if (supplier.isEmpty()) {
             return null;
         }
-        String supplierName = supplier.get().getName();
-        return supplierName + "_" + LocalDate.now() + ".csv";
+        String supplierName = supplier.get().getName().replaceAll(" ", "");
+        return "SupplierOrdersHistory/" + supplierName + "_" + LocalDate.now() + ".csv";
     }
 
-    public void generateAndUploadCsv(Map<Long, List<OrderedProduct>> supplierProducts) {
-        LocalDate today = LocalDate.now();
+    public List<String> generateAndUploadCsv(Map<Long, List<OrderedProduct>> supplierProducts) {
+        List<String> files = new ArrayList<>();
 
         supplierProducts.forEach((supplierId, products) -> {
-            String fileName = "SupplierOrdersHistory/" + "supplier_" + supplierId + "_" + today + ".csv";
+            String fileName = generateFileName(supplierId);
 
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
@@ -101,8 +68,8 @@ public class SupplierOrderService {
                 for (OrderedProduct product : products) {
                     price += product.getItemPrice() * product.getAmount();
                     csvWriter.writeNext(new String[]{
-                            product.getName(),
                             product.getProductCode(),
+                            product.getName(),
                             product.getItemPrice().toString(),
                             product.getAmount().toString()
                     });
@@ -115,7 +82,11 @@ public class SupplierOrderService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            files.add(fileName);
+
         });
+        return files;
     }
 
 }
