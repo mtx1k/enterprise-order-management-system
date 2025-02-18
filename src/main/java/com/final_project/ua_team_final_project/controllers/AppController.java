@@ -1,6 +1,7 @@
 package com.final_project.ua_team_final_project.controllers;
 
 import com.final_project.ua_team_final_project.dto.OrderDTO;
+import com.final_project.ua_team_final_project.dto.OrderRequest;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import com.final_project.ua_team_final_project.models.User;
@@ -108,13 +109,18 @@ public class AppController {
     }
 
     @PostMapping("/selectedProducts")
-    public String selectedProducts(@RequestParam List<Long> selectedProducts,
-                                   @RequestParam Map<String, String> quantities,
+    public String selectedProducts(@RequestBody OrderRequest orderRequest,
                                    Model model,
                                    Principal principal) {
-        if (orderService.setSelectedProductsModel(selectedProducts, quantities, model)) {
-            return "redirect:/";
+
+        List<Long> productIds = orderRequest.getProductIds();
+        List<Integer> quantities = orderRequest.getQuantities();
+
+        Map<Long, Integer> selectedProducts = new HashMap<>();
+        for (int i = 0; i < productIds.size(); i++) {
+            selectedProducts.put(productIds.get(i), quantities.get(i));
         }
+        orderService.setSelectedProductsModel(selectedProducts, model);
         model.addAttribute("user", userRepository.findByLogin(principal.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User not found: " + principal.getName())));
         return "organization/editProducts";
