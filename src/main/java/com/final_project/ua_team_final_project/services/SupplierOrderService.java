@@ -1,8 +1,10 @@
 package com.final_project.ua_team_final_project.services;
 
+import com.final_project.ua_team_final_project.models.OrderStatus;
 import com.final_project.ua_team_final_project.models.OrderedProduct;
 import com.final_project.ua_team_final_project.models.Supplier;
 import com.final_project.ua_team_final_project.models.SupplierOrder;
+import com.final_project.ua_team_final_project.repositories.OrderStatusRepository;
 import com.final_project.ua_team_final_project.repositories.SupplierOrdersRepository;
 import com.final_project.ua_team_final_project.repositories.SupplierRepository;
 import com.opencsv.CSVWriter;
@@ -27,7 +29,10 @@ public class SupplierOrderService {
     private final SupplierRepository supplierRepository;
 
     private final DigitalOceanStorageService digitalOceanStorageService;
+
     private final SupplierOrdersRepository supplierOrdersRepository;
+
+    private final OrderStatusRepository orderStatusRepository;
 
     public Map<Long, List<OrderedProduct>> processOrders(List<Long> orderIds) {
         List<OrderedProduct> orderedProducts = orderService.getOrderedProductsForOrders(orderIds);
@@ -96,10 +101,25 @@ public class SupplierOrderService {
         if (supplier.isEmpty()) {
             return;
         }
+        Optional<OrderStatus> orderStatus = orderStatusRepository.findById(1L);
+        if (orderStatus.isEmpty()) {
+            return;
+        }
         SupplierOrder supplierOrder = new SupplierOrder();
         supplierOrder.setSupplier(supplier.get());
         supplierOrder.setTotalPrice(price);
-        supplierOrdersRepository.save(supplierOrder);
+        supplierOrder.setOrderStatus(orderStatus.get());
+
+        long beforeCount = supplierOrdersRepository.count();
+        SupplierOrder newSupplierOrder = supplierOrdersRepository.save(supplierOrder);
+        long afterCount = supplierOrdersRepository.count();
+
+        if (afterCount > beforeCount) {
+            System.out.println("Supplier order id = " + newSupplierOrder.getSupplierOrderId() +  "already completed");
+        } else {
+            System.out.println("Error!");
+        }
+
     }
 }
 
