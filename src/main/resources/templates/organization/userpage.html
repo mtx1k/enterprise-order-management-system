@@ -6,6 +6,7 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>User page</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/table.css">
     <style>
         html, body {
             height: 100%;
@@ -166,7 +167,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="availableProduct : ${availableProducts}">
-                        <td><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/>
+                        <td id="check"><input type="checkbox" name="selectedProducts" th:value="${availableProduct.productId}"/>
                         </td>
                         <td th:text="${availableProduct.productCode}"></td>
                         <td th:text="${availableProduct.name}"></td>
