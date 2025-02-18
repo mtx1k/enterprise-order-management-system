@@ -5,6 +5,7 @@ import com.final_project.ua_team_final_project.models.OrderedProduct;
 import com.final_project.ua_team_final_project.models.Supplier;
 import com.final_project.ua_team_final_project.models.SupplierOrder;
 import com.final_project.ua_team_final_project.repositories.OrderStatusRepository;
+import com.final_project.ua_team_final_project.repositories.SupplierOrderProductRepository;
 import com.final_project.ua_team_final_project.repositories.SupplierOrdersRepository;
 import com.final_project.ua_team_final_project.repositories.SupplierRepository;
 import com.opencsv.CSVWriter;
@@ -33,6 +34,8 @@ public class SupplierOrderService {
     private final SupplierOrdersRepository supplierOrdersRepository;
 
     private final OrderStatusRepository orderStatusRepository;
+
+    private final SupplierOrderProductService supplierOrderProductService;
 
     public Map<Long, List<OrderedProduct>> processOrders(List<Long> orderIds) {
         List<OrderedProduct> orderedProducts = orderService.getOrderedProductsForOrders(orderIds);
@@ -89,37 +92,29 @@ public class SupplierOrderService {
                 e.printStackTrace();
             }
 
-            saveSupplierOrder(supplierId, price);
+            SupplierOrder supplierOrder = saveSupplierOrder(supplierId, price);
+            supplierOrderProductService.saveSupplierProducts(supplierOrder, products);
             files.add(fileName);
 
         });
         return files;
     }
 
-    public void saveSupplierOrder(Long supplierId, double price) {
+    public SupplierOrder saveSupplierOrder(Long supplierId, double price) {
         Optional<Supplier> supplier = supplierRepository.findBySupplierId(supplierId);
         if (supplier.isEmpty()) {
-            return;
+            return null;
         }
         Optional<OrderStatus> orderStatus = orderStatusRepository.findById(1L);
         if (orderStatus.isEmpty()) {
-            return;
+            return null;
         }
         SupplierOrder supplierOrder = new SupplierOrder();
         supplierOrder.setSupplier(supplier.get());
         supplierOrder.setTotalPrice(price);
         supplierOrder.setOrderStatus(orderStatus.get());
 
-        long beforeCount = supplierOrdersRepository.count();
-        SupplierOrder newSupplierOrder = supplierOrdersRepository.save(supplierOrder);
-        long afterCount = supplierOrdersRepository.count();
-
-        if (afterCount > beforeCount) {
-            System.out.println("Supplier order id = " + newSupplierOrder.getSupplierOrderId() +  "already completed");
-        } else {
-            System.out.println("Error!");
-        }
-
+        return supplierOrdersRepository.save(supplierOrder);
     }
 }
 
