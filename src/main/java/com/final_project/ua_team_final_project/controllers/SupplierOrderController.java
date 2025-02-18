@@ -22,6 +22,7 @@ public class SupplierOrderController {
         Map<Long, List<OrderedProduct>> orderedProducts = supplierOrderService.processOrders(selectedOrders);
         List<String> files = supplierOrderService.generateAndUploadCsv(orderedProducts);
 
+        //TODO add status change for order
         return ResponseEntity.ok(files);
     }
 }

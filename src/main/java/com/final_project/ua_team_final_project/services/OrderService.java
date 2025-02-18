@@ -182,5 +182,15 @@ public class OrderService {
         return orderedProductRepository.findByOrderOrderIdIn(orderIds);
     }
 
+    public void changeOrdersStatus(List<Long> orderIds, OrderStatus orderStatus) {
+        for (Long orderId : orderIds) {
+            Order order = orderRepository.findById(orderId).orElse(null);
+            if (order != null) {
+                order.setStatus(orderStatus);
+                orderRepository.save(order);
+            }
+        }
+    }
+
 }
 

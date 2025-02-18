@@ -14,5 +14,5 @@ public interface OrderMessageRepository extends JpaRepository<OrderMessage, Long
     Optional<OrderMessage> findAllByMessageId(Long message_id);
     Optional<OrderMessage> findAllByUser(User user);
     Optional<OrderMessage> findAllByOrder(Order order);
-    Optional<OrderMessage> findAllBySupplierOrders(SupplierOrder supplierOrder);
+    //Optional<OrderMessage> findAllBySupplierOrders(SupplierOrder supplierOrder);
 }
