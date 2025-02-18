@@ -3,6 +3,7 @@ package com.final_project.ua_team_final_project.services;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +23,8 @@ import java.util.Map;
 
 @Component
 @Service
+@RequiredArgsConstructor
 public class OrderService {
-
-    @Autowired
-    private EntityManager entityManager;
 
     private final UserRepository userRepository;
     private final SupplierRepository supplierRepository;
@@ -35,18 +34,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderedProductRepository orderedProductRepository;
-
-    public OrderService(UserRepository userRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, AvailableProductsRepository availableProductsRepository, OrderStatusRepository orderStatusRepository, OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
-        this.userRepository = userRepository;
-        this.supplierRepository = supplierRepository;
-        this.categoryRepository = categoryRepository;
-        this.availableProductsRepository = availableProductsRepository;
-        this.orderStatusRepository = orderStatusRepository;
-
-        this.orderRepository = orderRepository;
-        this.orderedProductRepository = orderedProductRepository;
-    }
-
 
     @Transactional
     public void saveNewOrder(Map<Long, Long> orderedProducts) {

@@ -4,6 +4,7 @@ import com.final_project.ua_team_final_project.models.OrderedProduct;
 import com.final_project.ua_team_final_project.models.Supplier;
 import com.final_project.ua_team_final_project.repositories.SupplierRepository;
 import com.opencsv.CSVWriter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -15,6 +16,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+
 public class SupplierOrderService {
 
     private final OrderService orderService;
@@ -22,12 +25,6 @@ public class SupplierOrderService {
     private final SupplierRepository supplierRepository;
 
     private final DigitalOceanStorageService digitalOceanStorageService;
-
-    public SupplierOrderService(OrderService orderService, SupplierRepository supplierRepository, DigitalOceanStorageService digitalOceanStorageService) {
-        this.orderService = orderService;
-        this.supplierRepository = supplierRepository;
-        this.digitalOceanStorageService = digitalOceanStorageService;
-    }
 
     public Map<Long, List<OrderedProduct>> processOrders(List<Long> orderIds) {
         List<OrderedProduct> orderedProducts = orderService.getOrderedProductsForOrders(orderIds);

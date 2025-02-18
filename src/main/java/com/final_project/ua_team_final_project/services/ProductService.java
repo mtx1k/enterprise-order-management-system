@@ -4,6 +4,7 @@ import com.final_project.ua_team_final_project.models.AvailableProducts;
 import com.final_project.ua_team_final_project.models.Supplier;
 import com.final_project.ua_team_final_project.repositories.AvailableProductsRepository;
 import com.final_project.ua_team_final_project.repositories.SupplierRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final DigitalOceanStorageService digitalOceanService;
@@ -19,14 +21,6 @@ public class ProductService {
     private final AvailableProductsRepository availableProductsRepository;
     private final SupplierRepository supplierRepository;
     private final TruncateService truncateService;
-
-    public ProductService(DigitalOceanStorageService digitalOceanService, ParsingService parsingService, AvailableProductsRepository availableProductsRepository, SupplierRepository supplierRepository, TruncateService truncateService) {
-        this.digitalOceanService = digitalOceanService;
-        this.parsingService = parsingService;
-        this.availableProductsRepository = availableProductsRepository;
-        this.supplierRepository = supplierRepository;
-        this.truncateService = truncateService;
-    }
 
     public void processProducts() {
         List<String> filenames = digitalOceanService.listCsvFiles();
