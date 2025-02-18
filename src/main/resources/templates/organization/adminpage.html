@@ -83,12 +83,13 @@
         #pageNumber {
             width: 50px;
         }
-
         .pagination-container {
-            position: sticky;
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+        .pagination-container {
+            position: sticky;
             bottom: 0;
             background: #fff;
             padding: 10px;
@@ -166,22 +167,22 @@
                 </tbody>
             </table>
 
-            <div class="pagination-container">
-                <button id="firstPageButton" onclick="refresh()">First Page</button>
-                <button id="prevPage" onclick="prevPage()">Previous</button>
-                <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
-                    <label for="pageNumber">Page#</label>
-                    <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
-                    <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
-                </form>
-                <button id="nextPage" onclick="nextPage()">Next</button>
-                <button id="lastPageButton" onclick="lastPage()">Last Page</button>
-            </div>
+
 
 
 
         </div>
-
+        <div class="pagination-container">
+            <button id="firstPageButton" onclick="refresh()">First Page</button>
+            <button id="prevPage" onclick="prevPage()">Previous</button>
+            <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
+                <label for="pageNumber">Page#</label>
+                <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
+                <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
+            </form>
+            <button id="nextPage" onclick="nextPage()">Next</button>
+            <button id="lastPageButton" onclick="lastPage()">Last Page</button>
+        </div>
     </div>
     <div class="right-sidebar">
         <button id="updatePriceList"
