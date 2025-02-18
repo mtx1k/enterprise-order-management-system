@@ -18,7 +18,7 @@ public class SupplierOrderProduct {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_order_id", nullable = false)
-    private SupplierOrders supplierOrder;
+    private SupplierOrder supplierOrder;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ordered_product_id", nullable = false)
@@ -29,7 +29,7 @@ public class SupplierOrderProduct {
     public SupplierOrderProduct() {
     }
 
-    public SupplierOrderProduct(Long id, SupplierOrders supplierOrder, OrderedProduct orderProduct, Long amount) {
+    public SupplierOrderProduct(Long id, SupplierOrder supplierOrder, OrderedProduct orderProduct, Long amount) {
         this.id = id;
         this.supplierOrder = supplierOrder;
         this.orderProduct = orderProduct;

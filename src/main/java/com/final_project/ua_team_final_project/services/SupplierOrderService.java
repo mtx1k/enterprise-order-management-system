@@ -2,6 +2,8 @@ package com.final_project.ua_team_final_project.services;
 
 import com.final_project.ua_team_final_project.models.OrderedProduct;
 import com.final_project.ua_team_final_project.models.Supplier;
+import com.final_project.ua_team_final_project.models.SupplierOrder;
+import com.final_project.ua_team_final_project.repositories.SupplierOrdersRepository;
 import com.final_project.ua_team_final_project.repositories.SupplierRepository;
 import com.opencsv.CSVWriter;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class SupplierOrderService {
     private final SupplierRepository supplierRepository;
 
     private final DigitalOceanStorageService digitalOceanStorageService;
+    private final SupplierOrdersRepository supplierOrdersRepository;
 
     public Map<Long, List<OrderedProduct>> processOrders(List<Long> orderIds) {
         List<OrderedProduct> orderedProducts = orderService.getOrderedProductsForOrders(orderIds);
@@ -53,6 +56,8 @@ public class SupplierOrderService {
         supplierProducts.forEach((supplierId, products) -> {
             String fileName = generateFileName(supplierId);
 
+            double price = 0.0;
+
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
                  CSVWriter csvWriter = new CSVWriter(writer)) {
@@ -61,7 +66,6 @@ public class SupplierOrderService {
                 csvWriter.writeNext(new String[]{"Product Code", "Name", "Item Price", "Amount"});
 
                 // Products
-                double price = 0.0;
                 for (OrderedProduct product : products) {
                     price += product.getItemPrice() * product.getAmount();
                     csvWriter.writeNext(new String[]{
@@ -80,11 +84,22 @@ public class SupplierOrderService {
                 e.printStackTrace();
             }
 
+            saveSupplierOrder(supplierId, price);
             files.add(fileName);
 
         });
         return files;
     }
 
+    public void saveSupplierOrder(Long supplierId, double price) {
+        Optional<Supplier> supplier = supplierRepository.findBySupplierId(supplierId);
+        if (supplier.isEmpty()) {
+            return;
+        }
+        SupplierOrder supplierOrder = new SupplierOrder();
+        supplierOrder.setSupplier(supplier.get());
+        supplierOrder.setTotalPrice(price);
+        supplierOrdersRepository.save(supplierOrder);
+    }
 }
 

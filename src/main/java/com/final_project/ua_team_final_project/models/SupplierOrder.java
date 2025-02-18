@@ -13,7 +13,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "supplier_orders")
-public class SupplierOrders {
+public class SupplierOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long supplierOrderId;
@@ -29,10 +29,10 @@ public class SupplierOrders {
     @JoinColumn(name = "status_id", nullable = false)
     private OrderStatus orderStatus;
 
-    public SupplierOrders() {
+    public SupplierOrder() {
     }
 
-    public SupplierOrders(Long supplierOrderId, Supplier supplier, double totalPrice, LocalDateTime createdAt, OrderStatus orderStatus) {
+    public SupplierOrder(Long supplierOrderId, Supplier supplier, double totalPrice, LocalDateTime createdAt, OrderStatus orderStatus) {
         this.supplierOrderId = supplierOrderId;
         this.supplier = supplier;
         this.totalPrice = totalPrice;
@@ -42,7 +42,7 @@ public class SupplierOrders {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof SupplierOrders that)) return false;
+        if (!(o instanceof SupplierOrder that)) return false;
         return Double.compare(totalPrice, that.totalPrice) == 0 && Objects.equals(supplierOrderId, that.supplierOrderId) && Objects.equals(supplier, that.supplier) && Objects.equals(createdAt, that.createdAt) && Objects.equals(orderStatus, that.orderStatus);
     }
 

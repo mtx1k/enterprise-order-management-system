@@ -1,6 +1,7 @@
 package com.final_project.ua_team_final_project.controllers;
 
 import com.final_project.ua_team_final_project.models.OrderedProduct;
+import com.final_project.ua_team_final_project.services.SupplierOrderProductService;
 import com.final_project.ua_team_final_project.services.SupplierOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,14 @@ public class SupplierOrderController {
 
     private final SupplierOrderService supplierOrderService;
 
+    private final SupplierOrderProductService supplierOrderProductService;
+
     @PostMapping("/generateCsv")
     public ResponseEntity<List<String>> generateCsv(@RequestParam List<Long> selectedOrders) {
         Map<Long, List<OrderedProduct>> orderedProducts = supplierOrderService.processOrders(selectedOrders);
         List<String> files = supplierOrderService.generateAndUploadCsv(orderedProducts);
+        supplierOrderProductService.saveSupplierProducts(orderedProducts);
+       // supplierOrderService.saveSupplierOrders(orderedProducts);
         return ResponseEntity.ok(files);
     }
 }
