@@ -9,6 +9,9 @@ import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +55,7 @@ public class AppController {
                         @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
                         @RequestParam(name = "products", required = false) List<Long> products,
                         @RequestParam(name = "quantities", required = false) List<Integer> quantities,
+                        @RequestParam(name = "query", required = false, defaultValue = "") String query,
                         Model model) {
         if (principal == null) {
 
@@ -75,6 +79,7 @@ public class AppController {
                 if (order.equals("userId")) {
                     order = "productCode";
                 }
+
                 pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user);
                 return "organization/userpage";
             }
@@ -273,4 +278,25 @@ public class AppController {
         userRepository.save(user);
         return "redirect:/";
     }
+
+    @GetMapping("/search")
+    public String searchProducts(
+            @RequestParam(name = "query", required = false, defaultValue = "") String query,
+            @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(name = "order", required = false, defaultValue = "productCode") String order,
+            Model model) {
+
+        PageRequest pageRequest = PageRequest.of(0, pageSize, Sort.by(order));
+
+        Page<AvailableProducts> filteredProducts;
+        if (query.isEmpty()) {
+            filteredProducts = availableProductsRepository.findAll(pageRequest);
+        } else {
+            filteredProducts = availableProductsRepository.findByNameContainingIgnoreCase(query, pageRequest);
+        }
+
+        model.addAttribute("availableProducts", filteredProducts.getContent());
+        return "fragments/products :: productList";
+    }
+
 }

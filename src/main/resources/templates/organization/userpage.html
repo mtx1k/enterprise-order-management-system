@@ -146,6 +146,10 @@
                 <option value="50" th:selected="${pageSize == 50}">50</option>
                 <option value="100" th:selected="${pageSize == 100}">100</option>
             </select>
+            <label for="searchInput">Search:</label>
+            <input type="text" id="searchInput" placeholder="Enter product name">
+
+
         </div>
         <div class="content">
 
@@ -245,6 +249,21 @@
 
 
 </script>
+<script>
+    document.getElementById("searchInput").addEventListener("input", function () {
+        let query = this.value.trim();
+        let pageSize = document.getElementById("resultsPerPage").value;
+        let order = document.getElementById("sortOptions").value;
+
+        fetch(`/search?query=${query}&page_size=${pageSize}&order=${order}`)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector("#availableProducts tbody").innerHTML = html;
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    });
+</script>
+
 <script src="/js/bootstrap.bundle.js"></script>
 </body>
 </html>
