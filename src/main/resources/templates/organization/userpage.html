@@ -122,9 +122,16 @@
 <div class="wrapper">
     <div class="sidebar">
         <h3>Categories</h3>
-        <button onclick="sort('category1')">Category 1</button>
-        <button onclick="sort('category2')">Category 2</button>
-        <button onclick="sort('category3')">Category 3</button>
+        <select id="categorySelect" onchange="sort('category', this.value)">
+            <option value="">All Categories</option>
+            <option th:each="category : ${categories}" th:value="${category.getCategoryId()}" th:text="${category.getName()}"></option>
+        </select>
+
+        <h3>Suppliers</h3>
+        <select id="supplierSelect" onchange="sort('supplier', this.value)">
+            <option value="">All Suppliers</option>
+            <option th:each="supplier : ${suppliers}" th:value="${supplier.getSupplierId()}" th:text="${supplier.getName()}"></option>
+        </select>
     </div>
     <div class="content-container">
         <div class="table-header">
@@ -247,6 +254,29 @@
     }
 
 
+</script>
+<script>
+    document.getElementById("categorySelect").addEventListener("change", function () {
+        filterProducts();
+    });
+
+    document.getElementById("supplierSelect").addEventListener("change", function () {
+        filterProducts();
+    });
+
+    function filterProducts() {
+        const categoryId = document.getElementById("categorySelect").value;
+        const supplierId = document.getElementById("supplierSelect").value;
+        const pageSize = document.getElementById("resultsPerPage").value;
+        const order = document.getElementById("sortOptions").value;
+
+        fetch(`/filter?category_id=${categoryId}&supplier_id=${supplierId}&page_size=${pageSize}&order=${order}`)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector("#availableProducts tbody").innerHTML = html;
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    }
 </script>
 <script>
     document.getElementById("searchInput").addEventListener("input", function () {

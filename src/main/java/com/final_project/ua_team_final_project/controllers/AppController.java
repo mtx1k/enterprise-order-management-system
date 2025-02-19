@@ -46,6 +46,10 @@ public class AppController {
     private OrderService orderService;
     @Autowired
     private OrderStatusRepository orderStatusRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private SupplierRepository supplierRepository;
 
 
     @GetMapping("/")
@@ -56,6 +60,9 @@ public class AppController {
                         @RequestParam(name = "products", required = false) List<Long> products,
                         @RequestParam(name = "quantities", required = false) List<Integer> quantities,
                         @RequestParam(name = "query", required = false, defaultValue = "") String query,
+                        @RequestParam(required = false) Long category,
+                        @RequestParam(required = false) Long supplier,
+                        @RequestParam(required = false) String search,
                         Model model) {
         if (principal == null) {
 
@@ -68,6 +75,8 @@ public class AppController {
         if (user == null) {
             return "redirect:/login";
         }
+        Category categoryObj = (category != null) ? categoryRepository.findById(category).orElse(null) : null;
+        Supplier supplierObj = (supplier != null) ? supplierRepository.findById(supplier).orElse(null) : null;
 
 
         switch (user.getRole().getName()) {
@@ -80,7 +89,7 @@ public class AppController {
                     order = "productCode";
                 }
 
-                pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user);
+                pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user, categoryObj, supplierObj);
                 return "organization/userpage";
             }
             case "HEAD" -> {
@@ -128,14 +137,6 @@ public class AppController {
         return "organization/editProducts";
     }
 
-//    @GetMapping("/editProducts")
-//    public String editProducts(Model model) {
-//        OrderedProduct orderedProduct = new OrderedProduct();
-//        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
-//        orderedProduct.setAmount(orderedProduct.getAmount());
-//        model.addAttribute("orderedProduct", orderedProduct);
-//        return "organization/editProducts";
-//    }
 
     @PostMapping("/confirmOrder")
     public String confirmOrder(@RequestParam List<Long> selectedProducts,
@@ -298,5 +299,17 @@ public class AppController {
         model.addAttribute("availableProducts", filteredProducts.getContent());
         return "fragments/fragments :: productList";
     }
+    @GetMapping("/filter")
+    public String filterProducts(
+            @RequestParam(required = false) Long category_id,
+            @RequestParam(required = false) Long supplier_id,
+            @RequestParam(defaultValue = "10") int page_size,
+            @RequestParam(defaultValue = "productCode: ASC") String order,
+            Model model) {
 
+        List<AvailableProducts> filteredProducts = pageDataManager.findByCategoryAndSupplier(category_id, supplier_id, page_size, order);
+
+        model.addAttribute("availableProducts", filteredProducts);
+        return "fragments/fragments :: productList";
+    }
 }
