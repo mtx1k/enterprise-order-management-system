@@ -69,3 +69,39 @@ document.querySelector('.close-modal2').addEventListener('click', function() {
         modal2.style.display = 'none';
     }, 1500);
 });
+
+document.getElementById('shiftButton3').addEventListener('click', function() {
+    const col3 = document.querySelector('.col3');
+    const modal3 = document.getElementById('modal3');
+    const modalContent3 = document.querySelector('.modal-content3');
+
+    col3.style.transform = 'translateX(-600px)';
+
+    modal3.style.display = 'block';
+    setTimeout(() => {
+        modal3.style.transform = 'translateX(300px)';
+        modal3.style.opacity = '1';
+        modalContent3.style.transform = 'translateX(0)';
+        modalContent3.style.opacity = '1';
+    }, 10);
+});
+
+document.querySelector('.close-modal3').addEventListener('click', function() {
+    const col3 = document.querySelector('.col3');
+    const modal3 = document.getElementById('modal3');
+    const modalContent3 = document.querySelector('.modal-content3');
+
+
+    col3.style.transform = 'translateX(0)';
+
+
+    modal3.style.transform = 'translateX(-50%)';
+    modal3.style.opacity = '0';
+    modalContent3.style.transform = 'translateX(100%)';
+    modalContent3.style.opacity = '0';
+
+
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 1500);
+});
