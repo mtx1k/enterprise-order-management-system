@@ -296,7 +296,7 @@ public class AppController {
         }
 
         model.addAttribute("availableProducts", filteredProducts.getContent());
-        return "fragments/products :: productList";
+        return "fragments/fragments :: productList";
     }
 
 }

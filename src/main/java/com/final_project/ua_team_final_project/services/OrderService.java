@@ -35,15 +35,7 @@ public class OrderService {
     private final OrderedProductRepository orderedProductRepository;
 
 
-    public OrderService(UserRepository userRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, AvailableProductsRepository availableProductsRepository, OrderStatusRepository orderStatusRepository, OrderRepository orderRepository, OrderedProductRepository orderedProductRepository) {
-        this.userRepository = userRepository;
-        this.supplierRepository = supplierRepository;
-        this.categoryRepository = categoryRepository;
-        this.availableProductsRepository = availableProductsRepository;
-        this.orderStatusRepository = orderStatusRepository;
-        this.orderRepository = orderRepository;
-        this.orderedProductRepository = orderedProductRepository;
-    }
+
 
 
     @Transactional
