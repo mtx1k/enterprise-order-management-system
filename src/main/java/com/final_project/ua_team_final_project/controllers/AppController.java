@@ -128,14 +128,14 @@ public class AppController {
         return "organization/editProducts";
     }
 
-    @GetMapping("/editProducts")
-    public String editProducts(Model model) {
-        OrderedProduct orderedProduct = new OrderedProduct();
-        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
-        orderedProduct.setAmount(orderedProduct.getAmount());
-        model.addAttribute("orderedProduct", orderedProduct);
-        return "organization/editProducts";
-    }
+//    @GetMapping("/editProducts")
+//    public String editProducts(Model model) {
+//        OrderedProduct orderedProduct = new OrderedProduct();
+//        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
+//        orderedProduct.setAmount(orderedProduct.getAmount());
+//        model.addAttribute("orderedProduct", orderedProduct);
+//        return "organization/editProducts";
+//    }
 
     @PostMapping("/confirmOrder")
     public String confirmOrder(@RequestParam List<Long> selectedProducts,
