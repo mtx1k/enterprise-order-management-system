@@ -104,7 +104,7 @@
                     <td th:text="${availableProduct.productCode}"></td>
                     <td th:text="${availableProduct.name}"></td>
                     <td th:text="${availableProduct.description}"></td>
-                    <td><input type="number" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
+                    <td><input type="number" min="1" th:name="'quantities[' + ${availableProduct.productId} + ']'"/></td>
                 </tr>
                 </tbody>
             </table>
@@ -251,27 +251,28 @@
             },
             body: JSON.stringify(orderData)
         })
-            .then(response => {
-                return response.text();
-            })
+            .then(response => response.text())
             .then(html => {
-                document.documentElement.innerHTML = html;
-                Array.from(document.getElementsByTagName('script')).forEach(script => {
-                    const newScript = document.createElement('script');
-                    Array.from(script.attributes).forEach(attr => {
-                        newScript.setAttribute(attr.name, attr.value);
-                    });
-                    newScript.appendChild(document.createTextNode(script.innerHTML));
-                    script.parentNode.replaceChild(newScript, script);
-                });
+                document.open();
+                document.write(html);
+                document.close();
             })
             .catch(error => {
                 console.error("Error:", error);
                 alert("Something went wrong.");
             });
     });
-    document.addEventListener('DOMContentLoaded', initializeFromUrl);
-
+        document.addEventListener('DOMContentLoaded', initializeFromUrl);
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("input[name='selectedProducts']").forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                let quantityInput = this.closest("tr").querySelector("input[type='number']");
+                if (this.checked && !quantityInput.value) {
+                    quantityInput.value = 1;
+                }
+            });
+        });
+    });
 </script>
 <script src="/js/bootstrap.bundle.js"></script>
 </body>

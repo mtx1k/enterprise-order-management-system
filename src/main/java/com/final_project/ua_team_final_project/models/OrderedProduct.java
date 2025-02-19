@@ -18,7 +18,7 @@ public class OrderedProduct {
     private Long orderedProductId;
 
     @ManyToOne
-    @JoinColumn(name = "orders_order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     private String name;

@@ -64,6 +64,7 @@ public class AppController {
             return "redirect:/login";
         }
 
+
         switch (user.getRole().getName()) {
             case "ADMIN" -> {
                 pageDataManager.setAdminModel(model, urlPageNumber, pageSize, order, user);
@@ -116,24 +117,27 @@ public class AppController {
         List<Long> productIds = orderRequest.getProductIds();
         List<Integer> quantities = orderRequest.getQuantities();
 
+        System.out.println(productIds);
         Map<Long, Integer> selectedProducts = new HashMap<>();
         for (int i = 0; i < productIds.size(); i++) {
             selectedProducts.put(productIds.get(i), quantities.get(i));
         }
+
         orderService.setSelectedProductsModel(selectedProducts, model);
         model.addAttribute("user", userRepository.findByLogin(principal.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User not found: " + principal.getName())));
-        return "organization/editProducts";
+        return "/organization/editProducts";
     }
 
-    @GetMapping("/editProducts")
-    public String editProducts(Model model) {
-        OrderedProduct orderedProduct = new OrderedProduct();
-        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
-        orderedProduct.setAmount(orderedProduct.getAmount());
-        model.addAttribute("orderedProduct", orderedProduct);
-        return "organization/editProducts";
-    }
+//    @GetMapping("/editProducts")
+//    public String editProducts(Model model) {
+//        OrderedProduct orderedProduct = new OrderedProduct();
+//        orderedProduct.setItemPrice(orderedProduct.getItemPrice());
+//        orderedProduct.setAmount(orderedProduct.getAmount());
+//        model.addAttribute("orderedProduct", orderedProduct);
+//
+//        return "organization/editProducts";
+//    }
 
     @PostMapping("/confirmOrder")
     public String confirmOrder(@RequestParam List<Long> selectedProducts,
