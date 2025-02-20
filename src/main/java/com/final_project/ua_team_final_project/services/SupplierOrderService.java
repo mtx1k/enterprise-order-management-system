@@ -1,22 +1,18 @@
 package com.final_project.ua_team_final_project.services;
 
-import com.final_project.ua_team_final_project.models.OrderStatus;
-import com.final_project.ua_team_final_project.models.OrderedProduct;
-import com.final_project.ua_team_final_project.models.Supplier;
-import com.final_project.ua_team_final_project.models.SupplierOrder;
-import com.final_project.ua_team_final_project.repositories.OrderStatusRepository;
-import com.final_project.ua_team_final_project.repositories.SupplierOrderProductRepository;
-import com.final_project.ua_team_final_project.repositories.SupplierOrdersRepository;
-import com.final_project.ua_team_final_project.repositories.SupplierRepository;
+import com.final_project.ua_team_final_project.models.*;
+import com.final_project.ua_team_final_project.repositories.*;
 import com.opencsv.CSVWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,16 +33,32 @@ public class SupplierOrderService {
 
     private final SupplierOrderProductService supplierOrderProductService;
 
-    public Map<Long, List<OrderedProduct>> processOrders(List<Long> orderIds) {
-        List<OrderedProduct> orderedProducts = orderService.getOrderedProductsForOrders(orderIds);
-        // System.out.println(orderedProducts);
+    private final SupplierOrderStatusRepository supplierOrderStatusRepository;
 
-        Map<Long, List<OrderedProduct>> orderedProductsBySupplier = orderedProducts.stream()
-                .collect(Collectors.groupingBy(product -> product.getSupplier().getSupplierId()));
-//        orderedProductsBySupplier.forEach((supplier, products) -> {
-//            System.out.println(supplier + " " + products);
-//        });
-        return orderedProductsBySupplier;
+    public Map<Long, List<OrderedProduct>> processOrders(Map<Long, List<OrderedProduct>> orderedProducts) {
+
+
+
+        orderedProducts.forEach((supplierId, products) -> {
+
+            Long id = supplierOrdersRepository.count() + 1;
+
+            Supplier supplier = supplierRepository.findById(supplierId).orElse(null);
+            if (supplier == null) {
+                return;
+            }
+
+            SupplierOrderStatus supplierOrderStatus = supplierOrderStatusRepository.findById(1L).orElse(null);
+
+            double price = 0;
+
+            SupplierOrder supplierOrder = new SupplierOrder(id, supplier, price, LocalDateTime.now(), supplierOrderStatus);
+
+
+
+        });
+
+        return null;
     }
 
     private String generateFileName(Long supplierId) {
@@ -56,6 +68,11 @@ public class SupplierOrderService {
         }
         String supplierName = supplier.get().getName().replaceAll(" ", "");
         return "SupplierOrdersHistory/" + supplierName + "_" + LocalDate.now() + ".csv";
+    }
+
+    public Map<String, OutputStream> generateCSVsOutputStream(Map<Long, List<OrderedProduct>> supplierProducts) {
+
+        return null;
     }
 
     public List<String> generateAndUploadCsv(Map<Long, List<OrderedProduct>> supplierProducts) {
@@ -93,7 +110,7 @@ public class SupplierOrderService {
             }
 
             SupplierOrder supplierOrder = saveSupplierOrder(supplierId, price);
-            supplierOrderProductService.saveSupplierProducts(supplierOrder, products);
+            supplierOrderProductService.saveSupplierProductsByOrder(supplierOrder, products);
             files.add(fileName);
 
         });

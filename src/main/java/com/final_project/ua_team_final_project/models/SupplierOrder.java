@@ -26,29 +26,29 @@ public class SupplierOrder {
     @CreationTimestamp
     private LocalDateTime createdAt;
     @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private OrderStatus orderStatus;
+    @JoinColumn(name = "supplier_order_status_id", nullable = false)
+    private SupplierOrderStatus supplierOrderStatus;
 
     public SupplierOrder() {
     }
 
-    public SupplierOrder(Long supplierOrderId, Supplier supplier, double totalPrice, LocalDateTime createdAt, OrderStatus orderStatus) {
+    public SupplierOrder(Long supplierOrderId, Supplier supplier, double totalPrice, LocalDateTime createdAt, SupplierOrderStatus supplierOrderStatus) {
         this.supplierOrderId = supplierOrderId;
         this.supplier = supplier;
         this.totalPrice = totalPrice;
         this.createdAt = createdAt;
-        this.orderStatus = orderStatus;
+        this.supplierOrderStatus = supplierOrderStatus;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SupplierOrder that)) return false;
-        return Double.compare(totalPrice, that.totalPrice) == 0 && Objects.equals(supplierOrderId, that.supplierOrderId) && Objects.equals(supplier, that.supplier) && Objects.equals(createdAt, that.createdAt) && Objects.equals(orderStatus, that.orderStatus);
+        return Double.compare(totalPrice, that.totalPrice) == 0 && Objects.equals(supplierOrderId, that.supplierOrderId) && Objects.equals(supplier, that.supplier) && Objects.equals(createdAt, that.createdAt) && Objects.equals(supplierOrderStatus, that.supplierOrderStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(supplierOrderId, supplier, totalPrice, createdAt, orderStatus);
+        return Objects.hash(supplierOrderId, supplier, totalPrice, createdAt, supplierOrderStatus);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SupplierOrder {
                 ", supplier=" + supplier +
                 ", totalPrice=" + totalPrice +
                 ", createdAt=" + createdAt +
-                ", orderStatus=" + orderStatus +
+                ", orderStatus=" + supplierOrderStatus +
                 '}';
     }
 }

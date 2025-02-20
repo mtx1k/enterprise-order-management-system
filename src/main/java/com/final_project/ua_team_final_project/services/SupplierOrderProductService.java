@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class SupplierOrderProductService {
 
     private final SupplierOrderProductRepository supplierOrderProductRepository;
 
-    public void saveSupplierProducts(SupplierOrder supplierOrder, List<OrderedProduct> products) {
+    public void saveSupplierProductsByOrder(SupplierOrder supplierOrder, List<OrderedProduct> products) {
         for (OrderedProduct product : products) {
             SupplierOrderProduct supplierOrderProduct = new SupplierOrderProduct();
             supplierOrderProduct.setSupplierOrder( supplierOrder );
@@ -23,5 +24,8 @@ public class SupplierOrderProductService {
             supplierOrderProduct.setAmount(product.getAmount());
             supplierOrderProductRepository.save(supplierOrderProduct);
         }
+    }
+
+    public void saveSupplierOrderProducts(Map<Long, List<OrderedProduct>> orderedProducts) {
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Service
@@ -178,8 +179,10 @@ public class OrderService {
         return orderRepository.findByDept(user.getDepartment());
     }
 
-    public List<OrderedProduct> getOrderedProductsForOrders(List<Long> orderIds) {
-        return orderedProductRepository.findByOrderOrderIdIn(orderIds);
+    public Map<Long, List<OrderedProduct>> getOrderedProductsForOrdersBySupplier(List<Long> orderIds) {
+        List<OrderedProduct> orderedProducts = orderedProductRepository.findByOrderOrderIdIn(orderIds);
+        return orderedProducts.stream()
+                .collect(Collectors.groupingBy(product -> product.getSupplier().getSupplierId()));
     }
 
     public void changeOrdersStatus(List<Long> orderIds, OrderStatus orderStatus) {
