@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/table.css">
     <style>
-        html, body {
+      html, body {
             height: 100%;
             margin: 0;
             display: flex;
@@ -120,7 +120,8 @@
 <body>
 <header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <div class="wrapper">
-    <div class="sidebar">
+
+  <div class="sidebar">
         <h3>Categories</h3>
         <select id="categorySelect" onchange="sort('category', this.value)">
             <option value="">All Categories</option>
@@ -133,8 +134,29 @@
             <option th:each="supplier : ${suppliers}" th:value="${supplier.getSupplierId()}" th:text="${supplier.getName()}"></option>
         </select>
     </div>
+<div class="content-container">
+    <div class="content">
+
+        <h1>List of products</h1>
+
+        <label for="sortOptions">Sort by:</label>
+        <select id="sortOptions" onchange="refresh()">
+            <option value="productCode" th:selected="${order == 'productCode: ASC'}">Product Code</option>
+            <option value="productCode_desc" th:selected="${order == 'productCode: DESC'}">Product Code DESC</option>
+            <option value="name" th:selected="${order == 'name: ASC'}">Name</option>
+            <option value="name_desc" th:selected="${order == 'name: DESC'}">Name DESC</option>
+
+        </select>
+
+        <h3>Suppliers</h3>
+        <select id="supplierSelect" onchange="sort('supplier', this.value)">
+            <option value="">All Suppliers</option>
+            <option th:each="supplier : ${suppliers}" th:value="${supplier.getSupplierId()}" th:text="${supplier.getName()}"></option>
+        </select>
+    </div>
     <div class="content-container">
         <div class="table-header">
+        
             <label for="sortOptions">Sort by:</label>
             <select id="sortOptions" onchange="refresh()">
 
@@ -158,7 +180,6 @@
 
         </div>
         <div class="content">
-
 
             <h1>List of products</h1>
 
@@ -219,6 +240,10 @@
 <script>
     let currentPageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
+    let selectedProductsState = {
+        productIds: [],
+        quantities: {}
+    };
 
 
     document.getElementById('prevPage').classList.toggle('disabled', currentPageNumber === 1);
@@ -247,13 +272,120 @@
         refresh(pageNumber);
     }
 
+    function initializeFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productIds = urlParams.get('productIds')?.split(',') || [];
+        const quantities = urlParams.get('quantities')?.split(',') || [];
+
+        selectedProductsState.productIds = productIds.filter(id => id !== '');
+
+        productIds.forEach((id, index) => {
+            if (id && quantities[index]) {
+                selectedProductsState.quantities[id] = parseInt(quantities[index]);
+            }
+        });
+
+        selectedProductsState.productIds.forEach(id => {
+            const checkbox = document.querySelector(`input[name="selectedProducts"][value="${id}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                const quantityInput = document.querySelector(`input[name="quantities[${id}]"]`);
+                if (quantityInput && selectedProductsState.quantities[id]) {
+                    quantityInput.value = selectedProductsState.quantities[id];
+                }
+            }
+        });
+    }
+
     function refresh(pageNumber = 1) {
         const pageSize = document.getElementById('resultsPerPage').value;
         const order = document.getElementById('sortOptions').value;
-        window.location.href = `/?page=${pageNumber}&page_size=${pageSize}&order=${order}`;
+
+        document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
+            const productId = checkbox.value;
+            if (!selectedProductsState.productIds.includes(productId)) {
+                selectedProductsState.productIds.push(productId);
+            }
+            const quantityInput = document.querySelector(`input[name="quantities[${productId}]"]`);
+            if (quantityInput && quantityInput.value) {
+                selectedProductsState.quantities[productId] = parseInt(quantityInput.value);
+            }
+        });
+
+        updateUrlWithState(pageNumber, pageSize, order);
     }
 
+    function updateUrlWithState(pageNum, pageSize, order) {
+        const quantities = selectedProductsState.productIds
+            .map(id => selectedProductsState.quantities[id] || 0);
 
+        const urlParams = new URLSearchParams();
+        urlParams.set('page', pageNum);
+        urlParams.set('page_size', pageSize);
+        urlParams.set('order', order);
+
+        if (selectedProductsState.productIds.length > 0) {
+            urlParams.set('productIds', selectedProductsState.productIds.join(','));
+            urlParams.set('quantities', quantities.join(','));
+        }
+
+        window.location.href = `/?${urlParams.toString()}`;
+    }
+
+    document.getElementById("createOrderButton").addEventListener("click", function(event) {
+        event.preventDefault();
+
+        document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
+            const productId = checkbox.value;
+            if (!selectedProductsState.productIds.includes(productId)) {
+                selectedProductsState.productIds.push(productId);
+            }
+            const quantityInput = document.querySelector(`input[name="quantities[${productId}]"]`);
+            if (quantityInput && quantityInput.value) {
+                selectedProductsState.quantities[productId] = parseInt(quantityInput.value);
+            }
+        });
+
+        if (selectedProductsState.productIds.length === 0) {
+            alert("Please select at least one product.");
+            return;
+        }
+
+        const orderData = {
+            productIds: selectedProductsState.productIds,
+            quantities: selectedProductsState.productIds.map(id => selectedProductsState.quantities[id])
+        };
+
+        fetch("/selectedProducts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('input[name="_csrf"]').value
+            },
+            body: JSON.stringify(orderData)
+        })
+            .then(response => response.text())
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Something went wrong.");
+            });
+    });
+        document.addEventListener('DOMContentLoaded', initializeFromUrl);
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("input[name='selectedProducts']").forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                let quantityInput = this.closest("tr").querySelector("input[type='number']");
+                if (this.checked && !quantityInput.value) {
+                    quantityInput.value = 1;
+                }
+            });
+        });
+    });
 </script>
 <script>
     document.getElementById("categorySelect").addEventListener("change", function () {
