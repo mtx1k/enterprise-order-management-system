@@ -34,10 +34,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderedProductRepository orderedProductRepository;
 
-
-
-
-
     @Transactional
     public void saveNewOrder(Map<Long, Long> orderedProducts) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -171,14 +167,6 @@ public class OrderService {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("orders", page.getContent());
         model.addAttribute("order", sort.toString());
-    }
-    public List<Order> getOrdersForCurrentUser() {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByLogin(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
-
-        return orderRepository.findByDept(user.getDepartment());
     }
 
     public List<OrderedProduct> getOrderedProductsForOrders(List<Long> orderIds) {
