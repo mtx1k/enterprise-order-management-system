@@ -14,20 +14,25 @@
             display: flex;
             flex-direction: column;
         }
+
         .order-button {
             margin-bottom: 20px;
         }
+
         .button {
             margin-bottom: 200px;
         }
+
         .wrapper {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
+
         .content {
             flex: 1;
         }
+
         .right-sidebar {
             width: 200px;
             padding: 20px;
@@ -38,12 +43,14 @@
             justify-content: flex-end;
             height: 100vh;
         }
+
         .content-container {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
+
         .fixed-footer {
             position: fixed;
             bottom: 0;
@@ -52,6 +59,7 @@
             padding: 10px;
             text-align: center;
         }
+
         .fixed-header {
             position: fixed;
             top: 0;
@@ -79,10 +87,10 @@
                         <tr>
                             <th></th>
                             <th>Product Code</th>
-                        <th>Product Name</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
 
                         </tr>
                         </thead>
@@ -93,8 +101,8 @@
                                        th:value="${orderedProduct.orderedProductId}" class="form-check-input">
                             </td>
                             <td th:text="${orderedProduct.productCode}"></td>
-                        <td th:text="${orderedProduct.name}"></td>
-                        <td th:text="${orderedProduct.itemPrice}"></td>
+                            <td th:text="${orderedProduct.name}"></td>
+                            <td th:text="${orderedProduct.itemPrice}"></td>
 
 
                             <td>
@@ -121,8 +129,8 @@
     </div>
     <div class="right-sidebar">
         <button type="submit" id="createOrder" class="order-button">Confirm Order</button>
-<!--        <button type="button" id="deleteButton" class="delete-button">Delete</button>-->
-        <button type="button" class="button" id="deleteButton" >
+        <!--        <button type="button" id="deleteButton" class="delete-button">Delete</button>-->
+        <button type="button" class="button" id="deleteButton">
             <div class="trash">
                 <div class="top">
                     <div class="paper"></div>
@@ -168,9 +176,9 @@
         checkboxes.forEach(checkbox => {
             const row = checkbox.closest('tr');
             rowsToDelete.push(row);
-            const productId = checkbox.value; // Get product ID to remove from form
+            const productId = checkbox.value;
 
-            // Remove hidden input fields for the deleted product
+
             const hiddenProductIdInput = row.querySelector(`input[name="selectedProducts"][value="${productId}"]`);
             const hiddenQuantityInput = row.querySelector(`input[name="quantities"]`);
 
@@ -188,7 +196,7 @@
     });
 
     orderForm.addEventListener('submit', (event) => {
-        //Before submit, check if any products are left. If not, prevent submission and show an alert.
+
         const productInputs = orderForm.querySelectorAll('input[name="selectedProducts"]');
         if (productInputs.length === 0) {
             event.preventDefault(); // Prevent form submission
