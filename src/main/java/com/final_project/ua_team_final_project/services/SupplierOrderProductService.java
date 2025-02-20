@@ -7,8 +7,8 @@ import com.final_project.ua_team_final_project.repositories.SupplierOrderProduct
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -16,16 +16,19 @@ public class SupplierOrderProductService {
 
     private final SupplierOrderProductRepository supplierOrderProductRepository;
 
-    public void saveSupplierProductsByOrder(SupplierOrder supplierOrder, List<OrderedProduct> products) {
-        for (OrderedProduct product : products) {
-            SupplierOrderProduct supplierOrderProduct = new SupplierOrderProduct();
-            supplierOrderProduct.setSupplierOrder( supplierOrder );
-            supplierOrderProduct.setOrderProduct(product);
-            supplierOrderProduct.setAmount(product.getAmount());
-            supplierOrderProductRepository.save(supplierOrderProduct);
-        }
+    public List<SupplierOrderProduct> saveSupplierProducts(List<SupplierOrderProduct> products) {
+        return supplierOrderProductRepository.saveAll(products);
     }
 
-    public void saveSupplierOrderProducts(Map<Long, List<OrderedProduct>> orderedProducts) {
+    public List<SupplierOrderProduct> processProducts(SupplierOrder supplierOrder, List<OrderedProduct> products) {
+        List<SupplierOrderProduct> supplierOrderProducts = new ArrayList<>();
+        for (OrderedProduct product : products) {
+            SupplierOrderProduct supplierOrderProduct = new SupplierOrderProduct();
+            supplierOrderProduct.setSupplierOrder(supplierOrder);
+            supplierOrderProduct.setOrderProduct(product);
+            supplierOrderProduct.setAmount(product.getAmount());
+            supplierOrderProducts.add(supplierOrderProduct);
+        }
+        return supplierOrderProducts;
     }
 }

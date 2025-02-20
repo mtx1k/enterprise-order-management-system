@@ -2,6 +2,7 @@ package com.final_project.ua_team_final_project.controllers;
 
 import com.final_project.ua_team_final_project.models.OrderedProduct;
 import com.final_project.ua_team_final_project.models.SupplierOrder;
+import com.final_project.ua_team_final_project.models.SupplierOrderProduct;
 import com.final_project.ua_team_final_project.services.OrderService;
 import com.final_project.ua_team_final_project.services.SupplierOrderProductService;
 import com.final_project.ua_team_final_project.services.SupplierOrderService;
@@ -37,9 +38,22 @@ public class SupplierOrderController {
 
         Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
 
-        Map<Long, List<OrderedProduct>> supplierOrders = supplierOrderService.processOrders(orderedProducts);
+        Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders = supplierOrderService.processOrders(orderedProducts);
 
-        supplierOrderProductService.saveSupplierOrderProducts(supplierOrders);
+        supplierOrders.forEach((supplierOrder, orderProducts) -> {
+            SupplierOrder resultSupplierOrder = supplierOrderService.saveSupplierOrder(supplierOrder);
+            if (resultSupplierOrder != null) {
+                List<SupplierOrderProduct> resultSupplierOrderProducts = supplierOrderProductService.saveSupplierProducts(orderProducts);
+                if (resultSupplierOrderProducts == null) {
+                    System.out.println("Supplier order product save failed");
+                }
+
+            } else {
+                System.out.println("Supplier order id " + supplierOrder.getSupplierOrderId() + " not saved");
+            }
+        });
+
+        //supplierOrderProductService.saveSupplierOrderProducts(supplierOrders);
 
         //supplierOrderProductService.saveSupplierOrderProducts(orderedProducts);
         //List<String> files = supplierOrderService.generateAndUploadCsv(orderedProducts);

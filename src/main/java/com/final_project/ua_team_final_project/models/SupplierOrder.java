@@ -32,6 +32,10 @@ public class SupplierOrder {
     public SupplierOrder() {
     }
 
+    public SupplierOrder(Long supplierOrderId) {
+        this.supplierOrderId = supplierOrderId;
+    }
+
     public SupplierOrder(Long supplierOrderId, Supplier supplier, double totalPrice, LocalDateTime createdAt, SupplierOrderStatus supplierOrderStatus) {
         this.supplierOrderId = supplierOrderId;
         this.supplier = supplier;

@@ -29,15 +29,13 @@ public class SupplierOrderService {
 
     private final SupplierOrdersRepository supplierOrdersRepository;
 
-    private final OrderStatusRepository orderStatusRepository;
+    private final SupplierOrderStatusRepository supplierOrderStatusRepository;
 
     private final SupplierOrderProductService supplierOrderProductService;
 
-    private final SupplierOrderStatusRepository supplierOrderStatusRepository;
+    public Map<SupplierOrder, List<SupplierOrderProduct>> processOrders(Map<Long, List<OrderedProduct>> orderedProducts) {
 
-    public Map<Long, List<OrderedProduct>> processOrders(Map<Long, List<OrderedProduct>> orderedProducts) {
-
-
+        Map<SupplierOrder, List<SupplierOrderProduct>> orders = new HashMap<>();
 
         orderedProducts.forEach((supplierId, products) -> {
 
@@ -50,15 +48,25 @@ public class SupplierOrderService {
 
             SupplierOrderStatus supplierOrderStatus = supplierOrderStatusRepository.findById(1L).orElse(null);
 
-            double price = 0;
+            double price = calculateTotalPrice(products);
 
             SupplierOrder supplierOrder = new SupplierOrder(id, supplier, price, LocalDateTime.now(), supplierOrderStatus);
 
+            List<SupplierOrderProduct> supplierOrderProducts = supplierOrderProductService.processProducts(supplierOrder, products);
 
+            orders.put(supplierOrder, supplierOrderProducts);
 
         });
 
-        return null;
+        return orders;
+    }
+
+    private double calculateTotalPrice(List<OrderedProduct> products) {
+        double totalPrice = 0;
+        for (OrderedProduct product : products) {
+            totalPrice += product.getItemPrice();
+        }
+        return totalPrice;
     }
 
     private String generateFileName(Long supplierId) {
@@ -70,7 +78,7 @@ public class SupplierOrderService {
         return "SupplierOrdersHistory/" + supplierName + "_" + LocalDate.now() + ".csv";
     }
 
-    public Map<String, OutputStream> generateCSVsOutputStream(Map<Long, List<OrderedProduct>> supplierProducts) {
+    public Map<String, OutputStream> generateCSVOutputStream(Map<Long, List<OrderedProduct>> supplierProducts) {
 
         return null;
     }
@@ -109,28 +117,13 @@ public class SupplierOrderService {
                 e.printStackTrace();
             }
 
-            SupplierOrder supplierOrder = saveSupplierOrder(supplierId, price);
-            supplierOrderProductService.saveSupplierProductsByOrder(supplierOrder, products);
             files.add(fileName);
 
         });
         return files;
     }
 
-    public SupplierOrder saveSupplierOrder(Long supplierId, double price) {
-        Optional<Supplier> supplier = supplierRepository.findBySupplierId(supplierId);
-        if (supplier.isEmpty()) {
-            return null;
-        }
-        Optional<OrderStatus> orderStatus = orderStatusRepository.findById(1L);
-        if (orderStatus.isEmpty()) {
-            return null;
-        }
-        SupplierOrder supplierOrder = new SupplierOrder();
-        supplierOrder.setSupplier(supplier.get());
-        supplierOrder.setTotalPrice(price);
-        supplierOrder.setOrderStatus(orderStatus.get());
-
+    public SupplierOrder saveSupplierOrder(SupplierOrder supplierOrder) {
         return supplierOrdersRepository.save(supplierOrder);
     }
 }
