@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 public class SupplierOrderService {
 
-    private final OrderService orderService;
-
     private final SupplierRepository supplierRepository;
 
     private final DigitalOceanStorageService digitalOceanStorageService;
@@ -75,21 +73,15 @@ public class SupplierOrderService {
             return null;
         }
         String supplierName = supplier.get().getName().replaceAll(" ", "");
-        return "SupplierOrdersHistory/" + supplierName + "_" + LocalDate.now() + ".csv";
+        return supplierName + "_" + LocalDate.now() + ".csv";
     }
 
-    public Map<String, OutputStream> generateCSVOutputStream(Map<Long, List<OrderedProduct>> supplierProducts) {
+    public Map<String, OutputStream> generateScvFiles(Map<SupplierOrder, List<SupplierOrderProduct>> orders) {
+        Map<String, OutputStream> files = new HashMap<>();
 
-        return null;
-    }
-
-    public List<String> generateAndUploadCsv(Map<Long, List<OrderedProduct>> supplierProducts) {
-        List<String> files = new ArrayList<>();
-
-        supplierProducts.forEach((supplierId, products) -> {
-            String fileName = generateFileName(supplierId);
-
-            double price = 0.0;
+        orders.forEach((order, supplierOrderProducts) -> {
+            String fileName = generateFileName(order.getSupplier().getSupplierId());
+            Double totalPrice = order.getTotalPrice();
 
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
@@ -99,8 +91,8 @@ public class SupplierOrderService {
                 csvWriter.writeNext(new String[]{"Product Code", "Name", "Item Price", "Amount"});
 
                 // Products
-                for (OrderedProduct product : products) {
-                    price += product.getItemPrice() * product.getAmount();
+                for (SupplierOrderProduct supplierOrderProduct : supplierOrderProducts) {
+                    OrderedProduct product = supplierOrderProduct.getOrderProduct();
                     csvWriter.writeNext(new String[]{
                             product.getProductCode(),
                             product.getName(),
@@ -108,16 +100,14 @@ public class SupplierOrderService {
                             product.getAmount().toString()
                     });
                 }
-                csvWriter.writeNext(new String[]{"Price: ", String.format("%.2f", price)});
+                csvWriter.writeNext(new String[]{"Price: ", String.format("%.2f", totalPrice)});
 
                 csvWriter.flush();
-                digitalOceanStorageService.uploadFile(fileName, outputStream.toByteArray());
+                files.put(fileName, outputStream);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            files.add(fileName);
 
         });
         return files;
