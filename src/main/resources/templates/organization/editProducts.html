@@ -34,7 +34,6 @@
                     <tr>
                         <th>Product Code</th>
                         <th>Product Name</th>
-                        <!--                <th>Description</th>-->
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>
@@ -44,7 +43,6 @@
                     <tr th:each="orderedProduct, iterStat : ${orderedProducts}">
                         <td th:text="${orderedProduct.productCode}"></td>
                         <td th:text="${orderedProduct.name}"></td>
-                        <!--                <td th:text="${item.description}"></td>-->
                         <td th:text="${orderedProduct.itemPrice}"></td>
                         <td>
                             <input type="hidden" name="selectedProducts" th:value="${orderedProduct.orderedProductId}">
@@ -52,13 +50,8 @@
                                    min="1"
                                    class="form-control"
                             />
-                            <!--                    <input type="number"-->
-                            <!--                           th:name="'orderedProducts[' + ${orderedProduct.order} + '].amount'"-->
-                            <!--                           th:value="${orderedProduct.amount}"-->
-                            <!--                           min="1"-->
-                            <!--                           class="form-control"/>-->
                         </td>
-                        <td th:text="${orderedProduct.itemPrice} * ${orderedProduct.amount}"></td>
+                        <td th:text="${#numbers.formatDecimal(orderedProduct.itemPrice * orderedProduct.amount, 1, 2)}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -73,5 +66,27 @@
     <footer th:replace="~{fragments/fragments :: bottom}"></footer>
 </div>
 <script src="/js/bootstrap.bundle.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("input[name='quantities']").forEach(function (input) {
+            input.addEventListener("input", function () {
+                let row = this.closest("tr");
+                let priceText = row.querySelector("td:nth-child(3)").textContent.trim();
+                let price = parseFloat(priceText.replace(/[^0-9.-]+/g, ""));
+                let quantity = parseInt(this.value) || 1;
+                let totalCell = row.querySelector("td:last-child");
+
+                if (!isNaN(price) && quantity >= 0) {
+                    let total = (price * quantity).toFixed(2);
+                    totalCell.textContent = new Intl.NumberFormat('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(total);
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
