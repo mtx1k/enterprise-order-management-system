@@ -65,6 +65,7 @@
 <body>
 <header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <div class="wrapper">
+
     <div class="content-container">
         <div class="content">
 
@@ -78,8 +79,10 @@
                         <tr>
                             <th></th>
                             <th>Product Code</th>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
 
                         </tr>
                         </thead>
@@ -90,7 +93,8 @@
                                        th:value="${orderedProduct.orderedProductId}" class="form-check-input">
                             </td>
                             <td th:text="${orderedProduct.productCode}"></td>
-                            <td th:text="${orderedProduct.name}"></td>
+                        <td th:text="${orderedProduct.name}"></td>
+                        <td th:text="${orderedProduct.itemPrice}"></td>
 
 
                             <td>
@@ -101,7 +105,7 @@
                                        class="form-control"
                                 />
                             </td>
-
+                            <td th:text="${#numbers.formatDecimal(orderedProduct.itemPrice * orderedProduct.amount, 1, 2)}"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -194,5 +198,27 @@
 
 </script>
 <script src="/js/bootstrap.bundle.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("input[name='quantities']").forEach(function (input) {
+            input.addEventListener("input", function () {
+                let row = this.closest("tr");
+                let priceText = row.querySelector("td:nth-child(3)").textContent.trim();
+                let price = parseFloat(priceText.replace(/[^0-9.-]+/g, ""));
+                let quantity = parseInt(this.value) || 1;
+                let totalCell = row.querySelector("td:last-child");
+
+                if (!isNaN(price) && quantity >= 0) {
+                    let total = (price * quantity).toFixed(2);
+                    totalCell.textContent = new Intl.NumberFormat('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(total);
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

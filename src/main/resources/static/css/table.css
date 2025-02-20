@@ -1,5 +1,4 @@
 
-
 table {
     width: 100%;
     margin-bottom: 20px;
@@ -22,4 +21,6 @@ table td {
 
 #availableProducts tbody tr:has(input[type="checkbox"]:checked) {
     background-color: lightblue;
+
 }
+
