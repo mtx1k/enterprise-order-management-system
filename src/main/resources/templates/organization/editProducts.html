@@ -73,13 +73,10 @@
 <body>
 <header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <div class="wrapper">
-
     <div class="content-container">
         <div class="content">
-
             <div class="container mt-4">
                 <h2>Review and Edit Selected Products</h2>
-
                 <form id="productForm" action="/confirmOrder" method="POST">
                     <input type="hidden" name="_csrf" th:value="${_csrf.token}">
                     <table class="table">

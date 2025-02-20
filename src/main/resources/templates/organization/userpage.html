@@ -177,7 +177,7 @@
             <h1>List of products</h1>
 
 
-            <form id="productForm" action="/selectedProducts" method="POST">
+            <form id="productForm" action="/selectedProducts" method="POST" enctype="application/x-www-form-urlencoded">
                 <input type="hidden" name="_csrf" th:value="${_csrf.token}">
                 <table id="availableProducts">
                     <thead>
@@ -224,14 +224,14 @@
     </div>
 </div>
 <footer class="fixed-footer" th:replace="~{fragments/fragments :: bottom}"></footer>
-<script>
-    const productForm = document.querySelector("#productForm");
-    const createOrder = document.querySelector("#createOrder")
+<!--<script>-->
+<!--    const productForm = document.querySelector("#productForm");-->
+<!--    const createOrder = document.querySelector("#createOrder")-->
 
-    createOrder.addEventListener("click", function () {
-        productForm.submit();
-    })
-</script>
+<!--    createOrder.addEventListener("click", function () {-->
+<!--        productForm.submit();-->
+<!--    })-->
+<!--</script>-->
 <script>
     let currentPageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
@@ -327,7 +327,7 @@
         window.location.href = `/?${urlParams.toString()}`;
     }
 
-    document.getElementById("createOrderButton").addEventListener("click", function (event) {
+    document.getElementById("createOrder").addEventListener("click", function (event) {
         event.preventDefault();
 
         document.querySelectorAll('input[name="selectedProducts"]:checked').forEach((checkbox) => {
