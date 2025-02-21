@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Financial Control Page</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <title>Order History Page</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
     <style>
         html, body {
             height: 100%;
@@ -56,7 +56,7 @@
         }
 
         .modal {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
             z-index: 1;
             left: 0;
@@ -73,7 +73,7 @@
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%; /* Could be adjusted */
+            width: 80%;
         }
 
         .close {
@@ -90,7 +90,6 @@
             cursor: pointer;
         }
 
-        /* Style for the order details table inside the modal */
         .modal-content table {
             width: 100%;
             border-collapse: collapse;
@@ -101,22 +100,25 @@
             text-align: left;
             border: 1px solid #ddd;
         }
+        .disabled {
+            color: #ccc;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 <div class="wrapper">
     <div class="content">
-
         <header th:replace="~{fragments/fragments :: top}"></header>
-        <h1>List of orders</h1>
+        <h1><span th:text="${department}"></span> department</h1>
 
         <label for="sortOptions">Sort by:</label>
         <select id="sortOptions" onchange="refresh()">
             <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
-            <option value="dept" th:selected="${order == 'dept: ASC'}">Department</option>
-            <option value="dept_desc" th:selected="${order == 'dept: DESC'}">Department DESC</option>
-            <option value="totalPrice" th:selected="${order == 'totalPrice: ASC'}">Total Price</option>
-            <option value="totalPrice_desc" th:selected="${order == 'totalPrice: DESC'}">Total Price DESC</option>
+            <option value="status" th:selected="${order == 'status: ASC'}">Status</option>
+            <option value="status_desc" th:selected="${order == 'status: DESC'}">Status DESC</option>
+            <option value="createdAt" th:selected="${order == 'createdAt: ASC'}">Created at</option>
+            <option value="createdAt" th:selected="${order == 'createdAt: DESC'}">Created at DESC</option>
         </select>
 
         <label for="resultsPerPage">Results per page:</label>
@@ -127,42 +129,29 @@
             <option value="100" th:selected="${pageSize == 100}">100</option>
         </select>
 
-        <form id="ordersForm" action="/approveOrders" method="POST">
-            <input type="hidden" name="_csrf" th:value="${_csrf.token}">
-            <table id="ordersTable">
-                <thead>
-                <tr>
-                    <th>Select</th>
-                    <th>Order ID</th>
-                    <th>Department</th>
-                    <th>Total Price</th>
-                    <th>Created at</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="order : ${orders}">
-                    <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
-                    <td th:text="${order.orderId}"
-                        th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
-                        style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
-                    <td th:text="${order.dept.getName()}"></td>
-                    <td th:text="${order.totalPrice}"></td>
-                    <td th:text="${order.createdAt}"></td>
-                </tr>
-                </tbody>
-            </table>
-            <button type="submit">Approve Order</button>
-            <button type="button" onclick="reject()">Reject Order</button>
-        </form>
-
-        <form action="/history">
-            <button type="submit" class="order-button" id="orderHistory">Order History</button>
-        </form>
+        <table id="availableProducts">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Status</th>
+                <th>Date of Creation</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.orderId}"
+                    th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='block'|"
+                    style="color: #0a58ca; font-weight: bold; cursor: pointer;"></td>
+                <td th:text="${order.status.getStatusText()}"></td>
+                <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
 
         <div th:each="order : ${orders}" th:id="'modal-' + ${order.orderId}" class="modal">
             <div class="modal-content">
-                <span class="close"
-                      th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
+            <span class="close"
+                  th:onclick="|document.getElementById('modal-' + ${order.orderId}).style.display='none'|">&times;</span>
                 <h2>Order Details</h2>
                 <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
                 <p><strong>Department:</strong> <span th:text="${order.dept.name}"></span></p>
@@ -179,7 +168,6 @@
             </div>
         </div>
 
-
         <div class="pagination-container">
             <button id="firstPageButton" onclick="refresh()">First Page</button>
             <button id="prevPage" onclick="prevPage()">Previous</button>
@@ -195,20 +183,16 @@
     <footer th:replace="~{fragments/fragments :: bottom}"></footer>
 
 </div>
+
 <script>
-    const pageNumber = [[${pageNumber}]];
+    let currentPageNumber = [[${pageNumber}]];
     const totalPages = [[${totalPages}]];
+    console.log(currentPageNumber === 1)
 
-    document.getElementById('prevPage').classList.toggle('disabled', pageNumber === 1);
-    document.getElementById('firstPageButton').classList.toggle('disabled', pageNumber === 1);
-    document.getElementById('lastPageButton').classList.toggle('disabled', pageNumber === totalPages);
-    document.getElementById('nextPage').classList.toggle('disabled', pageNumber === totalPages);
-
-    function reject() {
-        let form = document.getElementById('ordersForm');
-        form.action = "/rejectOrders";
-        form.submit();
-    }
+    document.getElementById('prevPage').classList.toggle('disabled', currentPageNumber === 1);
+    document.getElementById('firstPageButton').classList.toggle('disabled', currentPageNumber === 1);
+    document.getElementById('lastPageButton').classList.toggle('disabled', currentPageNumber === totalPages);
+    document.getElementById('nextPage').classList.toggle('disabled', currentPageNumber === totalPages);
 
     function prevPage() {
         const pageSize = document.getElementById('resultsPerPage').value;

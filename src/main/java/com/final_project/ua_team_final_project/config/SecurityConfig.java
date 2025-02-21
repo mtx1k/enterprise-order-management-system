@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/organization/pageOfFinco").hasRole("FINCO")
                         .requestMatchers("/organization/supply/**").hasRole("SUPPLIER")
                         .requestMatchers("/api/products/import").hasRole("ADMIN")
+                        .requestMatchers("/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin

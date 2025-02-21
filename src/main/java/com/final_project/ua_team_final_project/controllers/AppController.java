@@ -321,4 +321,15 @@ public class AppController {
         model.addAttribute("availableProducts", filteredProducts);
         return "fragments/productList :: productList";
     }
+
+    @GetMapping("/history")
+    public String history(Model model, Principal principal,
+                          @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
+                          @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
+                          @RequestParam(name = "order", required = false, defaultValue = "orderId") String order) {
+        pageDataManager.setHistoryModel(model,
+                userRepository.findByLogin(principal.getName()).get(),
+                urlPageNumber, pageSize, order);
+        return "/history";
+    }
 }

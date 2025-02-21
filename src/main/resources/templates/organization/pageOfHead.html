@@ -154,6 +154,11 @@
             <button type="button" onclick="reject()">Reject Order</button>
 
         </form>
+
+        <form action="/history">
+            <button type="submit" class="order-button" id="orderHistory">Order History</button>
+        </form>
+
         <div th:each="order : ${orderForDept}" th:id="'modal-' + ${order.orderId}" class="modal">
             <div class="modal-content">
             <span class="close"

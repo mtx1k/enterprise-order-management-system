@@ -160,6 +160,7 @@ public class PageDataManager {
         model.addAttribute("category", category);
         model.addAttribute("supplier", supplier);
     }
+
     public void setNewUserModel(Model model, User user) {
         model.addAttribute("user", user);
         model.addAttribute("departments", departmentRepository.findAll());
@@ -202,8 +203,7 @@ public class PageDataManager {
                 .getResultList();
     }
 
-    public void getAvailableProductsModel(Model model, Integer urlPageNumber, Integer pageSize, String order, User user) {
-
+    public void setHistoryModel(Model model, User user, Integer urlPageNumber, Integer pageSize, String order) {
         int pageNumber = urlPageNumber - 1;
 
         Sort.Direction direction = Sort.Direction.ASC;
@@ -214,18 +214,27 @@ public class PageDataManager {
         }
         Sort sort = Sort.by(direction, order);
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-        Page<AvailableProducts> page = null;
+        Page<Order> page = null;
+        String role = user.getRole().getName();
         try {
-            page = availableProductsRepository.findAll(pageable);
-        } catch (PropertyReferenceException e) {
-            getAvailableProductsModel(model, 1, 10, "productCode", user);
+            page = switch (role) {
+                case "USER" ->
+                        orderRepository.findByUserAndStatusNot(user, orderStatusRepository.findById(1L).get(), pageable);
+                case "HEAD" -> orderRepository.findByDept(user.getDepartment(), pageable);
+                case "FINCO" -> orderRepository.findByStatusIn(List.of(orderStatusRepository.findById(2L).get(),
+                        orderStatusRepository.findById(4L).get()), pageable);
+                case "SUPPLIER" -> orderRepository.findByUserAndStatusNot(user, orderStatusRepository.findById(3L).get(), pageable);
+                default -> throw new IllegalStateException("Unexpected value: " + role);
+            };
+        } catch (PropertyReferenceException _) {
+            setHistoryModel(model, user, 1, 10, "orderId");
         }
-
         model.addAttribute("user", user);
         model.addAttribute("pageNumber", urlPageNumber);
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("order", sort.toString());
-        model.addAttribute("availableProducts", page.getContent());
+        model.addAttribute("orders", page.getContent());
+
     }
 }
