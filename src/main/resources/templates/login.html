@@ -13,17 +13,17 @@
     </div>
     <div class="start">
         <form action="/login" method="post">
-
+            <h1>AlViOl</h1>
             <input type="hidden" name="_csrf" th:value="${_csrf.token}">
 
-
-            <label for="form2Example1">Login</label>
-            <input type="text" id="form2Example1" name="username" required/>
-
-
-            <label for="form2Example2">Password</label>
-            <input type="password" id="form2Example2" name="password" class="form-control" required/>
-
+            <div class="input-group">
+                <input type="text" id="login" name="username"  class="input"  required/>
+                <label for="login" class="label">Login</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" name="password" class="input" required/>
+                <label for="password" class="label">Password</label>
+            </div>
 
             <div class="row mb-4">
                 <div class="col d-flex justify-content-center">

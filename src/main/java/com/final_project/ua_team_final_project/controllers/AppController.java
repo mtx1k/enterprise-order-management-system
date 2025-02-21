@@ -10,6 +10,9 @@ import com.final_project.ua_team_final_project.repositories.RoleRepository;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +47,10 @@ public class AppController {
     private OrderService orderService;
     @Autowired
     private OrderStatusRepository orderStatusRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private SupplierRepository supplierRepository;
 
 
     @GetMapping("/")
@@ -51,6 +58,12 @@ public class AppController {
                         @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
                         @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
                         @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
+                        @RequestParam(name = "products", required = false) List<Long> products,
+                        @RequestParam(name = "quantities", required = false) List<Integer> quantities,
+                        @RequestParam(name = "query", required = false, defaultValue = "") String query,
+                        @RequestParam(required = false) Long category,
+                        @RequestParam(required = false) Long supplier,
+                        @RequestParam(required = false) String search,
                         Model model) {
         if (principal == null) {
 
@@ -63,6 +76,8 @@ public class AppController {
         if (user == null) {
             return "redirect:/login";
         }
+        Category categoryObj = (category != null) ? categoryRepository.findById(category).orElse(null) : null;
+        Supplier supplierObj = (supplier != null) ? supplierRepository.findById(supplier).orElse(null) : null;
 
 
         switch (user.getRole().getName()) {
@@ -74,7 +89,11 @@ public class AppController {
                 if (order.equals("userId")) {
                     order = "productCode";
                 }
-                pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user);
+
+
+                pageDataManager.getAvailableProductsModel(model, urlPageNumber, pageSize, order, user, categoryObj, supplierObj);
+
+
                 return "organization/userpage";
             }
             case "HEAD" -> {
@@ -126,8 +145,11 @@ public class AppController {
         orderService.setSelectedProductsModel(selectedProducts, model);
         model.addAttribute("user", userRepository.findByLogin(principal.getName()).orElseThrow(() ->
                 new UsernameNotFoundException("User not found: " + principal.getName())));
-        return "/organization/editProducts";
+
+        return "organization/editProducts";
     }
+
+
 
     @PostMapping("/confirmOrder")
     public String confirmOrder(@RequestParam List<Long> selectedProducts,
@@ -265,5 +287,38 @@ public class AppController {
         user.setPasswordEnc("$2a$12$7xYK.QaW9kmjU8Lbqu.cauuL7Dl4SidrO2O/2P2na8ujC0cKdHbtK");
         userRepository.save(user);
         return "redirect:/";
+    }
+
+    @GetMapping("/search")
+    public String searchProducts(
+            @RequestParam(name = "query", required = false, defaultValue = "") String query,
+            @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(name = "order", required = false, defaultValue = "productCode") String order,
+            Model model) {
+
+        PageRequest pageRequest = PageRequest.of(0, pageSize, Sort.by(order));
+
+        Page<AvailableProducts> filteredProducts;
+        if (query.isEmpty()) {
+            filteredProducts = availableProductsRepository.findAll(pageRequest);
+        } else {
+            filteredProducts = availableProductsRepository.findByNameContainingIgnoreCase(query, pageRequest);
+        }
+
+        model.addAttribute("availableProducts", filteredProducts.getContent());
+        return "fragments/fragments :: productList";
+    }
+    @GetMapping("/filter")
+    public String filterProducts(
+            @RequestParam(required = false) Long category_id,
+            @RequestParam(required = false) Long supplier_id,
+            @RequestParam(defaultValue = "10") int page_size,
+            @RequestParam(defaultValue = "productCode: ASC") String order,
+            Model model) {
+
+        List<AvailableProducts> filteredProducts = pageDataManager.findByCategoryAndSupplier(category_id, supplier_id, page_size, order);
+
+        model.addAttribute("availableProducts", filteredProducts);
+        return "fragments/fragments :: productList";
     }
 }

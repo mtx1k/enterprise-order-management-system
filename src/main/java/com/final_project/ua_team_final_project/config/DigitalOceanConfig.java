@@ -24,11 +24,6 @@ public class DigitalOceanConfig {
         String secretKey = dotenv.get("DO_SECRET_KEY");
         String region = dotenv.get("DO_REGION");
 
-//        System.out.println("DEBUG: Endpoint -> " + endpoint);
-//        System.out.println("DEBUG: Access Key -> " + accessKey);
-//        System.out.println("DEBUG: Secret Key -> " + (secretKey != null ? "Loaded" : "NULL"));
-//        System.out.println("DEBUG: Region -> " + region);
-
         if (endpoint == null || accessKey == null || secretKey == null || region == null) {
             throw new RuntimeException("Missing environment variables! Check application.properties or .env.");
         }
