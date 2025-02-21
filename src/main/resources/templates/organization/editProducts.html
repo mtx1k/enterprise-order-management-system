@@ -103,8 +103,7 @@
 
 
                             <td>
-                                <input type="hidden" name="selectedProducts"
-                                       th:value="${orderedProduct.orderedProductId}">
+                                <input type="hidden" name="selectedProducts" th:value="${orderedProduct.orderedProductId}">
                                 <input type="number" name="quantities" th:value="${orderedProduct.amount}"
                                        min="1"
                                        class="form-control"
@@ -196,7 +195,7 @@
 
         const productInputs = orderForm.querySelectorAll('input[name="selectedProducts"]');
         if (productInputs.length === 0) {
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault();
             alert("No products selected. Please select products to order.");
         }
     });
@@ -208,7 +207,7 @@
         document.querySelectorAll("input[name='quantities']").forEach(function (input) {
             input.addEventListener("input", function () {
                 let row = this.closest("tr");
-                let priceText = row.querySelector("td:nth-child(3)").textContent.trim();
+                let priceText = row.querySelector("td:nth-child(4)").textContent.trim();
                 let price = parseFloat(priceText.replace(/[^0-9.-]+/g, ""));
                 let quantity = parseInt(this.value) || 1;
                 let totalCell = row.querySelector("td:last-child");
