@@ -26,27 +26,27 @@ public class OrderMessage {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_order_id", nullable = false)
-    private SupplierOrders supplierOrders;
+    private SupplierOrder supplierOrder;
 
     public OrderMessage() {
     }
 
-    public OrderMessage(Long messageId, User user, Order order, SupplierOrders supplierOrders) {
+    public OrderMessage(Long messageId, User user, Order order, SupplierOrder supplierOrder) {
         this.messageId = messageId;
         this.user = user;
         this.order = order;
-        this.supplierOrders = supplierOrders;
+        this.supplierOrder = supplierOrder;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof OrderMessage that)) return false;
-        return Objects.equals(messageId, that.messageId) && Objects.equals(user, that.user) && Objects.equals(order, that.order) && Objects.equals(supplierOrders, that.supplierOrders);
+        return Objects.equals(messageId, that.messageId) && Objects.equals(user, that.user) && Objects.equals(order, that.order) && Objects.equals(supplierOrder, that.supplierOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(messageId, user, order, supplierOrders);
+        return Objects.hash(messageId, user, order, supplierOrder);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class OrderMessage {
                 "messageId=" + messageId +
                 ", user=" + user +
                 ", order=" + order +
-                ", supplierOrders=" + supplierOrders +
+                ", supplierOrders=" + supplierOrder +
                 '}';
     }
 }

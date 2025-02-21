@@ -12,24 +12,25 @@ import java.util.Objects;
 @Entity
 @Table(name = "supplier_order_products")
 public class SupplierOrderProduct {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "supplier_order_id", nullable = false)
-    private SupplierOrders supplierOrder;
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ordered_product_id", nullable = false)
     private OrderedProduct orderProduct;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_order_id", nullable = false)
+    private SupplierOrder supplierOrder;
 
     private Long amount;
 
     public SupplierOrderProduct() {
     }
 
-    public SupplierOrderProduct(Long id, SupplierOrders supplierOrder, OrderedProduct orderProduct, Long amount) {
+    public SupplierOrderProduct(Long id, SupplierOrder supplierOrder, OrderedProduct orderProduct, Long amount) {
         this.id = id;
         this.supplierOrder = supplierOrder;
         this.orderProduct = orderProduct;

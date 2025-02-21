@@ -38,6 +38,10 @@ public class OrderedProduct {
     @Column(nullable = false)
     private Long amount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_order_product_id", nullable = false)
+    private SupplierOrderProduct supplierOrderProduct;
+
     public OrderedProduct() {
     }
 
