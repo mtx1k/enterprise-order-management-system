@@ -306,7 +306,7 @@ public class AppController {
         }
 
         model.addAttribute("availableProducts", filteredProducts.getContent());
-        return "fragments/fragments :: productList";
+        return "fragments/productList :: productList";
     }
     @GetMapping("/filter")
     public String filterProducts(
@@ -319,6 +319,6 @@ public class AppController {
         List<AvailableProducts> filteredProducts = pageDataManager.findByCategoryAndSupplier(category_id, supplier_id, page_size, order);
 
         model.addAttribute("availableProducts", filteredProducts);
-        return "fragments/fragments :: productList";
+        return "fragments/productList :: productList";
     }
 }
