@@ -1,41 +1,67 @@
 package com.final_project.ua_team_final_project.services;
 
-import com.final_project.ua_team_final_project.models.OrderedProduct;
-import com.final_project.ua_team_final_project.models.Supplier;
-import com.final_project.ua_team_final_project.repositories.SupplierRepository;
+import com.final_project.ua_team_final_project.models.*;
+import com.final_project.ua_team_final_project.repositories.*;
 import com.opencsv.CSVWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 
 public class SupplierOrderService {
 
-    private final OrderService orderService;
-
     private final SupplierRepository supplierRepository;
 
-    private final DigitalOceanStorageService digitalOceanStorageService;
+    private final SupplierOrderRepository supplierOrderRepository;
 
-    public Map<Long, List<OrderedProduct>> processOrders(List<Long> orderIds) {
-        List<OrderedProduct> orderedProducts = orderService.getOrderedProductsForOrders(orderIds);
-        // System.out.println(orderedProducts);
+    private final SupplierOrderProductService supplierOrderProductService;
 
-        Map<Long, List<OrderedProduct>> orderedProductsBySupplier = orderedProducts.stream()
-                .collect(Collectors.groupingBy(product -> product.getSupplier().getSupplierId()));
-//        orderedProductsBySupplier.forEach((supplier, products) -> {
-//            System.out.println(supplier + " " + products);
-//        });
-        return orderedProductsBySupplier;
+    private final SupplierOrderStatusService supplierOrderStatusService;
+
+    public Map<SupplierOrder, List<SupplierOrderProduct>> processOrders(Map<Long, List<OrderedProduct>> orderedProducts) {
+
+        Map<SupplierOrder, List<SupplierOrderProduct>> orders = new HashMap<>();
+
+        orderedProducts.forEach((supplierId, products) -> {
+
+            //Long id = supplierOrderRepository.count() + 1;
+
+            Supplier supplier = supplierRepository.findById(supplierId).orElse(null);
+            if (supplier == null) {
+                return;
+            }
+
+            SupplierOrderStatus supplierOrderStatus = supplierOrderStatusService.findById(1L);
+
+            double price = calculateTotalPrice(products);
+
+            SupplierOrder supplierOrder = new SupplierOrder(supplier, price, LocalDateTime.now(), supplierOrderStatus); // id,
+
+            List<SupplierOrderProduct> supplierOrderProducts = supplierOrderProductService.processProducts(supplierOrder, products);
+
+            orders.put(supplierOrder, supplierOrderProducts);
+
+        });
+
+        return orders;
+    }
+
+    private double calculateTotalPrice(List<OrderedProduct> products) {
+        double totalPrice = 0;
+        for (OrderedProduct product : products) {
+            totalPrice += product.getItemPrice();
+        }
+        return totalPrice;
     }
 
     private String generateFileName(Long supplierId) {
@@ -44,14 +70,15 @@ public class SupplierOrderService {
             return null;
         }
         String supplierName = supplier.get().getName().replaceAll(" ", "");
-        return "SupplierOrdersHistory/" + supplierName + "_" + LocalDate.now() + ".csv";
+        return supplierName + "_" + LocalDate.now() + ".csv";
     }
 
-    public List<String> generateAndUploadCsv(Map<Long, List<OrderedProduct>> supplierProducts) {
-        List<String> files = new ArrayList<>();
+    public Map<String, OutputStream> generateScvFiles(Map<SupplierOrder, List<SupplierOrderProduct>> orders) {
+        Map<String, OutputStream> files = new HashMap<>();
 
-        supplierProducts.forEach((supplierId, products) -> {
-            String fileName = generateFileName(supplierId);
+        orders.forEach((order, supplierOrderProducts) -> {
+            String fileName = generateFileName(order.getSupplier().getSupplierId());
+            Double totalPrice = order.getTotalPrice();
 
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                  OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
@@ -61,9 +88,8 @@ public class SupplierOrderService {
                 csvWriter.writeNext(new String[]{"Product Code", "Name", "Item Price", "Amount"});
 
                 // Products
-                double price = 0.0;
-                for (OrderedProduct product : products) {
-                    price += product.getItemPrice() * product.getAmount();
+                for (SupplierOrderProduct supplierOrderProduct : supplierOrderProducts) {
+                    OrderedProduct product = supplierOrderProduct.getOrderProduct();
                     csvWriter.writeNext(new String[]{
                             product.getProductCode(),
                             product.getName(),
@@ -71,20 +97,21 @@ public class SupplierOrderService {
                             product.getAmount().toString()
                     });
                 }
-                csvWriter.writeNext(new String[]{"Price: ", String.format("%.2f", price)});
+                csvWriter.writeNext(new String[]{"Price: ", String.format("%.2f", totalPrice)});
 
                 csvWriter.flush();
-                digitalOceanStorageService.uploadFile(fileName, outputStream.toByteArray());
+                files.put(fileName, outputStream);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            files.add(fileName);
-
         });
         return files;
     }
 
+    public SupplierOrder saveSupplierOrder(SupplierOrder supplierOrder) {
+        return supplierOrderRepository.save(supplierOrder);
+    }
 }
 
