@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -26,6 +27,10 @@ public class Supplier {
     private String contactPhone;
 
     private String contactEmail;
+
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupplierOrder> supplierOrders;
+
 
     public Supplier() {
     }

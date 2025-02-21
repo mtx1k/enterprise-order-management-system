@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +22,11 @@ public class SupplierOrderService {
 
     private final SupplierRepository supplierRepository;
 
-    private final DigitalOceanStorageService digitalOceanStorageService;
-
-    private final SupplierOrdersRepository supplierOrdersRepository;
-
-    private final SupplierOrderStatusRepository supplierOrderStatusRepository;
+    private final SupplierOrderRepository supplierOrderRepository;
 
     private final SupplierOrderProductService supplierOrderProductService;
+
+    private final SupplierOrderStatusService supplierOrderStatusService;
 
     public Map<SupplierOrder, List<SupplierOrderProduct>> processOrders(Map<Long, List<OrderedProduct>> orderedProducts) {
 
@@ -37,18 +34,18 @@ public class SupplierOrderService {
 
         orderedProducts.forEach((supplierId, products) -> {
 
-            Long id = supplierOrdersRepository.count() + 1;
+            //Long id = supplierOrderRepository.count() + 1;
 
             Supplier supplier = supplierRepository.findById(supplierId).orElse(null);
             if (supplier == null) {
                 return;
             }
 
-            SupplierOrderStatus supplierOrderStatus = supplierOrderStatusRepository.findById(1L).orElse(null);
+            SupplierOrderStatus supplierOrderStatus = supplierOrderStatusService.findById(1L);
 
             double price = calculateTotalPrice(products);
 
-            SupplierOrder supplierOrder = new SupplierOrder(id, supplier, price, LocalDateTime.now(), supplierOrderStatus);
+            SupplierOrder supplierOrder = new SupplierOrder(supplier, price, LocalDateTime.now(), supplierOrderStatus); // id,
 
             List<SupplierOrderProduct> supplierOrderProducts = supplierOrderProductService.processProducts(supplierOrder, products);
 
@@ -114,7 +111,7 @@ public class SupplierOrderService {
     }
 
     public SupplierOrder saveSupplierOrder(SupplierOrder supplierOrder) {
-        return supplierOrdersRepository.save(supplierOrder);
+        return supplierOrderRepository.save(supplierOrder);
     }
 }
 

@@ -14,10 +14,12 @@ import java.util.Objects;
 @Entity
 @Table(name = "supplier_orders")
 public class SupplierOrder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long supplierOrderId;
-    @OneToOne(fetch = FetchType.EAGER)
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
@@ -25,6 +27,7 @@ public class SupplierOrder {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
     @ManyToOne
     @JoinColumn(name = "supplier_order_status_id", nullable = false)
     private SupplierOrderStatus supplierOrderStatus;
@@ -34,6 +37,13 @@ public class SupplierOrder {
 
     public SupplierOrder(Long supplierOrderId) {
         this.supplierOrderId = supplierOrderId;
+    }
+
+    public SupplierOrder(Supplier supplier, double totalPrice, LocalDateTime createdAt, SupplierOrderStatus supplierOrderStatus) {
+        this.supplier = supplier;
+        this.totalPrice = totalPrice;
+        this.createdAt = createdAt;
+        this.supplierOrderStatus = supplierOrderStatus;
     }
 
     public SupplierOrder(Long supplierOrderId, Supplier supplier, double totalPrice, LocalDateTime createdAt, SupplierOrderStatus supplierOrderStatus) {

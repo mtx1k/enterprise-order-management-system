@@ -3,7 +3,6 @@ package com.final_project.ua_team_final_project.services;
 import com.final_project.ua_team_final_project.models.SupplierOrder;
 import com.final_project.ua_team_final_project.models.SupplierOrderStatus;
 import com.final_project.ua_team_final_project.repositories.SupplierOrderStatusRepository;
-import com.final_project.ua_team_final_project.repositories.SupplierOrdersRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,6 @@ public class SupplierOrderStatusService {
     private final EntityManager entityManager;
 
     private final SupplierOrderStatusRepository supplierOrderStatusRepository;
-
-    private final SupplierOrdersRepository supplierOrderRepository;
 
     public SupplierOrderStatus findById(Long id) {
         return supplierOrderStatusRepository.findById(id).orElse(null);
