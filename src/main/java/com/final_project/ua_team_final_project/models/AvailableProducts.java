@@ -2,6 +2,7 @@ package com.final_project.ua_team_final_project.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table (name = "available_products")
+@NoArgsConstructor
 public class AvailableProducts {
 
 
@@ -41,22 +43,6 @@ public class AvailableProducts {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-
-    public AvailableProducts() {
-    }
-
-    public AvailableProducts(Long productId, String productCode, String name, String description, Category category, Supplier supplier, Double price, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.productId = productId;
-        this.productCode = productCode;
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.supplier = supplier;
-        this.price = price;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 
     @Override
     public boolean equals(Object o) {

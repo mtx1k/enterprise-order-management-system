@@ -1,7 +1,9 @@
 package com.final_project.ua_team_final_project.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +17,8 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "orders")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
 
     @Id
@@ -48,20 +52,6 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderedProduct> orderedProducts = new ArrayList<>();
-
-    public Order() { }
-
-    public Order(Long orderId, Department dept, double totalPrice, boolean approvedByHead, boolean approvedByFinDept, LocalDateTime createdAt, LocalDateTime updatedAt, OrderStatus status, List<OrderedProduct> orderedProducts) {
-        this.orderId = orderId;
-        this.dept = dept;
-        this.totalPrice = totalPrice;
-        this.approvedByHead = approvedByHead;
-        this.approvedByFinDept = approvedByFinDept;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.status = status;
-        this.orderedProducts = orderedProducts;
-    }
 
     @Override
     public boolean equals(Object o) {

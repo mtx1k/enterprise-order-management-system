@@ -19,14 +19,6 @@ public class OrderStatus {
 
     private String statusText;
 
-    public OrderStatus() {
-    }
-
-    public OrderStatus(Long statusId, String statusText) {
-        this.statusId = statusId;
-        this.statusText = statusText;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof OrderStatus that)) return false;

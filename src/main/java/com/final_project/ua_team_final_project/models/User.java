@@ -2,7 +2,9 @@ package com.final_project.ua_team_final_project.models;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -14,6 +16,8 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table (name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -51,20 +55,6 @@ public class User {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public User() {
-    }
-
-    public User(Long userId, Department department, String name, Role role, String login, String passwordEnc, String phone, String email) {
-        this.userId = userId;
-        this.department = department;
-        this.name = name;
-        this.role = role;
-        this.login = login;
-        this.passwordEnc = passwordEnc;
-        this.phone = phone;
-        this.email = email;
-    }
 
     @Override
     public boolean equals(Object o) {

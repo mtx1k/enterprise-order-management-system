@@ -8,5 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface OrderStatusRepository extends JpaRepository<OrderStatus, Long> {
-    Optional<OrderStatus> findByStatusText(String statusText);
 }

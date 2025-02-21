@@ -1,6 +1,5 @@
 package com.final_project.ua_team_final_project.controllers;
 
-import com.final_project.ua_team_final_project.dto.OrderDTO;
 import com.final_project.ua_team_final_project.dto.OrderRequest;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
@@ -13,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.final_project.ua_team_final_project.services.PageDataManager;
 import org.springframework.stereotype.Controller;
@@ -58,12 +54,8 @@ public class AppController {
                         @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
                         @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
                         @RequestParam(name = "order", required = false, defaultValue = "userId") String order,
-                        @RequestParam(name = "products", required = false) List<Long> products,
-                        @RequestParam(name = "quantities", required = false) List<Integer> quantities,
-                        @RequestParam(name = "query", required = false, defaultValue = "") String query,
                         @RequestParam(required = false) Long category,
                         @RequestParam(required = false) Long supplier,
-                        @RequestParam(required = false) String search,
                         Model model) {
         if (principal == null) {
 
@@ -161,10 +153,7 @@ public class AppController {
         }
         orderService.saveNewOrder(productQuantities);
 
-        // TODO: or NOT TODO that is the question
         return "redirect:/";
-
-
     }
 
     @GetMapping("/login")
@@ -184,8 +173,6 @@ public class AppController {
         pageDataManager.setEditUserModel(id, model, user);
         return "editUser";
     }
-
-
 
     @PostMapping("/edituser")
     public String editUser(@RequestParam("id") Long id,
@@ -308,6 +295,7 @@ public class AppController {
         model.addAttribute("availableProducts", filteredProducts.getContent());
         return "fragments/productList :: productList";
     }
+
     @GetMapping("/filter")
     public String filterProducts(
             @RequestParam(required = false) Long category_id,
