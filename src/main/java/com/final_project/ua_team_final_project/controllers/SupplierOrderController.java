@@ -40,13 +40,15 @@ public class SupplierOrderController {
     private final SupplierOrderStatusService supplierOrderStatusService;
 
     private Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders;
-    private Map<Long, List<OrderedProduct>> orderedProducts;
+    private List<Long> selectedOrderIds;
 
     @Transactional
     @PostMapping("/createSupplierOrders")
     public String createSupplierOrders(@RequestParam List<Long> selectedOrders, Model model) {
 
-        orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
+        selectedOrderIds = selectedOrders;
+
+        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
         supplierOrders = supplierOrderService.processOrders(orderedProducts);
 
         supplierOrders.forEach((supplierOrder, orderProducts) -> {
@@ -67,7 +69,7 @@ public class SupplierOrderController {
         Map<String, OutputStream> files = supplierOrderService.generateScvFiles(supplierOrders);
         List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
         supplierOrders.keySet().forEach(order -> supplierOrderStatusService.changeStatusToSent(order.getSupplierOrderId()));
-        orderedProducts.keySet().forEach(orderedProduct -> orderService.changeStatusToDone(orderedProduct));
+        selectedOrderIds.forEach(orderService::changeStatusToDone);
         redirectAttributes.addFlashAttribute("message", "Orders sent successfully");
         return "redirect:/";
     }
@@ -80,63 +82,5 @@ public class SupplierOrderController {
         return "redirect:/";
     }
 
-//    @PostMapping("/supplier-orders")
-//    public ResponseEntity<List<String>> createSupplierOrders(@RequestParam List<Long> selectedOrders) {
-//
-//        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
-//
-//        Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders = supplierOrderService.processOrders(orderedProducts);
-//
-//        supplierOrders.forEach((supplierOrder, orderProducts) -> {
-//            SupplierOrder resultSupplierOrder = supplierOrderService.saveSupplierOrder(supplierOrder);
-//            if (resultSupplierOrder != null) {
-//                List<SupplierOrderProduct> resultSupplierOrderProducts = supplierOrderProductService.saveSupplierProducts(orderProducts);
-//                if (resultSupplierOrderProducts == null) {
-//                    System.out.println("Supplier order product save failed");
-//                }
-//
-//            } else {
-//                System.out.println("Supplier order id " + supplierOrder.getSupplierOrderId() + " not saved");
-//            }
-//        });
-//
-//        //List<String> files = supplierOrderService.generateAndUploadCsv(orderedProducts);
-//
-//        return ResponseEntity.ok(null);
-//    }
-
-//    @PostMapping("/generateCsv")
-//    public ResponseEntity<List<String>> generateCsv(@RequestParam List<Long> selectedOrders) {
-//
-//        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
-//
-//        Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders = supplierOrderService.processOrders(orderedProducts);
-//
-//        supplierOrders.forEach((supplierOrder, orderProducts) -> {
-//            SupplierOrder resultSupplierOrder = supplierOrderService.saveSupplierOrder(supplierOrder);
-//            if (resultSupplierOrder != null) {
-//                List<SupplierOrderProduct> resultSupplierOrderProducts = supplierOrderProductService.saveSupplierProducts(orderProducts);
-//                if (resultSupplierOrderProducts == null) {
-//                    System.out.println("Supplier order product save failed");
-//                }
-//
-//            } else {
-//                System.out.println("Supplier order id " + supplierOrder.getSupplierOrderId() + " not saved");
-//            }
-//        });
-//
-//        //---------------------------------------------------------
-//
-//        Map<String, OutputStream> files = supplierOrderService.generateScvFiles(supplierOrders);
-//        List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
-
-
-        //changing status to SENT
-//        supplierOrders.keySet().forEach(supplierOrder -> {
-//            supplierOrderStatusService.changeStatusToSent(supplierOrder.getSupplierOrderId());
-//        });
-
-    //       return ResponseEntity.ok(csvFiles);
-    //}
 }
 

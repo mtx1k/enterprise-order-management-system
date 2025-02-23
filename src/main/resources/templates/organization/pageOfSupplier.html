@@ -40,6 +40,9 @@
 <body>
 <header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <div class="container">
+  <div th:if="${message}" class="alert alert-success text-center">
+    <span th:text="${message}"></span>
+  </div>
   <h2>Approved Internal Orders</h2>
   <form id="internalOrdersForm" method="POST" action="/createSupplierOrders">
     <input type="hidden" name="_csrf" th:value="${_csrf.token}">
