@@ -6,9 +6,13 @@ import com.final_project.ua_team_final_project.models.SupplierOrderProduct;
 import com.final_project.ua_team_final_project.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -25,7 +29,7 @@ import java.util.Map;
 //6 - send by email
 //7 - update status
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class SupplierOrderController {
 
@@ -34,6 +38,45 @@ public class SupplierOrderController {
     private final SupplierOrderProductService supplierOrderProductService;
     private final DigitalOceanStorageService digitalOceanStorageService;
     private final SupplierOrderStatusService supplierOrderStatusService;
+
+    private Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders;
+
+    @Transactional
+    @PostMapping("/createSupplierOrders")
+    public String createSupplierOrders(@RequestParam List<Long> selectedOrders, Model model) {
+
+        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
+        supplierOrders = supplierOrderService.processOrders(orderedProducts);
+
+        supplierOrders.forEach((supplierOrder, orderProducts) -> {
+            SupplierOrder savedOrder = supplierOrderService.saveSupplierOrder(supplierOrder);
+            if (savedOrder != null) {
+                supplierOrderProductService.saveSupplierProducts(orderProducts);
+                supplierOrderStatusService.changeStatusToSent(savedOrder.getSupplierOrderId());
+            }
+        });
+
+        model.addAttribute("supplierOrders", supplierOrders.keySet());
+        return "organization/supplierOrdersModal";
+    }
+
+    @Transactional
+    @PostMapping("/sendToSuppliers")
+    public String sendToSuppliers(RedirectAttributes redirectAttributes) {
+        Map<String, OutputStream> files = supplierOrderService.generateScvFiles(supplierOrders);
+        List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
+       // supplierOrderStatusService.changeStatusToSent(supplierOrders.keySet());
+        redirectAttributes.addFlashAttribute("message", "Orders sent successfully");
+        return "redirect:/";
+    }
+
+    @Transactional
+    @PostMapping("/cancelSupplierOrders")
+    public String cancelSupplierOrders(RedirectAttributes redirectAttributes) {
+        supplierOrders.keySet().forEach(order -> supplierOrderStatusService.changeStatusToCancelled(order.getSupplierOrderId()));
+        redirectAttributes.addFlashAttribute("message", "Orders cancelled successfully");
+        return "redirect:/";
+    }
 
 //    @PostMapping("/supplier-orders")
 //    public ResponseEntity<List<String>> createSupplierOrders(@RequestParam List<Long> selectedOrders) {
@@ -60,30 +103,30 @@ public class SupplierOrderController {
 //        return ResponseEntity.ok(null);
 //    }
 
-    @PostMapping("/generateCsv")
-    public ResponseEntity<List<String>> generateCsv(@RequestParam List<Long> selectedOrders) {
-
-        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
-
-        Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders = supplierOrderService.processOrders(orderedProducts);
-
-        supplierOrders.forEach((supplierOrder, orderProducts) -> {
-            SupplierOrder resultSupplierOrder = supplierOrderService.saveSupplierOrder(supplierOrder);
-            if (resultSupplierOrder != null) {
-                List<SupplierOrderProduct> resultSupplierOrderProducts = supplierOrderProductService.saveSupplierProducts(orderProducts);
-                if (resultSupplierOrderProducts == null) {
-                    System.out.println("Supplier order product save failed");
-                }
-
-            } else {
-                System.out.println("Supplier order id " + supplierOrder.getSupplierOrderId() + " not saved");
-            }
-        });
-
-        //---------------------------------------------------------
-
-        Map<String, OutputStream> files = supplierOrderService.generateScvFiles(supplierOrders);
-        List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
+//    @PostMapping("/generateCsv")
+//    public ResponseEntity<List<String>> generateCsv(@RequestParam List<Long> selectedOrders) {
+//
+//        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
+//
+//        Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders = supplierOrderService.processOrders(orderedProducts);
+//
+//        supplierOrders.forEach((supplierOrder, orderProducts) -> {
+//            SupplierOrder resultSupplierOrder = supplierOrderService.saveSupplierOrder(supplierOrder);
+//            if (resultSupplierOrder != null) {
+//                List<SupplierOrderProduct> resultSupplierOrderProducts = supplierOrderProductService.saveSupplierProducts(orderProducts);
+//                if (resultSupplierOrderProducts == null) {
+//                    System.out.println("Supplier order product save failed");
+//                }
+//
+//            } else {
+//                System.out.println("Supplier order id " + supplierOrder.getSupplierOrderId() + " not saved");
+//            }
+//        });
+//
+//        //---------------------------------------------------------
+//
+//        Map<String, OutputStream> files = supplierOrderService.generateScvFiles(supplierOrders);
+//        List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
 
 
         //changing status to SENT
@@ -91,7 +134,7 @@ public class SupplierOrderController {
 //            supplierOrderStatusService.changeStatusToSent(supplierOrder.getSupplierOrderId());
 //        });
 
-        return ResponseEntity.ok(csvFiles);
-    }
+    //       return ResponseEntity.ok(csvFiles);
+    //}
 }
 

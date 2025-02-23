@@ -5,6 +5,7 @@ import com.final_project.ua_team_final_project.models.SupplierOrderStatus;
 import com.final_project.ua_team_final_project.repositories.SupplierOrderStatusRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +22,31 @@ public class SupplierOrderStatusService {
         return supplierOrderStatusRepository.findById(id).orElse(null);
     }
 
-    public SupplierOrder changeStatusToSent(Long supplierOrderId) {
+    @Transactional
+    public void changeStatusToSent(Long supplierOrderId) {
         SupplierOrder order = entityManager.find(SupplierOrder.class, supplierOrderId);
         if (order != null) {
-            order.setSupplierOrderId(2L);
+            SupplierOrderStatus sentStatus = entityManager.createQuery(
+                            "SELECT s FROM SupplierOrderStatus s WHERE s.supplierOrderStatusText = 'SENT'",
+                            SupplierOrderStatus.class)
+                    .getSingleResult();
+
+            order.setSupplierOrderStatus(sentStatus);
             entityManager.flush();
         }
-        return order;
     }
 
+    @Transactional
+    public void changeStatusToCancelled(Long supplierOrderId) {
+        SupplierOrder order = entityManager.find(SupplierOrder.class, supplierOrderId);
+        if (order != null) {
+            SupplierOrderStatus cancelledStatus = entityManager.createQuery(
+                            "SELECT s FROM SupplierOrderStatus s WHERE s.supplierOrderStatusText = 'CANCELLED'",
+                            SupplierOrderStatus.class)
+                    .getSingleResult();
+
+            order.setSupplierOrderStatus(cancelledStatus);
+            entityManager.flush();
+        }
+    }
 }

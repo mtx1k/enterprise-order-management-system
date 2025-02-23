@@ -118,9 +118,9 @@ public class PageDataManager {
 
     public void setSupplierModel(Model model, User user) {
         model.addAttribute("user", user);
-        List<Order> orders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptTrueAndStatusStatusId(2L);
-        model.addAttribute("orders", orders);
-        model.addAttribute("department", user.getDepartment().getName());
+        List<Order> internalOrders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptTrueAndStatusStatusId(2L);
+        model.addAttribute("internalOrders", internalOrders);
+        //model.addAttribute("department", user.getDepartment().getName());
     }
 
 
