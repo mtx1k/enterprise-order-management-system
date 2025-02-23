@@ -62,7 +62,7 @@ public class SupplierOrderService {
         for (OrderedProduct product : products) {
             totalPrice += product.getItemPrice();
         }
-        return totalPrice;
+        return (int)(totalPrice * 100) / 100.0;
     }
 
     private String generateFileName(Long supplierId) {
