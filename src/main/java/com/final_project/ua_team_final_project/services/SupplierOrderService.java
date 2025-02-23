@@ -115,5 +115,9 @@ public class SupplierOrderService {
     public SupplierOrder saveSupplierOrder(SupplierOrder supplierOrder) {
         return supplierOrderRepository.save(supplierOrder);
     }
+
+    public List<SupplierOrder> getAllSupplierOrders() {
+        return supplierOrderRepository.findAll();
+    }
 }
 

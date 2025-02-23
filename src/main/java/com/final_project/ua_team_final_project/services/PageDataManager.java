@@ -34,12 +34,15 @@ public class PageDataManager {
     private final AvailableProductsRepository availableProductsRepository;
     private final CategoryRepository categoryRepository;
     private final SupplierRepository supplierRepository;
+    private final SupplierOrderRepository supplierOrderRepository;
 
     @Autowired
     private EntityManager entityManager;
 
     public PageDataManager(UserRepository userRepository, DepartmentRepository departmentRepository,
-                           RoleRepository roleRepository, OrderRepository orderRepository, OrderStatusRepository orderStatusRepository, AvailableProductsRepository availableProductsRepository, CategoryRepository categoryRepository, SupplierRepository supplierRepository) {
+                           RoleRepository roleRepository, OrderRepository orderRepository, OrderStatusRepository orderStatusRepository,
+                           AvailableProductsRepository availableProductsRepository, CategoryRepository categoryRepository,
+                           SupplierRepository supplierRepository, SupplierOrderRepository supplierOrderRepository) {
 
 
         this.roleRepository = roleRepository;
@@ -51,6 +54,7 @@ public class PageDataManager {
         this.availableProductsRepository = availableProductsRepository;
         this.categoryRepository = categoryRepository;
         this.supplierRepository = supplierRepository;
+        this.supplierOrderRepository = supplierOrderRepository;
 
     }
 
@@ -236,5 +240,26 @@ public class PageDataManager {
         model.addAttribute("order", sort.toString());
         model.addAttribute("orders", page.getContent());
 
+    }
+
+    public void setSupplierHistoryModel(Model model, User user, Integer urlPageNumber, Integer pageSize, String order) {
+        int pageNumber = urlPageNumber - 1;
+
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (order.endsWith("desc")) {
+            direction = Sort.Direction.DESC;
+            order = order.substring(0, order.length() - 5);
+        }
+        Sort sort = Sort.by(direction, order);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<SupplierOrder> page = supplierOrderRepository.findAll(pageable);
+
+        model.addAttribute("department", user.getDepartment().getName());
+        model.addAttribute("user", user);
+        model.addAttribute("pageNumber", urlPageNumber);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("order", sort.toString());
+        model.addAttribute("supplierOrders", page.getContent());
     }
 }

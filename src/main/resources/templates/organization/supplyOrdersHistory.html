@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Supplier Orders History</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 6px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            cursor: pointer;
+            background-color: #f8f9fa;
+        }
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .page-form {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="content">
+        <header th:replace="~{fragments/fragments :: top}"></header>
+        <h1>Supplier Orders History</h1>
+
+        <label for="sortOptions">Sort by:</label>
+        <select id="sortOptions" onchange="refresh()">
+            <option value="supplierOrderId" th:selected="${order == 'supplierOrderId'}">ID</option>
+            <option value="status" th:selected="${order == 'status: ASC'}">Status</option>
+            <option value="status_desc" th:selected="${order == 'status: DESC'}">Status DESC</option>
+            <option value="createdAt" th:selected="${order == 'createdAt: ASC'}">Created at</option>
+            <option value="createdAt_desc" th:selected="${order == 'createdAt: DESC'}">Created at DESC</option>
+        </select>
+
+        <label for="resultsPerPage">Results per page:</label>
+        <select id="resultsPerPage" onchange="refresh()">
+            <option value="10" th:selected="${pageSize == 10}">10</option>
+            <option value="25" th:selected="${pageSize == 25}">25</option>
+            <option value="50" th:selected="${pageSize == 50}">50</option>
+            <option value="100" th:selected="${pageSize == 100}">100</option>
+        </select>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Supplier</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Created At</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="supplierOrder : ${supplierOrders}">
+                <td th:text="${supplierOrder.getSupplierOrderId()}"></td>
+                <td th:text="${supplierOrder.getSupplier().getName()}"></td>
+                <td th:text="${supplierOrder.getSupplierOrderStatus().getSupplierOrderStatusText()}"></td>
+                <td th:text="${supplierOrder.getTotalPrice()}"></td>
+                <td th:text="${#temporals.format(supplierOrder.getCreatedAt(), 'dd.MM.yyyy HH:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination-container">
+            <button id="firstPageButton" onclick="refresh()">First Page</button>
+            <button id="prevPage" onclick="prevPage()">Previous</button>
+            <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
+                <label for="pageNumber">Page#</label>
+                <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
+                <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
+            </form>
+            <button id="nextPage" onclick="nextPage()">Next</button>
+            <button id="lastPageButton" onclick="lastPage()">Last Page</button>
+        </div>
+    </div>
+    <footer th:replace="~{fragments/fragments :: bottom}"></footer>
+</div>
+
+<script>
+    function refresh() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+        window.location.href = `/supplyOrdersHistory?page=1&page_size=${pageSize}&order=${order}`;
+    }
+    function prevPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+        window.location.href = `/supplyOrdersHistory?page=${pageNumber - 1}&page_size=${pageSize}&order=${order}`;
+    }
+    function nextPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+        window.location.href = `/supplyOrdersHistory?page=${pageNumber + 1}&page_size=${pageSize}&order=${order}`;
+    }
+    function moveToPage() {
+        const pageSize = document.getElementById('resultsPerPage').value;
+        const order = document.getElementById('sortOptions').value;
+        const moveToPageNumber = document.getElementById('pageNumber').value;
+        window.location.href = `/supplyOrdersHistory?page=${moveToPageNumber}&page_size=${pageSize}&order=${order}`;
+    }
+</script>
+<script src="/js/bootstrap.bundle.js"></script>
+</body>
+</html>
