@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Supplier Orders</title>
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      margin: 20px auto;
+      width: 80%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      text-align: center;
+    }
+    .btn-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Generated Supplier Orders</h2>
+  <table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Supplier</th>
+      <th>Total Price</th>
+      <th>Created At</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="supplierOrder : ${supplierOrders}">
+      <td th:text="${supplierOrder.supplierOrderId}"></td>
+      <td th:text="${supplierOrder.supplier.getName()}"></td>
+      <td th:text="${supplierOrder.totalPrice}"></td>
+      <td th:text="${supplierOrder.createdAt}"></td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="btn-container">
+    <form action="/sendToSuppliers" method="post">
+      <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+      <button type="submit" class="btn btn-success">Send to Suppliers</button>
+    </form>
+    <form action="/cancelSupplierOrders" method="post">
+      <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+      <button type="submit" class="btn btn-danger">Cancel Orders</button>
+    </form>
+  </div>
+</div>
+<script src="/js/bootstrap.bundle.js"></script>
+</body>
+</html>

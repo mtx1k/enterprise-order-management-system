@@ -4,149 +4,77 @@
   <meta charset="UTF-8">
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-  <title>Supply Manager page</title>
+  <title>Approved Internal Orders</title>
   <link rel="stylesheet" href="/css/bootstrap.css">
   <style>
-    a {
-      color: black;
-      text-decoration: none;
+    body {
+      font-family: Arial, sans-serif;
     }
-
+    .container {
+      margin: 20px auto;
+      width: 80%;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 20px;
     }
-
     th, td {
-      padding: 6px;
+      padding: 10px;
       text-align: left;
       border: 1px solid #ddd;
     }
-
     th {
-      cursor: pointer;
+      background-color: #f8f9fa;
+      font-weight: bold;
+      text-align: center;
     }
-
-    .disabled {
-      color: #ccc;
-      pointer-events: none;
-    }
-
-    #pageNumber {
-      width: 50px;
-    }
-
-    .pagination-container {
+    .btn-container {
+      margin-top: 20px;
       display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .page-form {
-      display: flex;
-      align-items: center;
+      justify-content: center;
+      gap: 15px;
     }
   </style>
 </head>
 <body>
-<header th:replace="~{fragments/fragments :: top}"></header>
-<h1>List of orders</h1>
-
-<label for="sortOptions">Sort by:</label>
-<select id="sortOptions" onchange="refresh()">
-  <option value="orderId" th:selected="${order == 'orderId'}">ID</option>
-  <option value="deptId" th:selected="${order == 'deptId: ASC'}">Department</option>
-  <option value="deptId_desc" th:selected="${order == 'deptId: DESC'}">Department DESC</option>
-  <option value="totalPrice" th:selected="${order == 'totalPrice: ASC'}">Total Price</option>
-  <option value="totalPrice_desc" th:selected="${order == 'totalPrice: DESC'}">Total Price DESC</option>
-</select>
-
-<label for="resultsPerPage">Results per page:</label>
-<select id="resultsPerPage" onchange="refresh()">
-  <option value="10" th:selected="${pageSize == 10}">10</option>
-  <option value="25" th:selected="${pageSize == 25}">25</option>
-  <option value="50" th:selected="${pageSize == 50}">50</option>
-  <option value="100" th:selected="${pageSize == 100}">100</option>
-</select>
-
-<form id="ordersForm" action="/approveOrders" method="POST">
-  <input type="hidden" name="_csrf" th:value="${_csrf.token}">
-  <table id="ordersTable">
-    <thead>
-    <tr>
-      <th>Select</th>
-      <th>Order ID</th>
-      <th>Department</th>
-      <th>Total Price</th>
-      <th>Created at</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="order : ${orders}">
-      <td><input type="checkbox" name="selectedOrders" th:value="${order.orderId}"/></td>
-      <td th:text="${order.orderId}"></td>
-      <td th:text="${order.dept.getName()}"></td>
-      <td th:text="${order.totalPrice}"></td>
-      <td th:text="${order.createdAt}"></td>
-    </tr>
-    </tbody>
-  </table>
-  <button type="button" onclick="generateCSV()">Generate CSV</button>
-</form>
-
-<form action="/history">
-  <button type="submit" class="order-button" id="orderHistory">Order History</button>
-</form>
-
-<div class="pagination-container">
-  <button id="firstPageButton" onclick="refresh()">First Page</button>
-  <button id="prevPage" onclick="prevPage()">Previous</button>
-  <form class="page-form" style="margin-inline: 40px" onsubmit="moveToPage(); return false;">
-    <label for="pageNumber">Page#</label>
-    <input type="number" step="1" min="1" max="${totalPages}" id="pageNumber" th:value="${pageNumber}"/>
-    <button type="button" style="margin-left: 10px" onclick="moveToPage()">Move</button>
+<header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
+<div class="container">
+  <div th:if="${message}" class="alert alert-success text-center">
+    <span th:text="${message}"></span>
+  </div>
+  <h2>Approved Internal Orders</h2>
+  <form id="internalOrdersForm" method="POST" action="/createSupplierOrders">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}">
+    <table class="table table-striped table-bordered">
+      <thead>
+      <tr>
+        <th>Select</th>
+        <th>Internal Order ID</th>
+        <th>Department</th>
+        <th>Total Price</th>
+        <th>Created at</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="internalOrder : ${internalOrders}">
+        <td><input type="checkbox" name="selectedOrders" th:value="${internalOrder.orderId}"/></td>
+        <td th:text="${internalOrder.orderId}"></td>
+        <td th:text="${internalOrder.dept.getName()}"></td>
+        <td th:text="${internalOrder.totalPrice}"></td>
+        <td th:text="${internalOrder.createdAt}"></td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="btn-container">
+      <button type="submit" class="btn btn-primary">Generate Supplier Orders</button>
+      <form action="/history">
+        <button type="submit" class="btn btn-primary" id="orderHistory">Order History</button>
+      </form>
+    </div>
   </form>
-  <button id="nextPage" onclick="nextPage()">Next</button>
-  <button id="lastPageButton" onclick="lastPage()">Last Page</button>
 </div>
-
-<script>
-  function generateCSV() {
-    let selectedOrders = [];
-    document.querySelectorAll('input[name="selectedOrders"]:checked').forEach((checkbox) => {
-      selectedOrders.push(checkbox.value);
-    });
-
-    if (selectedOrders.length === 0) {
-      alert("Please select at least one order!");
-      return;
-    }
-
-    let form = document.createElement("form");
-    form.method = "POST";
-    form.action = "/generateCsv";
-
-    let csrfInput = document.createElement("input");
-    csrfInput.type = "hidden";
-    csrfInput.name = "_csrf";
-    csrfInput.value = document.querySelector('input[name="_csrf"]').value;
-    form.appendChild(csrfInput);
-
-    selectedOrders.forEach(orderId => {
-      let input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "selectedOrders";
-      input.value = orderId;
-      form.appendChild(input);
-    });
-
-    document.body.appendChild(form);
-    form.submit();
-  }
-
-</script>
-
 <script src="/js/bootstrap.bundle.js"></script>
+<footer th:replace="~{fragments/fragments :: bottom}"></footer>
 </body>
-
 </html>

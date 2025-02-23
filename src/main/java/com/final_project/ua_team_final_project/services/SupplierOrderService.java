@@ -13,6 +13,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -61,7 +62,7 @@ public class SupplierOrderService {
         for (OrderedProduct product : products) {
             totalPrice += product.getItemPrice();
         }
-        return totalPrice;
+        return (int)(totalPrice * 100) / 100.0;
     }
 
     private String generateFileName(Long supplierId) {
@@ -70,7 +71,8 @@ public class SupplierOrderService {
             return null;
         }
         String supplierName = supplier.get().getName().replaceAll(" ", "");
-        return supplierName + "_" + LocalDate.now() + ".csv";
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+        return supplierName + "_" + timestamp + ".csv";
     }
 
     public Map<String, OutputStream> generateScvFiles(Map<SupplierOrder, List<SupplierOrderProduct>> orders) {
