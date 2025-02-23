@@ -94,6 +94,10 @@
   <button type="button" onclick="generateCSV()">Generate CSV</button>
 </form>
 
+<form action="/history">
+  <button type="submit" class="order-button" id="orderHistory">Order History</button>
+</form>
+
 <div class="pagination-container">
   <button id="firstPageButton" onclick="refresh()">First Page</button>
   <button id="prevPage" onclick="prevPage()">Previous</button>
@@ -140,11 +144,6 @@
     form.submit();
   }
 
-  function reject() {
-    let form = document.getElementById('ordersForm');
-    form.action = "/rejectOrders";
-    form.submit();
-  }
 </script>
 
 <script src="/js/bootstrap.bundle.js"></script>

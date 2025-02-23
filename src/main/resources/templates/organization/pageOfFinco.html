@@ -139,6 +139,7 @@
 <body>
 <header class="fixed-header" th:replace="~{fragments/fragments :: top}"></header>
 <div class="wrapper">
+
     <div class="content-container">
         <div class="content">
             <div class="container mt-4">
@@ -235,6 +236,11 @@
     </div>
 
     <div class="right-sidebar">
+      <form action="/history">
+            <button type="submit" class="order-button" id="orderHistory"
+                    style="margin-bottom: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
+                Order History</button>
+        </form>
         <button type="submit" id="submit"
                 style="margin-bottom: 20px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
             Approve Order
@@ -243,6 +249,7 @@
                 style="margin-bottom: 200px; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
             Reject Order
         </button>
+      
     </div>
 </div>
 <footer class="fixed-footer" th:replace="~{fragments/fragments :: bottom}"></footer>
