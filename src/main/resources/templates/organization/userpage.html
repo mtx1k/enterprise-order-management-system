@@ -20,14 +20,6 @@
             overflow: hidden;
         }
 
-        /*th, td {*/
-        /*    padding: 6px;*/
-        /*    text-align: left;*/
-        /*    border: 1px solid #ddd;*/
-        /*}*/
-
-
-
         #pageNumber {
             width: 50px;
         }
@@ -44,7 +36,6 @@
         }
 
         .table-header {
-            /*display: flex;*/
             justify-content: space-between;
             align-items: center;
             background: #fff;
@@ -213,6 +204,9 @@
     </div>
     <div class="right-sidebar">
         <button class="order-button" id="createOrder">Create Order</button>
+        <form action="/history">
+            <button type="submit" class="order-button" id="orderHistory">Order History</button>
+        </form>
     </div>
 </div>
 <footer class="fixed-footer" th:replace="~{fragments/fragments :: bottom}"></footer>
