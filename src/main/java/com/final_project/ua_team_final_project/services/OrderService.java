@@ -3,6 +3,7 @@ package com.final_project.ua_team_final_project.services;
 import com.final_project.ua_team_final_project.models.*;
 import com.final_project.ua_team_final_project.repositories.*;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     private final UserRepository userRepository;
     private final SupplierRepository supplierRepository;
@@ -166,15 +170,19 @@ public class OrderService {
                 .collect(Collectors.groupingBy(product -> product.getSupplier().getSupplierId()));
     }
 
-    public void changeOrdersStatus(List<Long> orderIds, OrderStatus orderStatus) {
-        for (Long orderId : orderIds) {
-            Order order = orderRepository.findById(orderId).orElse(null);
-            if (order != null) {
-                order.setStatus(orderStatus);
-                orderRepository.save(order);
-            }
+
+    @Transactional
+    public void changeStatusToDone(Long orderId) {
+        Order order = entityManager.find(Order.class, orderId);
+        if (order != null) {
+            OrderStatus doneStatus = entityManager.createQuery(
+                            "SELECT s FROM OrderStatus s WHERE s.statusText = 'DONE'",
+                            OrderStatus.class)
+                    .getSingleResult();
+
+            order.setStatus(doneStatus);
+            entityManager.flush();
         }
     }
-
 }
 

@@ -120,7 +120,7 @@ public class PageDataManager {
         model.addAttribute("user", user);
         List<Order> internalOrders = orderRepository.findByApprovedByHeadTrueAndApprovedByFinDeptTrueAndStatusStatusId(2L);
         model.addAttribute("internalOrders", internalOrders);
-        //model.addAttribute("department", user.getDepartment().getName());
+        model.addAttribute("department", user.getDepartment().getName());
     }
 
 

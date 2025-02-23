@@ -40,12 +40,13 @@ public class SupplierOrderController {
     private final SupplierOrderStatusService supplierOrderStatusService;
 
     private Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders;
+    private Map<Long, List<OrderedProduct>> orderedProducts;
 
     @Transactional
     @PostMapping("/createSupplierOrders")
     public String createSupplierOrders(@RequestParam List<Long> selectedOrders, Model model) {
 
-        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
+        orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
         supplierOrders = supplierOrderService.processOrders(orderedProducts);
 
         supplierOrders.forEach((supplierOrder, orderProducts) -> {
@@ -65,7 +66,8 @@ public class SupplierOrderController {
     public String sendToSuppliers(RedirectAttributes redirectAttributes) {
         Map<String, OutputStream> files = supplierOrderService.generateScvFiles(supplierOrders);
         List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
-       // supplierOrderStatusService.changeStatusToSent(supplierOrders.keySet());
+        supplierOrders.keySet().forEach(order -> supplierOrderStatusService.changeStatusToSent(order.getSupplierOrderId()));
+        orderedProducts.keySet().forEach(orderedProduct -> orderService.changeStatusToDone(orderedProduct));
         redirectAttributes.addFlashAttribute("message", "Orders sent successfully");
         return "redirect:/";
     }
