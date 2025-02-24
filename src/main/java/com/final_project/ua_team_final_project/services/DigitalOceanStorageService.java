@@ -36,6 +36,7 @@ public class DigitalOceanStorageService {
         return response.contents().stream()
                 .map(S3Object::key)
                 .filter(key -> key.endsWith(".csv"))
+                .filter(key -> !key.contains(HISTORY_FOLDER))
                 .collect(Collectors.toList());
     }
 

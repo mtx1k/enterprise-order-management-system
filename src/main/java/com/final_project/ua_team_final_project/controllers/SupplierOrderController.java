@@ -54,7 +54,8 @@ public class SupplierOrderController {
 
         selectedOrderIds = selectedOrders;
 
-        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
+        Map<Long, List<OrderedProduct>> orderedProducts =
+                orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
         supplierOrders = supplierOrderService.processOrders(orderedProducts);
 
         supplierOrders.forEach((supplierOrder, orderProducts) -> {
