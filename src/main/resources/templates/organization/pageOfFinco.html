@@ -193,8 +193,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    <button type="submit">Approve Order</button>
-                    <button type="button" onclick="reject()">Reject Order</button>
+
                 </form>
 
                 <div th:each="order : ${orders}" th:id="'modal-' + ${order.orderId}" class="modal">
