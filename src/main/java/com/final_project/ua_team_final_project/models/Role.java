@@ -1,7 +1,9 @@
 package com.final_project.ua_team_final_project.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
@@ -10,6 +12,8 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table (name = "roles")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
 
     @Id
@@ -19,14 +23,6 @@ public class Role {
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-
-    public Role() {
-    }
-
-    public Role(Long roleId, String name) {
-        this.roleId = roleId;
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object o) {

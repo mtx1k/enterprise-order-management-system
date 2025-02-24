@@ -2,6 +2,7 @@ package com.final_project.ua_team_final_project.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
@@ -10,22 +11,14 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table (name = "categories")
+@NoArgsConstructor
 public class Category {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
     private String name;
-
-    public Category() {
-    }
-
-    public Category(Long categoryId, String name) {
-        this.categoryId = categoryId;
-        this.name = name;
-    }
 
     public Category(String name) {
         this.name = name;
@@ -49,6 +42,5 @@ public class Category {
                 ", name='" + name + '\'' +
                 '}';
     }
-
 
 }
