@@ -8,11 +8,28 @@
   <link rel="stylesheet" href="/css/bootstrap.css">
   <style>
     body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
       font-family: Arial, sans-serif;
+      margin: 0;
     }
+
     .container {
-      margin: 20px auto;
+      flex-grow: 1;
       width: 80%;
+      margin: 20px auto;
+    }
+
+    .fixed-footer {
+      background: #f1f1f1;
+      padding: 10px;
+      text-align: center;
+      width: 100%;
+    }
+    .disabled {
+      color: #ccc;
+      pointer-events: none;
     }
     table {
       width: 100%;
@@ -73,6 +90,7 @@
   </form>
 </div>
 <script src="/js/bootstrap.bundle.js"></script>
-<footer th:replace="~{fragments/fragments :: bottom}"></footer>
+
+<footer class="fixed-footer " th:replace="~{fragments/fragments :: bottom}"></footer>
 </body>
 </html>
