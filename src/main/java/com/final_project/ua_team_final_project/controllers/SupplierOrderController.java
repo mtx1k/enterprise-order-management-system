@@ -6,14 +6,12 @@ import com.final_project.ua_team_final_project.models.SupplierOrderProduct;
 import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.OutputStream;
@@ -41,6 +39,7 @@ public class SupplierOrderController {
     private final SupplierOrderProductService supplierOrderProductService;
     private final DigitalOceanStorageService digitalOceanStorageService;
     private final SupplierOrderStatusService supplierOrderStatusService;
+    private final OrderEmailSender orderEmailSender;
 
     private Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders;
     private List<Long> selectedOrderIds;
@@ -77,6 +76,7 @@ public class SupplierOrderController {
         List<String> csvFiles = digitalOceanStorageService.uploadFiles(files);
         supplierOrders.keySet().forEach(order -> supplierOrderStatusService.changeStatusToSent(order.getSupplierOrderId()));
         selectedOrderIds.forEach(orderService::changeStatusToDone);
+        orderEmailSender.sendSupplierOrder("vitalii.shekhovtsov@dci-student.org", files);
         redirectAttributes.addFlashAttribute("message", "Orders sent successfully");
         return "redirect:/";
     }
