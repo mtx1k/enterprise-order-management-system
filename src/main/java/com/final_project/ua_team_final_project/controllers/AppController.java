@@ -320,4 +320,5 @@ public class AppController {
                 urlPageNumber, pageSize, order);
         return "/history";
     }
+
 }

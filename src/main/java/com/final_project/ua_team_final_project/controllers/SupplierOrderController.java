@@ -3,18 +3,21 @@ package com.final_project.ua_team_final_project.controllers;
 import com.final_project.ua_team_final_project.models.OrderedProduct;
 import com.final_project.ua_team_final_project.models.SupplierOrder;
 import com.final_project.ua_team_final_project.models.SupplierOrderProduct;
+import com.final_project.ua_team_final_project.repositories.UserRepository;
 import com.final_project.ua_team_final_project.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.OutputStream;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -42,13 +45,17 @@ public class SupplierOrderController {
     private Map<SupplierOrder, List<SupplierOrderProduct>> supplierOrders;
     private List<Long> selectedOrderIds;
 
+    private final PageDataManager pageDataManager;
+    private final UserRepository userRepository;
+
     @Transactional
     @PostMapping("/createSupplierOrders")
     public String createSupplierOrders(@RequestParam List<Long> selectedOrders, Model model) {
 
         selectedOrderIds = selectedOrders;
 
-        Map<Long, List<OrderedProduct>> orderedProducts = orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
+        Map<Long, List<OrderedProduct>> orderedProducts =
+                orderService.getOrderedProductsForOrdersBySupplier(selectedOrders);
         supplierOrders = supplierOrderService.processOrders(orderedProducts);
 
         supplierOrders.forEach((supplierOrder, orderProducts) -> {
@@ -80,6 +87,18 @@ public class SupplierOrderController {
         supplierOrders.keySet().forEach(order -> supplierOrderStatusService.changeStatusToCancelled(order.getSupplierOrderId()));
         redirectAttributes.addFlashAttribute("message", "Orders cancelled successfully");
         return "redirect:/";
+    }
+
+    @GetMapping("/supplyOrdersHistory")
+    public String getSupplyOrdersHistory(Model model, Principal principal,
+                                         @RequestParam(name = "page", required = false, defaultValue = "1") Integer urlPageNumber,
+                                         @RequestParam(name = "page_size", required = false, defaultValue = "10") Integer pageSize,
+                                         @RequestParam(name = "order", required = false, defaultValue = "supplierOrderId") String order) {
+        pageDataManager.setSupplierHistoryModel(model,
+                userRepository.findByLogin(principal.getName()).get(),
+                urlPageNumber, pageSize, order);
+
+        return "organization/supplyOrdersHistory";
     }
 
 }
