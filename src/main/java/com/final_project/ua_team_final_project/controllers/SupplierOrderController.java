@@ -19,17 +19,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-//0 - create ordered products list +
-//1 - create supp orders +
-//1.1 - create supp products +
-//2 - save products +
-//3 - update order status
-//3.1 - update supplier order status
-//4 - create CSVs +
-//5 - save to DO history +
-//6 - send by email
-//7 - update status
-
 @Controller
 @RequiredArgsConstructor
 public class SupplierOrderController {
