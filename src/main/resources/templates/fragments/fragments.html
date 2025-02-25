@@ -1,5 +1,5 @@
 <header th:fragment="top" class="d-flex justify-content-between align-items-center p-4 bg-light border-bottom">
-    <h1 class="h4 text-center flex-grow-1">Hello, you are logged in as <span class="fw-bold" th:text="${user.login}"></span></h1>
+    <h1 class="h4 text-center flex-grow-1">Hello, <span class="fw-bold" th:text="${user.name}"></span></h1>
     <form id="logoutForm" action="/logout" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <button type="submit" class="btn btn-danger">Logout</button>
