@@ -27,6 +27,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByDept_DeptIdAndStatus_StatusIdIn(Long deptId, List<Long> statusIds);
     List<Order> findByApprovedByHeadTrueAndApprovedByFinDeptTrueAndStatusStatusId(Long id);
 
+    Page<Order> findByApprovedByHeadAndApprovedByFinDeptAndStatus(
+            boolean approvedByHead, boolean approvedByFinDept, OrderStatus status, Pageable pageable);
+
     Page<Order> findByApprovedByHeadAndApprovedByFinDeptAndStatusNot(
             boolean approvedByHead, boolean approvedByFinDept, OrderStatus status, Pageable pageable);
 

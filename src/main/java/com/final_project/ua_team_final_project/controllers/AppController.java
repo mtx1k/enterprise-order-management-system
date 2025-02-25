@@ -90,7 +90,7 @@ public class AppController {
             }
             case "HEAD" -> {
                 List<Order> orderForDept = orderRepository.findByDept_DeptIdAndStatus_StatusIdIn(
-                        user.getDepartment().getDeptId(), List.of(1L, 4L));
+                        user.getDepartment().getDeptId(), List.of(1L));
                 model.addAttribute("user", user);
                 if (order.equals("userId")) {
                     order = "orderId";

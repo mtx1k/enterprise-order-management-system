@@ -151,8 +151,8 @@ public class OrderService {
         Page<Order> page = null;
 
         try {
-            page = orderRepository.findByApprovedByHeadAndApprovedByFinDeptAndStatusNot(false,
-                    false, orderStatusRepository.findById(4L).orElse(null), pageable);
+            page = orderRepository.findByApprovedByHeadAndApprovedByFinDeptAndStatus(false,
+                    false, orderStatusRepository.findById(1L).orElse(null), pageable);
         } catch (PropertyReferenceException e) {
             setHeadOfDepModel(model, 1, 10, "orderId", user);
         }
