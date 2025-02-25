@@ -56,7 +56,7 @@
       <td th:text="${supplierOrder.supplierOrderId}"></td>
       <td th:text="${supplierOrder.supplier.getName()}"></td>
       <td th:text="${supplierOrder.totalPrice}"></td>
-      <td th:text="${supplierOrder.createdAt}"></td>
+      <td th:text="${#temporals.format(supplierOrder.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
     </tr>
     </tbody>
   </table>
